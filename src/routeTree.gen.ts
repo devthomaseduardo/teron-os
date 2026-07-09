@@ -16,6 +16,7 @@ import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppPropostasRouteImport } from './routes/app.propostas'
 import { Route as AppProjetosRouteImport } from './routes/app.projetos'
 import { Route as AppFinanceiroRouteImport } from './routes/app.financeiro'
+import { Route as AppContratosRouteImport } from './routes/app.contratos'
 import { Route as AppClientesRouteImport } from './routes/app.clientes'
 
 const LoginRoute = LoginRouteImport.update({
@@ -53,6 +54,11 @@ const AppFinanceiroRoute = AppFinanceiroRouteImport.update({
   path: '/financeiro',
   getParentRoute: () => AppRoute,
 } as any)
+const AppContratosRoute = AppContratosRouteImport.update({
+  id: '/contratos',
+  path: '/contratos',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppClientesRoute = AppClientesRouteImport.update({
   id: '/clientes',
   path: '/clientes',
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/app/clientes': typeof AppClientesRoute
+  '/app/contratos': typeof AppContratosRoute
   '/app/financeiro': typeof AppFinanceiroRoute
   '/app/projetos': typeof AppProjetosRoute
   '/app/propostas': typeof AppPropostasRoute
@@ -73,6 +80,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/app/clientes': typeof AppClientesRoute
+  '/app/contratos': typeof AppContratosRoute
   '/app/financeiro': typeof AppFinanceiroRoute
   '/app/projetos': typeof AppProjetosRoute
   '/app/propostas': typeof AppPropostasRoute
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/app/clientes': typeof AppClientesRoute
+  '/app/contratos': typeof AppContratosRoute
   '/app/financeiro': typeof AppFinanceiroRoute
   '/app/projetos': typeof AppProjetosRoute
   '/app/propostas': typeof AppPropostasRoute
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/app/clientes'
+    | '/app/contratos'
     | '/app/financeiro'
     | '/app/projetos'
     | '/app/propostas'
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/app/clientes'
+    | '/app/contratos'
     | '/app/financeiro'
     | '/app/projetos'
     | '/app/propostas'
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/app/clientes'
+    | '/app/contratos'
     | '/app/financeiro'
     | '/app/projetos'
     | '/app/propostas'
@@ -178,6 +190,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFinanceiroRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/contratos': {
+      id: '/app/contratos'
+      path: '/contratos'
+      fullPath: '/app/contratos'
+      preLoaderRoute: typeof AppContratosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/clientes': {
       id: '/app/clientes'
       path: '/clientes'
@@ -190,6 +209,7 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppClientesRoute: typeof AppClientesRoute
+  AppContratosRoute: typeof AppContratosRoute
   AppFinanceiroRoute: typeof AppFinanceiroRoute
   AppProjetosRoute: typeof AppProjetosRoute
   AppPropostasRoute: typeof AppPropostasRoute
@@ -198,6 +218,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppClientesRoute: AppClientesRoute,
+  AppContratosRoute: AppContratosRoute,
   AppFinanceiroRoute: AppFinanceiroRoute,
   AppProjetosRoute: AppProjetosRoute,
   AppPropostasRoute: AppPropostasRoute,
