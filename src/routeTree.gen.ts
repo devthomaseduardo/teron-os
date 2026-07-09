@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppPropostasRouteImport } from './routes/app.propostas'
 import { Route as AppProjetosRouteImport } from './routes/app.projetos'
+import { Route as AppInboxRouteImport } from './routes/app.inbox'
 import { Route as AppFinanceiroRouteImport } from './routes/app.financeiro'
 import { Route as AppContratosRouteImport } from './routes/app.contratos'
 import { Route as AppClientesRouteImport } from './routes/app.clientes'
@@ -49,6 +50,11 @@ const AppProjetosRoute = AppProjetosRouteImport.update({
   path: '/projetos',
   getParentRoute: () => AppRoute,
 } as any)
+const AppInboxRoute = AppInboxRouteImport.update({
+  id: '/inbox',
+  path: '/inbox',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppFinanceiroRoute = AppFinanceiroRouteImport.update({
   id: '/financeiro',
   path: '/financeiro',
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/app/clientes': typeof AppClientesRoute
   '/app/contratos': typeof AppContratosRoute
   '/app/financeiro': typeof AppFinanceiroRoute
+  '/app/inbox': typeof AppInboxRoute
   '/app/projetos': typeof AppProjetosRoute
   '/app/propostas': typeof AppPropostasRoute
   '/app/': typeof AppIndexRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/app/clientes': typeof AppClientesRoute
   '/app/contratos': typeof AppContratosRoute
   '/app/financeiro': typeof AppFinanceiroRoute
+  '/app/inbox': typeof AppInboxRoute
   '/app/projetos': typeof AppProjetosRoute
   '/app/propostas': typeof AppPropostasRoute
   '/app': typeof AppIndexRoute
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/app/clientes': typeof AppClientesRoute
   '/app/contratos': typeof AppContratosRoute
   '/app/financeiro': typeof AppFinanceiroRoute
+  '/app/inbox': typeof AppInboxRoute
   '/app/projetos': typeof AppProjetosRoute
   '/app/propostas': typeof AppPropostasRoute
   '/app/': typeof AppIndexRoute
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/app/clientes'
     | '/app/contratos'
     | '/app/financeiro'
+    | '/app/inbox'
     | '/app/projetos'
     | '/app/propostas'
     | '/app/'
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/app/clientes'
     | '/app/contratos'
     | '/app/financeiro'
+    | '/app/inbox'
     | '/app/projetos'
     | '/app/propostas'
     | '/app'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/app/clientes'
     | '/app/contratos'
     | '/app/financeiro'
+    | '/app/inbox'
     | '/app/projetos'
     | '/app/propostas'
     | '/app/'
@@ -183,6 +195,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProjetosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/inbox': {
+      id: '/app/inbox'
+      path: '/inbox'
+      fullPath: '/app/inbox'
+      preLoaderRoute: typeof AppInboxRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/financeiro': {
       id: '/app/financeiro'
       path: '/financeiro'
@@ -211,6 +230,7 @@ interface AppRouteChildren {
   AppClientesRoute: typeof AppClientesRoute
   AppContratosRoute: typeof AppContratosRoute
   AppFinanceiroRoute: typeof AppFinanceiroRoute
+  AppInboxRoute: typeof AppInboxRoute
   AppProjetosRoute: typeof AppProjetosRoute
   AppPropostasRoute: typeof AppPropostasRoute
   AppIndexRoute: typeof AppIndexRoute
@@ -220,6 +240,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppClientesRoute: AppClientesRoute,
   AppContratosRoute: AppContratosRoute,
   AppFinanceiroRoute: AppFinanceiroRoute,
+  AppInboxRoute: AppInboxRoute,
   AppProjetosRoute: AppProjetosRoute,
   AppPropostasRoute: AppPropostasRoute,
   AppIndexRoute: AppIndexRoute,
