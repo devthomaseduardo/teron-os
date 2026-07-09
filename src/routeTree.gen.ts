@@ -13,6 +13,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppPropostasRouteImport } from './routes/app.propostas'
 import { Route as AppProjetosRouteImport } from './routes/app.projetos'
 import { Route as AppClientesRouteImport } from './routes/app.clientes'
 
@@ -36,6 +37,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPropostasRoute = AppPropostasRouteImport.update({
+  id: '/propostas',
+  path: '/propostas',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProjetosRoute = AppProjetosRouteImport.update({
   id: '/projetos',
   path: '/projetos',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/app/clientes': typeof AppClientesRoute
   '/app/projetos': typeof AppProjetosRoute
+  '/app/propostas': typeof AppPropostasRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRoutesByTo {
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/app/clientes': typeof AppClientesRoute
   '/app/projetos': typeof AppProjetosRoute
+  '/app/propostas': typeof AppPropostasRoute
   '/app': typeof AppIndexRoute
 }
 export interface FileRoutesById {
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/app/clientes': typeof AppClientesRoute
   '/app/projetos': typeof AppProjetosRoute
+  '/app/propostas': typeof AppPropostasRoute
   '/app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
@@ -79,9 +88,16 @@ export interface FileRouteTypes {
     | '/login'
     | '/app/clientes'
     | '/app/projetos'
+    | '/app/propostas'
     | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/app/clientes' | '/app/projetos' | '/app'
+  to:
+    | '/'
+    | '/login'
+    | '/app/clientes'
+    | '/app/projetos'
+    | '/app/propostas'
+    | '/app'
   id:
     | '__root__'
     | '/'
@@ -89,6 +105,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/app/clientes'
     | '/app/projetos'
+    | '/app/propostas'
     | '/app/'
   fileRoutesById: FileRoutesById
 }
@@ -128,6 +145,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/propostas': {
+      id: '/app/propostas'
+      path: '/propostas'
+      fullPath: '/app/propostas'
+      preLoaderRoute: typeof AppPropostasRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/projetos': {
       id: '/app/projetos'
       path: '/projetos'
@@ -148,12 +172,14 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppClientesRoute: typeof AppClientesRoute
   AppProjetosRoute: typeof AppProjetosRoute
+  AppPropostasRoute: typeof AppPropostasRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppClientesRoute: AppClientesRoute,
   AppProjetosRoute: AppProjetosRoute,
+  AppPropostasRoute: AppPropostasRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
