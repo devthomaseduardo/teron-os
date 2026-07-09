@@ -16,9 +16,14 @@ import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppPropostasRouteImport } from './routes/app.propostas'
 import { Route as AppProjetosRouteImport } from './routes/app.projetos'
 import { Route as AppInboxRouteImport } from './routes/app.inbox'
+import { Route as AppHorasRouteImport } from './routes/app.horas'
 import { Route as AppFinanceiroRouteImport } from './routes/app.financeiro'
+import { Route as AppDesenvolvimentoRouteImport } from './routes/app.desenvolvimento'
 import { Route as AppContratosRouteImport } from './routes/app.contratos'
+import { Route as AppConfiguracoesRouteImport } from './routes/app.configuracoes'
 import { Route as AppClientesRouteImport } from './routes/app.clientes'
+import { Route as AppAtividadeRouteImport } from './routes/app.atividade'
+import { Route as AppAtendimentoRouteImport } from './routes/app.atendimento'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -55,9 +60,19 @@ const AppInboxRoute = AppInboxRouteImport.update({
   path: '/inbox',
   getParentRoute: () => AppRoute,
 } as any)
+const AppHorasRoute = AppHorasRouteImport.update({
+  id: '/horas',
+  path: '/horas',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppFinanceiroRoute = AppFinanceiroRouteImport.update({
   id: '/financeiro',
   path: '/financeiro',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDesenvolvimentoRoute = AppDesenvolvimentoRouteImport.update({
+  id: '/desenvolvimento',
+  path: '/desenvolvimento',
   getParentRoute: () => AppRoute,
 } as any)
 const AppContratosRoute = AppContratosRouteImport.update({
@@ -65,9 +80,24 @@ const AppContratosRoute = AppContratosRouteImport.update({
   path: '/contratos',
   getParentRoute: () => AppRoute,
 } as any)
+const AppConfiguracoesRoute = AppConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppClientesRoute = AppClientesRouteImport.update({
   id: '/clientes',
   path: '/clientes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAtividadeRoute = AppAtividadeRouteImport.update({
+  id: '/atividade',
+  path: '/atividade',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAtendimentoRoute = AppAtendimentoRouteImport.update({
+  id: '/atendimento',
+  path: '/atendimento',
   getParentRoute: () => AppRoute,
 } as any)
 
@@ -75,9 +105,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/app/atendimento': typeof AppAtendimentoRoute
+  '/app/atividade': typeof AppAtividadeRoute
   '/app/clientes': typeof AppClientesRoute
+  '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/contratos': typeof AppContratosRoute
+  '/app/desenvolvimento': typeof AppDesenvolvimentoRoute
   '/app/financeiro': typeof AppFinanceiroRoute
+  '/app/horas': typeof AppHorasRoute
   '/app/inbox': typeof AppInboxRoute
   '/app/projetos': typeof AppProjetosRoute
   '/app/propostas': typeof AppPropostasRoute
@@ -86,9 +121,14 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/app/atendimento': typeof AppAtendimentoRoute
+  '/app/atividade': typeof AppAtividadeRoute
   '/app/clientes': typeof AppClientesRoute
+  '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/contratos': typeof AppContratosRoute
+  '/app/desenvolvimento': typeof AppDesenvolvimentoRoute
   '/app/financeiro': typeof AppFinanceiroRoute
+  '/app/horas': typeof AppHorasRoute
   '/app/inbox': typeof AppInboxRoute
   '/app/projetos': typeof AppProjetosRoute
   '/app/propostas': typeof AppPropostasRoute
@@ -99,9 +139,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/app/atendimento': typeof AppAtendimentoRoute
+  '/app/atividade': typeof AppAtividadeRoute
   '/app/clientes': typeof AppClientesRoute
+  '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/contratos': typeof AppContratosRoute
+  '/app/desenvolvimento': typeof AppDesenvolvimentoRoute
   '/app/financeiro': typeof AppFinanceiroRoute
+  '/app/horas': typeof AppHorasRoute
   '/app/inbox': typeof AppInboxRoute
   '/app/projetos': typeof AppProjetosRoute
   '/app/propostas': typeof AppPropostasRoute
@@ -113,9 +158,14 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/login'
+    | '/app/atendimento'
+    | '/app/atividade'
     | '/app/clientes'
+    | '/app/configuracoes'
     | '/app/contratos'
+    | '/app/desenvolvimento'
     | '/app/financeiro'
+    | '/app/horas'
     | '/app/inbox'
     | '/app/projetos'
     | '/app/propostas'
@@ -124,9 +174,14 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/app/atendimento'
+    | '/app/atividade'
     | '/app/clientes'
+    | '/app/configuracoes'
     | '/app/contratos'
+    | '/app/desenvolvimento'
     | '/app/financeiro'
+    | '/app/horas'
     | '/app/inbox'
     | '/app/projetos'
     | '/app/propostas'
@@ -136,9 +191,14 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/login'
+    | '/app/atendimento'
+    | '/app/atividade'
     | '/app/clientes'
+    | '/app/configuracoes'
     | '/app/contratos'
+    | '/app/desenvolvimento'
     | '/app/financeiro'
+    | '/app/horas'
     | '/app/inbox'
     | '/app/projetos'
     | '/app/propostas'
@@ -202,11 +262,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppInboxRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/horas': {
+      id: '/app/horas'
+      path: '/horas'
+      fullPath: '/app/horas'
+      preLoaderRoute: typeof AppHorasRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/financeiro': {
       id: '/app/financeiro'
       path: '/financeiro'
       fullPath: '/app/financeiro'
       preLoaderRoute: typeof AppFinanceiroRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/desenvolvimento': {
+      id: '/app/desenvolvimento'
+      path: '/desenvolvimento'
+      fullPath: '/app/desenvolvimento'
+      preLoaderRoute: typeof AppDesenvolvimentoRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/contratos': {
@@ -216,6 +290,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppContratosRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/configuracoes': {
+      id: '/app/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/app/configuracoes'
+      preLoaderRoute: typeof AppConfiguracoesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/clientes': {
       id: '/app/clientes'
       path: '/clientes'
@@ -223,13 +304,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppClientesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/atividade': {
+      id: '/app/atividade'
+      path: '/atividade'
+      fullPath: '/app/atividade'
+      preLoaderRoute: typeof AppAtividadeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/atendimento': {
+      id: '/app/atendimento'
+      path: '/atendimento'
+      fullPath: '/app/atendimento'
+      preLoaderRoute: typeof AppAtendimentoRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
+  AppAtendimentoRoute: typeof AppAtendimentoRoute
+  AppAtividadeRoute: typeof AppAtividadeRoute
   AppClientesRoute: typeof AppClientesRoute
+  AppConfiguracoesRoute: typeof AppConfiguracoesRoute
   AppContratosRoute: typeof AppContratosRoute
+  AppDesenvolvimentoRoute: typeof AppDesenvolvimentoRoute
   AppFinanceiroRoute: typeof AppFinanceiroRoute
+  AppHorasRoute: typeof AppHorasRoute
   AppInboxRoute: typeof AppInboxRoute
   AppProjetosRoute: typeof AppProjetosRoute
   AppPropostasRoute: typeof AppPropostasRoute
@@ -237,9 +337,14 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAtendimentoRoute: AppAtendimentoRoute,
+  AppAtividadeRoute: AppAtividadeRoute,
   AppClientesRoute: AppClientesRoute,
+  AppConfiguracoesRoute: AppConfiguracoesRoute,
   AppContratosRoute: AppContratosRoute,
+  AppDesenvolvimentoRoute: AppDesenvolvimentoRoute,
   AppFinanceiroRoute: AppFinanceiroRoute,
+  AppHorasRoute: AppHorasRoute,
   AppInboxRoute: AppInboxRoute,
   AppProjetosRoute: AppProjetosRoute,
   AppPropostasRoute: AppPropostasRoute,
