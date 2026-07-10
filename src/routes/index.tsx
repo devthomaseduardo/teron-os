@@ -710,11 +710,12 @@ function Testimonials() {
 
 function FaqSection() {
   const faqs = [
-    { q: "Preciso migrar todos os meus clientes de uma vez?", a: "Não. Você pode migrar cliente por cliente. A TERON convive com processos legados durante a transição." },
-    { q: "Quem paga as taxas de pagamento?", a: "Você configura por proposta. Repasse, absorção ou modelo híbrido, tudo transparente para o cliente." },
-    { q: "Consigo personalizar o portal para minha marca?", a: "Sim. Logo, cores, domínio próprio e templates de e-mail já vêm de fábrica." },
-    { q: "Como funciona a assinatura digital?", a: "Contratos são assinados com validade jurídica (padrão eIDAS/ICP-Brasil). Toda versão fica versionada em auditoria." },
-    { q: "E se um cliente atrasar o envio de material?", a: "O cronograma pausa automaticamente. O prazo é recalculado e o cliente é notificado do impacto." },
+    { q: "Como funciona o pagamento?", a: "Cada proposta define o modelo — entrada + parcelas, mensalidade fixa ou por milestone. O cliente paga por boleto, Pix ou cartão dentro da própria plataforma, com conciliação automática. Nada de cobrança manual." },
+    { q: "Como acompanho meu projeto?", a: "Cada cliente entra na sua área exclusiva e vê o cronograma, as horas trabalhadas, os deploys, os arquivos, os pagamentos e o contrato — atualizados em tempo real. Sem precisar cobrar status." },
+    { q: "Como funciona o contrato?", a: "O contrato é gerado digitalmente na plataforma, com validade jurídica (padrão eIDAS/ICP-Brasil). Assinatura em um clique, versionado e disponível para download a qualquer momento." },
+    { q: "Posso solicitar alterações?", a: "Sim. Toda solicitação é registrada no projeto, avaliada pelo time e respeitada dentro do escopo contratado. Alterações fora do escopo geram um adendo com custo e prazo transparentes." },
+    { q: "Como funciona o suporte?", a: "Após a entrega, você entra no plano de suporte contratado — com SLA definido, canal único e histórico completo. Nada de suporte informal por mensagem privada." },
+    { q: "O cronograma muda se eu atrasar o envio dos materiais?", a: "Sim, automaticamente. Quando a pendência é do cliente, o cronograma pausa e o prazo é recalculado. Todo mundo vê o motivo, ninguém precisa cobrar, e a data de entrega volta a fazer sentido." },
   ];
   return (
     <section id="faq" className="border-b border-border/70 py-24">
@@ -744,19 +745,22 @@ function FinalCta() {
       <div className="relative mx-auto max-w-3xl px-6 text-center">
         <TeronMark className="mx-auto h-10 w-10 rounded-lg" />
         <h2 className="mt-6 font-display text-4xl font-semibold tracking-tight md:text-5xl">
-          Pronto para operar como um estúdio de outro nível?
+          Pare de administrar projetos no WhatsApp.
         </h2>
         <p className="mt-4 text-base text-muted-foreground">
-          Ative a TERON hoje. Suba sua primeira proposta em menos de 20 minutos.
+          Comece a trabalhar como as empresas de tecnologia de referência. Um workspace único, cronograma transparente e cliente confiante desde o primeiro dia.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link to="/app" className="inline-flex items-center gap-1.5 rounded-md bg-foreground px-5 py-2.5 text-sm font-medium text-background hover:opacity-90">
-            Abrir workspace <ArrowRight className="size-3.5" />
+          <Link to="/login" className="inline-flex items-center gap-1.5 rounded-md bg-foreground px-5 py-2.5 text-sm font-medium text-background hover:opacity-90">
+            Solicitar demonstração <ArrowRight className="size-3.5" />
           </Link>
-          <Link to="/login" className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card/40 px-5 py-2.5 text-sm font-medium text-foreground hover:bg-accent">
-            Entrar
+          <Link to="/app" className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card/40 px-5 py-2.5 text-sm font-medium text-foreground hover:bg-accent">
+            Explorar plataforma
           </Link>
         </div>
+        <p className="mt-6 text-[12px] text-muted-foreground">
+          Sem cartão de crédito · Onboarding assistido · Migração cliente por cliente
+        </p>
       </div>
     </section>
   );
