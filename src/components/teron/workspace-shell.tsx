@@ -2,20 +2,26 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   Activity,
   Bell,
+  BookOpen,
+  CheckSquare,
   CircleDollarSign,
   Clock,
   Command,
   FileSignature,
   FileText,
   FolderKanban,
+  Heart,
   HeartHandshake,
   Inbox,
   LayoutDashboard,
   type LucideIcon,
+  MessageSquare,
+  Scale,
   Search,
   Settings,
+  Sparkles,
+  Timer,
   Users,
-  Workflow,
 } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -31,6 +37,7 @@ const groups: NavGroup[] = [
     items: [
       { label: "Hoje", to: "/app", icon: LayoutDashboard },
       { label: "Inbox", to: "/app/inbox", icon: Inbox, badge: "4" },
+      { label: "Assistente IA", to: "/app/ia", icon: Sparkles, badge: "5" },
       { label: "Atividade", to: "/app/atividade", icon: Activity },
     ],
   },
@@ -46,8 +53,18 @@ const groups: NavGroup[] = [
     label: "Operação",
     items: [
       { label: "Projetos", to: "/app/projetos", icon: FolderKanban },
-      { label: "Desenvolvimento", to: "/app/desenvolvimento", icon: Workflow },
+      { label: "Aprovações", to: "/app/aprovacoes", icon: CheckSquare, badge: "2" },
+      { label: "Escopo", to: "/app/escopo", icon: Scale, badge: "1" },
       { label: "Horas", to: "/app/horas", icon: Clock },
+      { label: "Diário", to: "/app/diario", icon: Timer },
+      { label: "Comunicação", to: "/app/chat", icon: MessageSquare },
+      { label: "Base", to: "/app/base", icon: BookOpen },
+    ],
+  },
+  {
+    label: "Cliente",
+    items: [
+      { label: "Health Score", to: "/app/health", icon: Heart },
       { label: "Atendimento", to: "/app/atendimento", icon: HeartHandshake },
     ],
   },
@@ -147,7 +164,7 @@ export function WorkspaceShell({
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-[12px] font-medium text-foreground">Rafael Santos</p>
-              <p className="truncate text-[10px] text-muted-foreground">TERON Studio · Owner</p>
+              <p className="truncate text-[10px] text-muted-foreground">TERON OS · Owner</p>
             </div>
           </div>
         </div>
