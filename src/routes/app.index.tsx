@@ -30,7 +30,9 @@ const kindIcon = {
   meeting: Calendar,
   deploy: Rocket,
   delivery: CheckCircle2,
-};
+  scope: AlertTriangle,
+  approval: CheckCircle2,
+} as const;
 
 const priorityTone = {
   critical: "danger",

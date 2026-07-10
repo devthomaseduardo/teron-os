@@ -12,6 +12,7 @@ export const Route = createFileRoute("/app/projetos")({
 
 const statusMap = {
   descoberta: { label: "Descoberta", tone: "info" as const },
+  onboarding: { label: "Onboarding", tone: "warning" as const },
   execucao: { label: "Em execução", tone: "success" as const },
   revisao: { label: "Em revisão", tone: "warning" as const },
   entregue: { label: "Entregue", tone: "neutral" as const },
