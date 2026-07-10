@@ -1,19 +1,33 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import {
+  AlertTriangle,
   ArrowRight,
   ArrowUpRight,
+  Boxes,
+  Building2,
   CheckCircle2,
   ChevronRight,
+  CircleDollarSign,
   CircleDot,
+  Clock,
+  Code2,
   FileSignature,
   FileText,
+  FolderKanban,
+  Gauge,
   Github,
-  LayoutDashboard,
+  HeartHandshake,
+  Inbox,
   MessageSquare,
+  Play,
   Radio,
+  Receipt,
+  Rocket,
   Shield,
   Sparkles,
+  Users,
+  Workflow,
   Zap,
 } from "lucide-react";
 
@@ -23,10 +37,10 @@ import { StatusPill } from "@/components/teron/status-pill";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "TERON Studio — Sistema operacional para estúdios de software" },
-      { name: "description", content: "Substitua WhatsApp, planilhas e documentos soltos por uma única plataforma para gerenciar clientes, propostas, contratos, projetos, pagamentos e comunicação." },
-      { property: "og:title", content: "TERON Studio — Sistema operacional para estúdios de software" },
-      { property: "og:description", content: "Uma plataforma única para gerenciar toda a experiência do cliente: propostas, contratos, projetos, pagamentos e comunicação." },
+      { title: "TERON — Workspace único para empresas de produto digital" },
+      { name: "description", content: "Pare de operar no WhatsApp. A TERON substitui planilhas, PDFs e cobranças manuais por um único workspace: propostas, contratos, projetos, financeiro, portal do cliente e automações." },
+      { property: "og:title", content: "TERON — Workspace único para empresas de produto digital" },
+      { property: "og:description", content: "Pare de operar no WhatsApp. A TERON substitui planilhas, PDFs e cobranças manuais por um único workspace." },
     ],
   }),
   component: Landing,
@@ -38,11 +52,13 @@ function Landing() {
       <TopNav />
       <Hero />
       <LogoCloud />
-      <ProductShowcase />
-      <ProcessSection />
-      <ServicesSection />
+      <BeforeAfterSection />
+      <WorkspaceCardsSection />
+      <ProcessFlowSection />
       <ClientAreaSection />
-      <Differentials />
+      <OperationalIntelligenceSection />
+      <WhyTeronSection />
+      <AudienceSection />
       <Testimonials />
       <FaqSection />
       <FinalCta />
@@ -59,10 +75,10 @@ function TopNav() {
           <TeronWordmark />
         </Link>
         <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
-          <a href="#produto" className="hover:text-foreground">Produto</a>
+          <a href="#workspace" className="hover:text-foreground">Workspace</a>
           <a href="#processo" className="hover:text-foreground">Processo</a>
-          <a href="#servicos" className="hover:text-foreground">Serviços</a>
           <a href="#cliente" className="hover:text-foreground">Área do cliente</a>
+          <a href="#por-que" className="hover:text-foreground">Por que TERON</a>
           <a href="#faq" className="hover:text-foreground">FAQ</a>
         </nav>
         <div className="ml-auto flex items-center gap-2">
@@ -73,10 +89,10 @@ function TopNav() {
             Entrar
           </Link>
           <Link
-            to="/app"
+            to="/login"
             className="inline-flex items-center gap-1.5 rounded-md bg-foreground px-3 py-1.5 text-[13px] font-medium text-background transition-opacity hover:opacity-90"
           >
-            Abrir workspace
+            Solicitar demonstração
             <ArrowRight className="size-3.5" />
           </Link>
         </div>
@@ -93,27 +109,27 @@ function Hero() {
       <div className="relative mx-auto max-w-6xl px-6 pt-24 pb-16 text-center">
         <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-[11px] font-medium text-muted-foreground backdrop-blur">
           <Radio className="size-3 text-[oklch(0.72_0.15_155)]" />
-          v1 · Operando com 34 estúdios em produção
+          Product Engineering Company · Operação transparente por padrão
         </div>
         <h1 className="mx-auto mt-6 max-w-3xl font-display text-5xl font-semibold tracking-tight text-foreground md:text-6xl">
-          O sistema operacional para estúdios que <span className="text-muted-foreground">levam software a sério</span>.
+          Toda a operação da sua empresa de software em <span className="text-muted-foreground">um único workspace</span>.
         </h1>
         <p className="mx-auto mt-5 max-w-2xl text-base text-muted-foreground md:text-lg">
-          Substitua WhatsApp, planilhas e documentos soltos por uma plataforma única. Propostas, contratos, projetos, pagamentos e comunicação — organizados como o seu produto merece.
+          A TERON substitui WhatsApp, planilhas, PDFs, e-mails perdidos e cobranças manuais. Propostas, contratos, projetos, financeiro e portal do cliente — organizados, transparentes e previsíveis.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link
-            to="/app"
+            to="/login"
             className="inline-flex items-center gap-1.5 rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background transition-transform hover:-translate-y-px"
           >
-            Explorar plataforma
+            Solicitar demonstração
             <ArrowRight className="size-3.5" />
           </Link>
           <a
-            href="#produto"
+            href="#workspace"
             className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card/40 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
           >
-            Ver como funciona
+            <Play className="size-3" /> Ver como funciona
           </a>
         </div>
 
@@ -200,36 +216,142 @@ function LogoCloud() {
   );
 }
 
-function ProductShowcase() {
-  const features = [
-    { icon: LayoutDashboard, title: "Workspace inteligente", body: "Abre respondendo a única pergunta que importa: o que precisa da minha atenção hoje?" },
-    { icon: FileText, title: "Propostas que convertem", body: "Geração profissional com escopo, cronograma, tecnologias e assinatura em um clique." },
-    { icon: FileSignature, title: "Contratos e assinaturas", body: "Assinatura digital, versionamento e histórico completo — pronto para download em PDF." },
-    { icon: Zap, title: "Pagamentos integrados", body: "Cobrança recorrente, parcelas, multas, juros e reconciliação automática." },
-    { icon: MessageSquare, title: "Sem WhatsApp perdido", body: "Toda comunicação dentro do projeto. Nada de conversa importante em outro app." },
-    { icon: Shield, title: "Transparência total", body: "Quando a pendência é do cliente, o cronograma pausa. Todo mundo sabe o motivo." },
+function BeforeAfterSection() {
+  const before = [
+    "Cliente manda mensagem no WhatsApp",
+    "Arquivos ficam espalhados em drives e e-mails",
+    "Pagamento atrasa — ninguém cobra",
+    "Cronograma quebra sem aviso",
+    "Cliente cobra atualização por mensagem",
+    "Equipe perde tempo respondendo status",
+  ];
+  const after = [
+    "Cliente solicita proposta pela plataforma",
+    "Proposta digital enviada e aprovada em um clique",
+    "Contrato assinado com validade jurídica",
+    "Pagamento confirmado automaticamente",
+    "Projeto iniciado com kickoff registrado",
+    "Área exclusiva do cliente criada",
+    "Cliente acompanha tudo em tempo real",
+    "Entrega organizada, com histórico completo",
   ];
   return (
-    <section id="produto" className="border-b border-border/70 py-24">
+    <section className="border-b border-border/70 py-24">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="max-w-2xl">
+          <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">A operação</p>
+          <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight">
+            De uma bagunça reativa para uma operação previsível.
+          </h2>
+          <p className="mt-3 text-base text-muted-foreground">
+            A maioria das empresas de software ainda opera com ferramentas de bolso. A TERON reorganiza esse fluxo em uma única linha do tempo.
+          </p>
+        </div>
+
+        <div className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <TimelineCard
+            tone="danger"
+            eyebrow="Como as empresas trabalham hoje"
+            title="Reativo, disperso e imprevisível"
+            items={before}
+            footer="Resultado: cliente inseguro, equipe cansada, margem apertada."
+          />
+          <TimelineCard
+            tone="success"
+            eyebrow="Como funciona com a TERON"
+            title="Um único fluxo, do contato à entrega"
+            items={after}
+            footer="Resultado: cliente confiante, equipe focada, previsibilidade financeira."
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TimelineCard({
+  eyebrow,
+  title,
+  items,
+  tone,
+  footer,
+}: {
+  eyebrow: string;
+  title: string;
+  items: string[];
+  tone: "danger" | "success";
+  footer: string;
+}) {
+  const isSuccess = tone === "success";
+  const ring = isSuccess
+    ? "border-[oklch(0.72_0.15_155_/_25%)] bg-[oklch(0.72_0.15_155_/_4%)]"
+    : "border-[oklch(0.65_0.2_22_/_25%)] bg-[oklch(0.65_0.2_22_/_4%)]";
+  const dot = isSuccess ? "bg-[oklch(0.72_0.15_155)]" : "bg-[oklch(0.65_0.2_22)]";
+  const line = isSuccess ? "bg-[oklch(0.72_0.15_155_/_25%)]" : "bg-[oklch(0.65_0.2_22_/_20%)]";
+  return (
+    <div className={`rounded-2xl border ${ring} p-6`}>
+      <div className="flex items-center justify-between">
+        <p className={`text-[11px] font-semibold uppercase tracking-wider ${isSuccess ? "text-[oklch(0.82_0.15_155)]" : "text-[oklch(0.78_0.18_22)]"}`}>
+          {eyebrow}
+        </p>
+        <StatusPill tone={isSuccess ? "success" : "danger"} dot>
+          {isSuccess ? "TERON" : "Legado"}
+        </StatusPill>
+      </div>
+      <h3 className="mt-3 font-display text-xl font-semibold tracking-tight">{title}</h3>
+      <ol className="relative mt-6 space-y-3.5 pl-6">
+        <span className={`absolute left-[7px] top-1.5 bottom-1.5 w-px ${line}`} />
+        {items.map((item, i) => (
+          <li key={i} className="relative text-[13.5px] leading-relaxed text-foreground">
+            <span className={`absolute -left-6 top-1.5 size-3 rounded-full ${dot} ring-4 ring-background`} />
+            {item}
+          </li>
+        ))}
+      </ol>
+      <p className="mt-6 border-t border-border/60 pt-4 text-[12.5px] text-muted-foreground">{footer}</p>
+    </div>
+  );
+}
+
+function WorkspaceCardsSection() {
+  const cards = [
+    { icon: FolderKanban, t: "Projetos", d: "Cronograma, milestones e status ao vivo." },
+    { icon: Building2, t: "Clientes", d: "Ficha completa, histórico e relacionamento." },
+    { icon: Users, t: "CRM", d: "Leads, oportunidades e pipeline comercial." },
+    { icon: FileText, t: "Propostas", d: "Escopo, valor e aprovação em um clique." },
+    { icon: FileSignature, t: "Contratos", d: "Assinatura digital com validade jurídica." },
+    { icon: CircleDollarSign, t: "Financeiro", d: "Fluxo de caixa, previstos e realizados." },
+    { icon: Receipt, t: "Pagamentos", d: "Boleto, Pix e cartão com conciliação automática." },
+    { icon: Boxes, t: "Arquivos", d: "Materiais versionados por projeto." },
+    { icon: Clock, t: "Horas", d: "Timesheet, apontamento e faturamento por hora." },
+    { icon: Rocket, t: "Deploy", d: "Histórico de releases, aprovações e ambientes." },
+    { icon: HeartHandshake, t: "Área do Cliente", d: "Portal exclusivo com tudo do projeto." },
+    { icon: Workflow, t: "Automações", d: "Regras que disparam sozinhas conforme eventos." },
+  ];
+  return (
+    <section id="workspace" className="border-b border-border/70 py-24">
       <div className="mx-auto max-w-6xl px-6">
         <div className="max-w-2xl">
           <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">O produto</p>
           <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight">
-            Uma plataforma. Toda a experiência do cliente.
+            Tudo em um único workspace.
           </h2>
           <p className="mt-3 text-base text-muted-foreground">
-            Do primeiro contato ao deploy final. Cada tela pensada para reduzir atrito, aumentar clareza e transmitir a organização que o seu preço merece.
+            Doze módulos que trabalham como um só sistema. Cada evento em um módulo aparece nos outros — sem duplicidade, sem retrabalho.
           </p>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-border bg-border/70 md:grid-cols-3">
-          {features.map((f) => (
-            <div key={f.title} className="group bg-background p-6 transition-colors hover:bg-card">
-              <div className="inline-flex size-9 items-center justify-center rounded-md border border-border bg-card">
-                <f.icon className="size-4 text-foreground" />
+        <div className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border/70 md:grid-cols-3 lg:grid-cols-4">
+          {cards.map((c) => (
+            <div key={c.t} className="group relative bg-background p-5 transition-colors hover:bg-card">
+              <div className="flex items-center justify-between">
+                <div className="inline-flex size-9 items-center justify-center rounded-md border border-border bg-card">
+                  <c.icon className="size-4 text-foreground" />
+                </div>
+                <ArrowUpRight className="size-3.5 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
               </div>
-              <h3 className="mt-4 text-[15px] font-semibold">{f.title}</h3>
-              <p className="mt-1.5 text-sm text-muted-foreground">{f.body}</p>
+              <h3 className="mt-4 text-[14px] font-semibold text-foreground">{c.t}</h3>
+              <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">{c.d}</p>
             </div>
           ))}
         </div>
@@ -238,12 +360,18 @@ function ProductShowcase() {
   );
 }
 
-function ProcessSection() {
+function ProcessFlowSection() {
   const steps = [
-    { n: "01", t: "Diagnóstico", d: "Conversa estruturada. Escopo, riscos e objetivos claros antes de qualquer proposta." },
-    { n: "02", t: "Proposta assinada", d: "Documento gerado na plataforma, aprovado com um clique, convertido em projeto." },
-    { n: "03", t: "Execução com visibilidade", d: "Cronograma, horas, deploys e entregas visíveis em tempo real para o cliente." },
-    { n: "04", t: "Handover organizado", d: "Documentação técnica, wiki, credenciais e acompanhamento pós-entrega no mesmo lugar." },
+    { n: "01", t: "Contato", d: "Primeiro alinhamento, entendimento do desafio.", icon: MessageSquare },
+    { n: "02", t: "Diagnóstico", d: "Escopo estruturado, riscos mapeados.", icon: Gauge },
+    { n: "03", t: "Proposta", d: "Documento digital, aprovado com um clique.", icon: FileText },
+    { n: "04", t: "Contrato", d: "Assinatura digital com validade jurídica.", icon: FileSignature },
+    { n: "05", t: "Pagamento", d: "Confirmação automática, sem cobrança manual.", icon: CircleDollarSign },
+    { n: "06", t: "Kickoff", d: "Área do cliente criada, cronograma público.", icon: Rocket },
+    { n: "07", t: "Desenvolvimento", d: "Sprints visíveis, horas registradas.", icon: Code2 },
+    { n: "08", t: "Deploy", d: "Releases versionados e aprovados.", icon: Zap },
+    { n: "09", t: "Entrega", d: "Handover documentado, materiais organizados.", icon: CheckCircle2 },
+    { n: "10", t: "Suporte", d: "Continuidade com SLA claro e histórico.", icon: HeartHandshake },
   ];
   return (
     <section id="processo" className="border-b border-border/70 py-24">
@@ -252,60 +380,198 @@ function ProcessSection() {
           <div className="max-w-2xl">
             <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Processo</p>
             <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight">
-              Um método claro do primeiro contato à entrega.
+              Um processo que funciona — e é o mesmo em todos os projetos.
             </h2>
+            <p className="mt-3 text-base text-muted-foreground">
+              Dez etapas registradas na plataforma. Ninguém precisa lembrar do que vem depois: o sistema conduz.
+            </p>
           </div>
-          <StatusPill tone="info" dot>4 etapas · 100% na plataforma</StatusPill>
+          <StatusPill tone="info" dot>10 etapas · 100% documentadas</StatusPill>
         </div>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {steps.map((s) => (
-            <div key={s.n} className="rounded-xl border border-border bg-card p-6">
-              <p className="font-mono text-[11px] text-muted-foreground">{s.n}</p>
-              <h3 className="mt-3 font-display text-lg font-semibold">{s.t}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{s.d}</p>
-            </div>
-          ))}
+        <div className="mt-14">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            {steps.map((s, i) => (
+              <div key={s.n} className="group relative rounded-xl border border-border bg-card p-4 transition-colors hover:border-foreground/25">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[10px] text-muted-foreground">{s.n}</span>
+                  <s.icon className="size-3.5 text-muted-foreground" />
+                </div>
+                <h3 className="mt-2.5 font-display text-[15px] font-semibold text-foreground">{s.t}</h3>
+                <p className="mt-1 text-[12px] leading-relaxed text-muted-foreground">{s.d}</p>
+                {i < steps.length - 1 && (
+                  <ChevronRight className="absolute -right-2 top-1/2 hidden size-3 -translate-y-1/2 text-muted-foreground/40 lg:block" />
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-function ServicesSection() {
-  const services = [
-    { t: "MVPs em 6 semanas", d: "Do zero ao produto validado com usuários reais." },
-    { t: "Plataformas SaaS", d: "Produtos multi-tenant, com billing, auth e infra em produção." },
-    { t: "Automações e integrações", d: "Fluxos internos e integrações entre sistemas críticos." },
-    { t: "Reengenharia de produto", d: "Modernização de bases legadas com risco controlado." },
+function OperationalIntelligenceSection() {
+  const cards = [
+    {
+      tone: "warning" as const,
+      title: "Aguardando envio das imagens",
+      meta: "Pallas Studio · Rebrand digital",
+      body: "Cronograma pausado automaticamente até o cliente enviar o material. O prazo será recalculado sem retrabalho.",
+      icon: AlertTriangle,
+      chip: "Aguarda cliente",
+    },
+    {
+      tone: "danger" as const,
+      title: "Pagamento vencido",
+      meta: "Aurora Health · Fatura #0284",
+      body: "R$ 12.400 vencidos há 3 dias. Cobrança e lembrete disparados automaticamente pelo módulo financeiro.",
+      icon: CircleDollarSign,
+      chip: "Ação necessária",
+    },
+    {
+      tone: "info" as const,
+      title: "Deploy aguardando aprovação",
+      meta: "Órion Commerce v2.4",
+      body: "QA concluído, release documentado. Um clique publica em produção e registra no histórico do cliente.",
+      icon: Rocket,
+      chip: "Pronto",
+    },
+    {
+      tone: "success" as const,
+      title: "Aprovação recebida",
+      meta: "Meridian Capital · Wealth core",
+      body: "Milestone aprovado no portal do cliente. Próxima parcela liberada e sprint seguinte iniciada.",
+      icon: CheckCircle2,
+      chip: "Concluído",
+    },
+    {
+      tone: "warning" as const,
+      title: "Cronograma pausado automaticamente",
+      meta: "Nordica Motors · Portal dealer",
+      body: "Proposta ainda não assinada. Todo o time sabe que o projeto está no aguardo — sem cobrança injusta.",
+      icon: Clock,
+      chip: "Pausado",
+    },
+    {
+      tone: "info" as const,
+      title: "Nova solicitação do cliente",
+      meta: "Kite SaaS · Automação onboarding",
+      body: "Solicitação registrada no projeto, com resposta em SLA. Sem WhatsApp, sem retrabalho de contexto.",
+      icon: Inbox,
+      chip: "Novo",
+    },
   ];
   return (
-    <section id="servicos" className="border-b border-border/70 py-24">
+    <section className="border-b border-border/70 py-24">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="grid grid-cols-1 gap-16 lg:grid-cols-[1fr_1.4fr]">
+        <div className="max-w-2xl">
+          <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Inteligência operacional</p>
+          <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight">
+            Projetos nunca mais ficam sem controle.
+          </h2>
+          <p className="mt-3 text-base text-muted-foreground">
+            A TERON monitora cada projeto e move as peças sozinha. Você entra no workspace e vê exatamente o que exige a sua decisão hoje.
+          </p>
+        </div>
+
+        <div className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {cards.map((c) => {
+            const Icon = c.icon;
+            return (
+              <div key={c.title} className="group flex flex-col rounded-xl border border-border bg-card p-5 transition-colors hover:border-foreground/25">
+                <div className="flex items-center justify-between">
+                  <div className="inline-flex size-8 items-center justify-center rounded-md border border-border bg-background">
+                    <Icon className="size-3.5 text-muted-foreground" />
+                  </div>
+                  <StatusPill tone={c.tone} dot>{c.chip}</StatusPill>
+                </div>
+                <h3 className="mt-4 font-display text-[15px] font-semibold text-foreground">{c.title}</h3>
+                <p className="mt-0.5 text-[11.5px] font-medium uppercase tracking-wider text-muted-foreground">{c.meta}</p>
+                <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">{c.body}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function WhyTeronSection() {
+  const rows = [
+    "Processo documentado, replicável em cada projeto",
+    "Cronograma transparente, com pausa automática",
+    "Área exclusiva para clientes, com o histórico completo",
+    "Contratos digitais com validade jurídica",
+    "Controle financeiro com conciliação automática",
+    "Registro de horas por projeto, tarefa e pessoa",
+    "Comunicação centralizada, sem WhatsApp perdido",
+    "Aprovações registradas com autoria e data",
+    "Histórico completo de cada decisão e entrega",
+    "Organização profissional que o cliente sente",
+  ];
+  return (
+    <section id="por-que" className="border-b border-border/70 py-24">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="grid grid-cols-1 gap-14 lg:grid-cols-[1fr_1.2fr] lg:items-center">
           <div>
-            <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Serviços</p>
+            <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Por que TERON</p>
             <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight">
-              Engenharia de software feita como produto.
+              Por que empresas escolhem a TERON.
             </h2>
             <p className="mt-3 text-base text-muted-foreground">
-              Trabalhamos com poucos clientes por trimestre. Cada projeto recebe planejamento, execução e acompanhamento no mesmo padrão de qualidade.
+              Não vendemos código. Vendemos organização, transparência e previsibilidade. Cada linha da plataforma existe para transmitir uma coisa: essa empresa trabalha de forma extremamente profissional.
             </p>
-            <a href="#cta" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-foreground hover:opacity-80">
-              Iniciar conversa <ArrowUpRight className="size-3.5" />
-            </a>
+            <div className="mt-6 inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5 text-[12px] text-muted-foreground">
+              <Shield className="size-3.5" /> Padrão internacional de operação
+            </div>
           </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {services.map((s) => (
-              <div key={s.t} className="rounded-xl border border-border bg-card p-5 transition-colors hover:border-foreground/20">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-display text-base font-semibold">{s.t}</h3>
-                  <ChevronRight className="size-4 text-muted-foreground" />
-                </div>
-                <p className="mt-2 text-sm text-muted-foreground">{s.d}</p>
-              </div>
+          <ul className="divide-y divide-border rounded-2xl border border-border bg-card">
+            {rows.map((r) => (
+              <li key={r} className="flex items-center gap-3 px-5 py-3.5 text-[13.5px] text-foreground">
+                <CheckCircle2 className="size-4 shrink-0 text-[oklch(0.72_0.15_155)]" />
+                <span className="flex-1">{r}</span>
+              </li>
             ))}
-          </div>
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function AudienceSection() {
+  const audiences = [
+    { t: "Freelancers", d: "Que querem cobrar como empresa e ser tratados como tal." },
+    { t: "Desenvolvedores", d: "Que operam sozinhos e não querem virar administrativo." },
+    { t: "Software Houses", d: "Que precisam padronizar cada projeto do time." },
+    { t: "Agências Digitais", d: "Que atendem múltiplos clientes em paralelo." },
+    { t: "Consultorias", d: "Que vendem horas e precisam de registro impecável." },
+    { t: "Startups", d: "Que fazem entregas para clientes-âncora e investidores." },
+    { t: "Empresas de software", d: "Que querem escalar sem perder controle." },
+  ];
+  return (
+    <section className="border-b border-border/70 py-24">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="max-w-2xl">
+          <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Para quem</p>
+          <h2 className="mt-2 font-display text-4xl font-semibold tracking-tight">
+            Feita para quem desenvolve software para os outros.
+          </h2>
+        </div>
+        <div className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {audiences.map((a, i) => (
+            <div
+              key={a.t}
+              className={`rounded-xl border border-border bg-card p-5 transition-colors hover:border-foreground/25 ${
+                i === audiences.length - 1 ? "sm:col-span-2 lg:col-span-1" : ""
+              }`}
+            >
+              <p className="font-display text-[15px] font-semibold text-foreground">{a.t}</p>
+              <p className="mt-1.5 text-[12.5px] leading-relaxed text-muted-foreground">{a.d}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -441,11 +707,12 @@ function Testimonials() {
 
 function FaqSection() {
   const faqs = [
-    { q: "Preciso migrar todos os meus clientes de uma vez?", a: "Não. Você pode migrar cliente por cliente. A TERON convive com processos legados durante a transição." },
-    { q: "Quem paga as taxas de pagamento?", a: "Você configura por proposta. Repasse, absorção ou modelo híbrido, tudo transparente para o cliente." },
-    { q: "Consigo personalizar o portal para minha marca?", a: "Sim. Logo, cores, domínio próprio e templates de e-mail já vêm de fábrica." },
-    { q: "Como funciona a assinatura digital?", a: "Contratos são assinados com validade jurídica (padrão eIDAS/ICP-Brasil). Toda versão fica versionada em auditoria." },
-    { q: "E se um cliente atrasar o envio de material?", a: "O cronograma pausa automaticamente. O prazo é recalculado e o cliente é notificado do impacto." },
+    { q: "Como funciona o pagamento?", a: "Cada proposta define o modelo — entrada + parcelas, mensalidade fixa ou por milestone. O cliente paga por boleto, Pix ou cartão dentro da própria plataforma, com conciliação automática. Nada de cobrança manual." },
+    { q: "Como acompanho meu projeto?", a: "Cada cliente entra na sua área exclusiva e vê o cronograma, as horas trabalhadas, os deploys, os arquivos, os pagamentos e o contrato — atualizados em tempo real. Sem precisar cobrar status." },
+    { q: "Como funciona o contrato?", a: "O contrato é gerado digitalmente na plataforma, com validade jurídica (padrão eIDAS/ICP-Brasil). Assinatura em um clique, versionado e disponível para download a qualquer momento." },
+    { q: "Posso solicitar alterações?", a: "Sim. Toda solicitação é registrada no projeto, avaliada pelo time e respeitada dentro do escopo contratado. Alterações fora do escopo geram um adendo com custo e prazo transparentes." },
+    { q: "Como funciona o suporte?", a: "Após a entrega, você entra no plano de suporte contratado — com SLA definido, canal único e histórico completo. Nada de suporte informal por mensagem privada." },
+    { q: "O cronograma muda se eu atrasar o envio dos materiais?", a: "Sim, automaticamente. Quando a pendência é do cliente, o cronograma pausa e o prazo é recalculado. Todo mundo vê o motivo, ninguém precisa cobrar, e a data de entrega volta a fazer sentido." },
   ];
   return (
     <section id="faq" className="border-b border-border/70 py-24">
@@ -475,19 +742,22 @@ function FinalCta() {
       <div className="relative mx-auto max-w-3xl px-6 text-center">
         <TeronMark className="mx-auto h-10 w-10 rounded-lg" />
         <h2 className="mt-6 font-display text-4xl font-semibold tracking-tight md:text-5xl">
-          Pronto para operar como um estúdio de outro nível?
+          Pare de administrar projetos no WhatsApp.
         </h2>
         <p className="mt-4 text-base text-muted-foreground">
-          Ative a TERON hoje. Suba sua primeira proposta em menos de 20 minutos.
+          Comece a trabalhar como as empresas de tecnologia de referência. Um workspace único, cronograma transparente e cliente confiante desde o primeiro dia.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link to="/app" className="inline-flex items-center gap-1.5 rounded-md bg-foreground px-5 py-2.5 text-sm font-medium text-background hover:opacity-90">
-            Abrir workspace <ArrowRight className="size-3.5" />
+          <Link to="/login" className="inline-flex items-center gap-1.5 rounded-md bg-foreground px-5 py-2.5 text-sm font-medium text-background hover:opacity-90">
+            Solicitar demonstração <ArrowRight className="size-3.5" />
           </Link>
-          <Link to="/login" className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card/40 px-5 py-2.5 text-sm font-medium text-foreground hover:bg-accent">
-            Entrar
+          <Link to="/app" className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card/40 px-5 py-2.5 text-sm font-medium text-foreground hover:bg-accent">
+            Explorar plataforma
           </Link>
         </div>
+        <p className="mt-6 text-[12px] text-muted-foreground">
+          Sem cartão de crédito · Onboarding assistido · Migração cliente por cliente
+        </p>
       </div>
     </section>
   );
