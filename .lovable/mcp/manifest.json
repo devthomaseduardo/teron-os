@@ -1,0 +1,170 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://ygdufkltrsarnoirvtsp.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "teron-studio-mcp",
+      "version": "0.1.0",
+      "title": "TERON Studio"
+    },
+    "tools": [
+      {
+        "name": "whoami",
+        "title": "Quem está autenticado",
+        "description": "Retorna o usuário autenticado que está chamando o MCP.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_attention_items",
+        "title": "Pendências que precisam de atenção",
+        "description": "Lista as pendências priorizadas do workspace (pagamentos, propostas, entregas, reuniões e itens bloqueados aguardando cliente).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "priority": {
+              "type": "string",
+              "enum": [
+                "critical",
+                "high",
+                "medium",
+                "low"
+              ],
+              "description": "Filtra por prioridade."
+            },
+            "blockedByClient": {
+              "type": "boolean",
+              "description": "Se true, retorna apenas itens bloqueados aguardando cliente."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_projects",
+        "title": "Projetos do estúdio",
+        "description": "Lista os projetos ativos com progresso, próximo marco, horas da semana e se há bloqueio aguardando cliente.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "descoberta",
+                "execucao",
+                "revisao",
+                "entregue",
+                "pausado"
+              ],
+              "description": "Filtra por status do projeto."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_clients",
+        "title": "Clientes do workspace",
+        "description": "Lista os clientes do estúdio com contato, MRR, projetos ativos e status.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_proposals",
+        "title": "Propostas comerciais",
+        "description": "Lista as propostas comerciais com escopo, valor, status e envio.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "rascunho",
+                "enviada",
+                "aprovada",
+                "recusada"
+              ],
+              "description": "Filtra por status da proposta."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_invoices",
+        "title": "Faturas financeiras",
+        "description": "Lista as faturas do financeiro com valor, vencimento e status.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "paga",
+                "aberta",
+                "vencida",
+                "prevista"
+              ],
+              "description": "Filtra por status da fatura."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
