@@ -1,19 +1,36 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import {
+  AlertTriangle,
   ArrowRight,
   ArrowUpRight,
+  Bell,
+  Boxes,
+  Building2,
+  Calendar,
   CheckCircle2,
   ChevronRight,
+  CircleDollarSign,
   CircleDot,
+  Clock,
+  Code2,
   FileSignature,
   FileText,
+  FolderKanban,
+  Gauge,
   Github,
+  HeartHandshake,
+  Inbox,
   LayoutDashboard,
   MessageSquare,
+  Play,
   Radio,
+  Receipt,
+  Rocket,
   Shield,
   Sparkles,
+  Users,
+  Workflow,
   Zap,
 } from "lucide-react";
 
@@ -23,10 +40,10 @@ import { StatusPill } from "@/components/teron/status-pill";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "TERON Studio — Sistema operacional para estúdios de software" },
-      { name: "description", content: "Substitua WhatsApp, planilhas e documentos soltos por uma única plataforma para gerenciar clientes, propostas, contratos, projetos, pagamentos e comunicação." },
-      { property: "og:title", content: "TERON Studio — Sistema operacional para estúdios de software" },
-      { property: "og:description", content: "Uma plataforma única para gerenciar toda a experiência do cliente: propostas, contratos, projetos, pagamentos e comunicação." },
+      { title: "TERON — Workspace único para empresas de produto digital" },
+      { name: "description", content: "Pare de operar no WhatsApp. A TERON substitui planilhas, PDFs e cobranças manuais por um único workspace: propostas, contratos, projetos, financeiro, portal do cliente e automações." },
+      { property: "og:title", content: "TERON — Workspace único para empresas de produto digital" },
+      { property: "og:description", content: "Pare de operar no WhatsApp. A TERON substitui planilhas, PDFs e cobranças manuais por um único workspace." },
     ],
   }),
   component: Landing,
@@ -38,11 +55,13 @@ function Landing() {
       <TopNav />
       <Hero />
       <LogoCloud />
-      <ProductShowcase />
-      <ProcessSection />
-      <ServicesSection />
+      <BeforeAfterSection />
+      <WorkspaceCardsSection />
+      <ProcessFlowSection />
       <ClientAreaSection />
-      <Differentials />
+      <OperationalIntelligenceSection />
+      <WhyTeronSection />
+      <AudienceSection />
       <Testimonials />
       <FaqSection />
       <FinalCta />
@@ -59,10 +78,10 @@ function TopNav() {
           <TeronWordmark />
         </Link>
         <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
-          <a href="#produto" className="hover:text-foreground">Produto</a>
+          <a href="#workspace" className="hover:text-foreground">Workspace</a>
           <a href="#processo" className="hover:text-foreground">Processo</a>
-          <a href="#servicos" className="hover:text-foreground">Serviços</a>
           <a href="#cliente" className="hover:text-foreground">Área do cliente</a>
+          <a href="#por-que" className="hover:text-foreground">Por que TERON</a>
           <a href="#faq" className="hover:text-foreground">FAQ</a>
         </nav>
         <div className="ml-auto flex items-center gap-2">
@@ -73,10 +92,10 @@ function TopNav() {
             Entrar
           </Link>
           <Link
-            to="/app"
+            to="/login"
             className="inline-flex items-center gap-1.5 rounded-md bg-foreground px-3 py-1.5 text-[13px] font-medium text-background transition-opacity hover:opacity-90"
           >
-            Abrir workspace
+            Solicitar demonstração
             <ArrowRight className="size-3.5" />
           </Link>
         </div>
@@ -93,27 +112,27 @@ function Hero() {
       <div className="relative mx-auto max-w-6xl px-6 pt-24 pb-16 text-center">
         <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-[11px] font-medium text-muted-foreground backdrop-blur">
           <Radio className="size-3 text-[oklch(0.72_0.15_155)]" />
-          v1 · Operando com 34 estúdios em produção
+          Product Engineering Company · Operação transparente por padrão
         </div>
         <h1 className="mx-auto mt-6 max-w-3xl font-display text-5xl font-semibold tracking-tight text-foreground md:text-6xl">
-          O sistema operacional para estúdios que <span className="text-muted-foreground">levam software a sério</span>.
+          Toda a operação da sua empresa de software em <span className="text-muted-foreground">um único workspace</span>.
         </h1>
         <p className="mx-auto mt-5 max-w-2xl text-base text-muted-foreground md:text-lg">
-          Substitua WhatsApp, planilhas e documentos soltos por uma plataforma única. Propostas, contratos, projetos, pagamentos e comunicação — organizados como o seu produto merece.
+          A TERON substitui WhatsApp, planilhas, PDFs, e-mails perdidos e cobranças manuais. Propostas, contratos, projetos, financeiro e portal do cliente — organizados, transparentes e previsíveis.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Link
-            to="/app"
+            to="/login"
             className="inline-flex items-center gap-1.5 rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background transition-transform hover:-translate-y-px"
           >
-            Explorar plataforma
+            Solicitar demonstração
             <ArrowRight className="size-3.5" />
           </Link>
           <a
-            href="#produto"
+            href="#workspace"
             className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card/40 px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
           >
-            Ver como funciona
+            <Play className="size-3" /> Ver como funciona
           </a>
         </div>
 
