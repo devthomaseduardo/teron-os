@@ -1,167 +1,147 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
-  AlertTriangle,
   ArrowUpRight,
-  Calendar,
   CheckCircle2,
+  ChevronRight,
   CircleDollarSign,
   Clock,
+  FileSignature,
   FileText,
-  Plus,
-  Rocket,
-  UserCircle2,
+  FolderKanban,
+  Gauge,
+  Sparkles,
+  TrendingUp,
+  Users,
+  Zap,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 import { StatusPill } from "@/components/teron/status-pill";
 import { WorkspaceShell } from "@/components/teron/workspace-shell";
-import { activity, attentionItems, currency, projects } from "@/lib/teron-data";
+import { currency, projects } from "@/lib/teron-data";
+import {
+  commandInsights,
+  companyKpis,
+  smartSuggestions,
+} from "@/lib/teron-os-data";
 
 export const Route = createFileRoute("/app/")({
-  head: () => ({
-    meta: [{ title: "Hoje — TERON Studio" }],
-  }),
-  component: WorkspaceHome,
+  head: () => ({ meta: [{ title: "Command Center — TERON OS" }] }),
+  component: CommandCenter,
 });
 
-const kindIcon = {
-  payment: CircleDollarSign,
-  proposal: FileText,
-  client: UserCircle2,
-  meeting: Calendar,
-  deploy: Rocket,
-  delivery: CheckCircle2,
-  scope: AlertTriangle,
-  approval: CheckCircle2,
+const kindIcon: Record<string, LucideIcon> = {
+  proposta: FileText,
+  contrato: FileSignature,
+  cliente: Users,
+  pagamento: CircleDollarSign,
+  projeto: FolderKanban,
+  horas: Clock,
+  receita: TrendingUp,
+};
+
+const suggestionTone = {
+  primary: "bg-[oklch(0.7_0.14_250_/_10%)] text-[oklch(0.85_0.13_250)] ring-[oklch(0.7_0.14_250_/_28%)]",
+  warning: "bg-[oklch(0.8_0.14_78_/_10%)] text-[oklch(0.88_0.14_78)] ring-[oklch(0.8_0.14_78_/_28%)]",
+  success: "bg-[oklch(0.72_0.15_155_/_10%)] text-[oklch(0.82_0.15_155)] ring-[oklch(0.72_0.15_155_/_28%)]",
+  info: "bg-muted/40 text-foreground ring-border",
 } as const;
 
-const priorityTone = {
-  critical: "danger",
-  high: "warning",
-  medium: "info",
-  low: "neutral",
-} as const;
-
-function WorkspaceHome() {
-  const hoje = new Date().toLocaleDateString("pt-BR", {
+function CommandCenter() {
+  const hour = new Date().getHours();
+  const greet = hour < 5 ? "Boa madrugada" : hour < 12 ? "Bom dia" : hour < 18 ? "Boa tarde" : "Boa noite";
+  const date = new Date().toLocaleDateString("pt-BR", {
     weekday: "long",
     day: "2-digit",
     month: "long",
   });
 
-  const totals = {
-    critical: attentionItems.filter((a) => a.priority === "critical").length,
-    waitingClient: attentionItems.filter((a) => a.blockedBy === "cliente").length,
-    todayMeetings: 2,
-    deploys: attentionItems.filter((a) => a.kind === "deploy").length,
-    hoursToday: 4.2,
-    aReceber: 42200,
-  };
-
   return (
     <WorkspaceShell
-      eyebrow={hoje}
-      title="O que precisa da sua atenção hoje"
-      description="Priorizamos as pendências que estão bloqueando você, seu time ou o cliente."
+      eyebrow={date}
+      title={`${greet}, Thomas.`}
+      description="Este é o pulso da TERON OS — tudo que exige a sua atenção hoje, em uma única tela."
       action={
-        <button className="inline-flex items-center gap-1.5 rounded-md bg-foreground px-3 py-1.5 text-[13px] font-medium text-background hover:opacity-90">
-          <Plus className="size-3.5" /> Novo projeto
-        </button>
+        <div className="flex items-center gap-2">
+          <button className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-[13px] text-foreground hover:bg-accent">
+            <Sparkles className="size-3.5" /> Perguntar à IA
+          </button>
+          <button className="inline-flex items-center gap-1.5 rounded-md bg-foreground px-3 py-1.5 text-[13px] font-medium text-background hover:opacity-90">
+            <Zap className="size-3.5" /> Executar rotina diária
+          </button>
+        </div>
       }
     >
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
-        <MetricCard label="Pendências críticas" value={totals.critical} tone="danger" hint="agir agora" />
-        <MetricCard label="Aguardando cliente" value={totals.waitingClient} tone="warning" hint="cronograma pausado" />
-        <MetricCard label="Reuniões hoje" value={totals.todayMeetings} tone="info" hint="14:30 · 17:00" />
-        <MetricCard label="Deploys prontos" value={totals.deploys} tone="info" hint="aguarda aprovação" />
-        <MetricCard label="Horas hoje" value={`${totals.hoursToday}h`} tone="neutral" hint="meta 6h" />
-        <MetricCard label="A receber" value={currency(totals.aReceber)} tone="success" hint="3 faturas" />
-      </div>
+      {/* Hoje você possui */}
+      <section className="rounded-2xl border border-border bg-gradient-to-br from-card to-background p-6">
+        <header className="mb-4 flex items-center justify-between">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Hoje você possui</p>
+            <h2 className="mt-1 font-display text-lg font-semibold">O que precisa da sua atenção</h2>
+          </div>
+          <StatusPill tone="info" dot>Atualizado agora</StatusPill>
+        </header>
 
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1.7fr_1fr]">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {commandInsights.map((ci) => {
+            const Icon = kindIcon[ci.kind] ?? FolderKanban;
+            return (
+              <Link
+                key={ci.id}
+                to={ci.href ?? "/app"}
+                className="group flex items-start gap-3 rounded-lg border border-border bg-card/60 p-3.5 transition-colors hover:border-foreground/30 hover:bg-card"
+              >
+                <div className="grid size-9 place-items-center rounded-md border border-border bg-background">
+                  <Icon className="size-4 text-muted-foreground" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[12px] text-muted-foreground">{ci.label}</p>
+                  <div className="mt-0.5 flex items-baseline gap-2">
+                    <span className="font-display text-xl font-semibold text-foreground">{ci.value}</span>
+                    <StatusPill tone={ci.tone}>·</StatusPill>
+                  </div>
+                  <p className="mt-0.5 truncate text-[11px] text-muted-foreground">{ci.hint}</p>
+                </div>
+                <ChevronRight className="mt-1 size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Sugestões da IA + Pulso da empresa */}
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1.5fr_1fr]">
         <Surface>
           <SurfaceHeader
-            title="Fila de prioridade"
-            hint="Ordenado por impacto"
-            action={<Link to="/app/inbox" className="text-[12px] text-muted-foreground hover:text-foreground">Ver inbox <ArrowUpRight className="ml-0.5 inline size-3" /></Link>}
+            title="Sugestões da IA"
+            hint="Ações práticas geradas pelo cérebro da TERON"
+            action={
+              <Link to="/app/ia" className="text-[12px] text-muted-foreground hover:text-foreground">
+                Ver todas <ArrowUpRight className="ml-0.5 inline size-3" />
+              </Link>
+            }
           />
           <ul className="divide-y divide-border">
-            {attentionItems.map((item) => {
-              const Icon = kindIcon[item.kind];
-              const tone = priorityTone[item.priority];
-              return (
-                <li key={item.id} className="group flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-muted/30">
-                  <div className="grid size-9 place-items-center rounded-md border border-border bg-card">
-                    <Icon className="size-4 text-muted-foreground" />
+            {smartSuggestions.map((s) => (
+              <li key={s.id} className="group px-5 py-3.5 transition-colors hover:bg-muted/20">
+                <div className="flex items-start gap-3">
+                  <div className={`mt-0.5 grid size-8 place-items-center rounded-md ring-1 ring-inset ${suggestionTone[s.tone]}`}>
+                    <Sparkles className="size-3.5" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="truncate text-[13.5px] font-medium text-foreground">{item.title}</p>
-                      {item.blockedBy === "cliente" && (
-                        <StatusPill tone="warning" dot>Aguarda cliente</StatusPill>
-                      )}
+                    <p className="text-[13.5px] font-medium text-foreground">{s.text}</p>
+                    <p className="mt-0.5 text-[11.5px] text-muted-foreground">{s.detail}</p>
+                    <div className="mt-2 flex items-center gap-1.5">
+                      <button className="rounded-md bg-foreground px-2.5 py-1 text-[11.5px] font-medium text-background hover:opacity-90">
+                        {s.action}
+                      </button>
+                      <button className="rounded-md border border-border bg-background px-2.5 py-1 text-[11.5px] text-muted-foreground hover:text-foreground">
+                        Adiar
+                      </button>
+                      <button className="rounded-md px-2.5 py-1 text-[11.5px] text-muted-foreground hover:text-foreground">
+                        Descartar
+                      </button>
                     </div>
-                    <p className="mt-0.5 truncate text-[12px] text-muted-foreground">{item.meta}</p>
-                  </div>
-                  <StatusPill tone={tone}>{item.dueLabel}</StatusPill>
-                </li>
-              );
-            })}
-          </ul>
-        </Surface>
-
-        <div className="space-y-6">
-          <Surface>
-            <SurfaceHeader title="Agenda de hoje" />
-            <div className="space-y-3 p-5">
-              {[
-                { t: "10:00", n: "1:1 com Marina — Pallas Studio", tag: "Kickoff" },
-                { t: "14:30", n: "Kickoff Meridian Finance", tag: "Novo cliente" },
-                { t: "17:00", n: "Review sprint Órion", tag: "Interno" },
-              ].map((e) => (
-                <div key={e.t} className="flex items-start gap-3">
-                  <div className="w-12 shrink-0 font-mono text-[11px] text-muted-foreground">{e.t}</div>
-                  <div className="flex-1">
-                    <p className="text-[13px] font-medium text-foreground">{e.n}</p>
-                    <p className="text-[11px] text-muted-foreground">{e.tag}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Surface>
-
-          <Surface>
-            <SurfaceHeader title="Atividade recente" />
-            <ul className="divide-y divide-border">
-              {activity.slice(0, 5).map((a) => (
-                <li key={a.id} className="flex items-start gap-3 px-5 py-3">
-                  <div className="mt-1 size-1.5 rounded-full bg-muted-foreground/60" />
-                  <div className="flex-1 text-[12.5px] text-muted-foreground">
-                    <span className="text-foreground">{a.who}</span> {a.what}
-                    <div className="mt-0.5 text-[10.5px] text-muted-foreground/70">{a.when}</div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </Surface>
-        </div>
-      </div>
-
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Surface>
-          <SurfaceHeader title="Próximas entregas" action={<Link to="/app/projetos" className="text-[12px] text-muted-foreground hover:text-foreground">Ver projetos</Link>} />
-          <ul className="divide-y divide-border">
-            {projects.slice(0, 4).map((p) => (
-              <li key={p.id} className="px-5 py-3.5">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-[13px] font-medium">{p.name}</p>
-                    <p className="truncate text-[11px] text-muted-foreground">{p.client} · {p.nextMilestone}</p>
-                  </div>
-                  <div className="flex w-32 items-center gap-2">
-                    <div className="h-1 flex-1 rounded-full bg-muted">
-                      <div className="h-full rounded-full bg-foreground" style={{ width: `${p.progress}%` }} />
-                    </div>
-                    <span className="w-8 text-right font-mono text-[11px] text-muted-foreground">{p.progress}%</span>
                   </div>
                 </div>
               </li>
@@ -169,27 +149,102 @@ function WorkspaceHome() {
           </ul>
         </Surface>
 
-        <Surface tone="warning">
-          <div className="flex items-start gap-4 p-5">
-            <div className="grid size-10 place-items-center rounded-md bg-[oklch(0.8_0.14_78_/_15%)]">
-              <AlertTriangle className="size-5 text-[oklch(0.88_0.14_78)]" />
+        <div className="space-y-6">
+          <Surface>
+            <SurfaceHeader title="Pulso da empresa" hint="Últimos 30 dias" />
+            <div className="grid grid-cols-2 gap-px overflow-hidden rounded-b-xl bg-border">
+              <Kpi label="Receita" value={currency(companyKpis.receitaMes)} tone="text-foreground" />
+              <Kpi label="Lucro" value={currency(companyKpis.lucroMes)} tone="text-[oklch(0.82_0.15_155)]" />
+              <Kpi label="Margem" value={`${companyKpis.margem}%`} tone="text-foreground" />
+              <Kpi
+                label="Horas vend./trab."
+                value={`${companyKpis.horasVendidas}h / ${companyKpis.horasTrabalhadas}h`}
+                tone="text-foreground"
+              />
+              <Kpi label="Projetos ativos" value={String(companyKpis.projetosAtivos)} tone="text-foreground" />
+              <Kpi label="Propostas abertas" value={String(companyKpis.propostasAbertas)} tone="text-foreground" />
             </div>
-            <div className="flex-1">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-[oklch(0.88_0.14_78)]">Pendências do cliente</p>
-              <h3 className="mt-1 font-display text-lg font-semibold">3 cronogramas pausados aguardando cliente</h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Enquanto o material não chega, os prazos são recalculados automaticamente. O cliente foi notificado e vê o impacto no portal.
-              </p>
-              <div className="mt-4 space-y-2">
-                {["Pallas Studio · imagens da marca", "Nordica Motors · aprovação da proposta", "Kite SaaS · acesso ao banco de dados"].map((x) => (
-                  <div key={x} className="flex items-center gap-2 text-[12.5px]">
-                    <Clock className="size-3.5 text-muted-foreground" />
-                    <span className="flex-1 text-foreground">{x}</span>
-                    <StatusPill tone="warning">Pausado</StatusPill>
-                  </div>
-                ))}
+          </Surface>
+
+          <Surface tone="warning">
+            <div className="p-5">
+              <div className="flex items-start gap-3">
+                <Gauge className="mt-0.5 size-5 text-[oklch(0.88_0.14_78)]" />
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-[oklch(0.88_0.14_78)]">Radar de riscos</p>
+                  <h3 className="mt-1 font-display text-base font-semibold">3 sinais que merecem sua atenção</h3>
+                </div>
               </div>
+              <ul className="mt-4 space-y-2">
+                {[
+                  { t: "Pallas Studio — cronograma pausado há 7 dias", tag: "Aguarda cliente" },
+                  { t: "Órion Commerce — margem caindo para 18%", tag: "Estouro de horas" },
+                  { t: "Aurora Health — Health Score em 62", tag: "Atenção" },
+                ].map((r) => (
+                  <li key={r.t} className="flex items-center gap-2 text-[12.5px]">
+                    <span className="size-1.5 rounded-full bg-[oklch(0.88_0.14_78)]" />
+                    <span className="flex-1 truncate">{r.t}</span>
+                    <StatusPill tone="warning">{r.tag}</StatusPill>
+                  </li>
+                ))}
+              </ul>
             </div>
+          </Surface>
+        </div>
+      </div>
+
+      {/* Próximas entregas + atalhos */}
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1.5fr_1fr]">
+        <Surface>
+          <SurfaceHeader
+            title="Próximas entregas"
+            action={
+              <Link to="/app/projetos" className="text-[12px] text-muted-foreground hover:text-foreground">
+                Ver projetos
+              </Link>
+            }
+          />
+          <ul className="divide-y divide-border">
+            {projects.slice(0, 5).map((p) => (
+              <li key={p.id} className="flex items-center gap-3 px-5 py-3.5">
+                <CheckCircle2 className="size-4 text-muted-foreground" />
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[13px] font-medium">{p.name}</p>
+                  <p className="truncate text-[11px] text-muted-foreground">
+                    {p.client} · {p.nextMilestone}
+                  </p>
+                </div>
+                <div className="flex w-32 items-center gap-2">
+                  <div className="h-1 flex-1 rounded-full bg-muted">
+                    <div className="h-full rounded-full bg-foreground" style={{ width: `${p.progress}%` }} />
+                  </div>
+                  <span className="w-8 text-right font-mono text-[11px] text-muted-foreground">{p.progress}%</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Surface>
+
+        <Surface>
+          <SurfaceHeader title="Acesso rápido" />
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-b-xl bg-border">
+            {[
+              { label: "Nova proposta", to: "/app/propostas" },
+              { label: "Novo lead", to: "/app/crm" },
+              { label: "Novo projeto", to: "/app/projetos" },
+              { label: "Cobrar cliente", to: "/app/financeiro" },
+              { label: "Registrar horas", to: "/app/horas" },
+              { label: "Criar automação", to: "/app/automacoes" },
+            ].map((q) => (
+              <Link
+                key={q.label}
+                to={q.to}
+                className="flex items-center justify-between bg-card p-4 text-[13px] hover:bg-muted/40"
+              >
+                <span>{q.label}</span>
+                <ArrowUpRight className="size-3.5 text-muted-foreground" />
+              </Link>
+            ))}
           </div>
         </Surface>
       </div>
@@ -197,25 +252,11 @@ function WorkspaceHome() {
   );
 }
 
-function MetricCard({
-  label,
-  value,
-  hint,
-  tone,
-}: {
-  label: string;
-  value: string | number;
-  hint: string;
-  tone: "danger" | "warning" | "info" | "success" | "neutral";
-}) {
+function Kpi({ label, value, tone }: { label: string; value: string; tone: string }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
-      <div className="flex items-center justify-between">
-        <p className="text-[11px] font-medium text-muted-foreground">{label}</p>
-        <StatusPill tone={tone} dot>·</StatusPill>
-      </div>
-      <p className="mt-2 font-display text-2xl font-semibold tracking-tight text-foreground">{value}</p>
-      <p className="mt-1 text-[11px] text-muted-foreground">{hint}</p>
+    <div className="bg-card p-4">
+      <p className="text-[11px] text-muted-foreground">{label}</p>
+      <p className={`mt-1 font-display text-lg font-semibold tracking-tight ${tone}`}>{value}</p>
     </div>
   );
 }

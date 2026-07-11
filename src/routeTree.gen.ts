@@ -16,24 +16,35 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as PropostaIdRouteImport } from './routes/proposta.$id'
+import { Route as AppTemplatesRouteImport } from './routes/app.templates'
+import { Route as AppSuporteRouteImport } from './routes/app.suporte'
 import { Route as AppPropostasRouteImport } from './routes/app.propostas'
 import { Route as AppProjetosRouteImport } from './routes/app.projetos'
+import { Route as AppPagamentosRouteImport } from './routes/app.pagamentos'
+import { Route as AppMarketplaceRouteImport } from './routes/app.marketplace'
+import { Route as AppMarketingRouteImport } from './routes/app.marketing'
 import { Route as AppInboxRouteImport } from './routes/app.inbox'
 import { Route as AppIaRouteImport } from './routes/app.ia'
 import { Route as AppHorasRouteImport } from './routes/app.horas'
 import { Route as AppHealthRouteImport } from './routes/app.health'
 import { Route as AppFinanceiroRouteImport } from './routes/app.financeiro'
 import { Route as AppEscopoRouteImport } from './routes/app.escopo'
+import { Route as AppDocumentacaoRouteImport } from './routes/app.documentacao'
 import { Route as AppDiarioRouteImport } from './routes/app.diario'
 import { Route as AppDesenvolvimentoRouteImport } from './routes/app.desenvolvimento'
+import { Route as AppCrmRouteImport } from './routes/app.crm'
 import { Route as AppContratosRouteImport } from './routes/app.contratos'
 import { Route as AppConfiguracoesRouteImport } from './routes/app.configuracoes'
 import { Route as AppClientesRouteImport } from './routes/app.clientes'
 import { Route as AppChatRouteImport } from './routes/app.chat'
+import { Route as AppBibliotecaRouteImport } from './routes/app.biblioteca'
 import { Route as AppBaseRouteImport } from './routes/app.base'
+import { Route as AppAutomacoesRouteImport } from './routes/app.automacoes'
 import { Route as AppAtividadeRouteImport } from './routes/app.atividade'
 import { Route as AppAtendimentoRouteImport } from './routes/app.atendimento'
 import { Route as AppAprovacoesRouteImport } from './routes/app.aprovacoes'
+import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
+import { Route as AppAcademiaRouteImport } from './routes/app.academia'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as ClienteOnboardingProjetoRouteImport } from './routes/cliente.onboarding.$projeto'
@@ -75,6 +86,16 @@ const PropostaIdRoute = PropostaIdRouteImport.update({
   path: '/proposta/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppTemplatesRoute = AppTemplatesRouteImport.update({
+  id: '/templates',
+  path: '/templates',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSuporteRoute = AppSuporteRouteImport.update({
+  id: '/suporte',
+  path: '/suporte',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPropostasRoute = AppPropostasRouteImport.update({
   id: '/propostas',
   path: '/propostas',
@@ -83,6 +104,21 @@ const AppPropostasRoute = AppPropostasRouteImport.update({
 const AppProjetosRoute = AppProjetosRouteImport.update({
   id: '/projetos',
   path: '/projetos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPagamentosRoute = AppPagamentosRouteImport.update({
+  id: '/pagamentos',
+  path: '/pagamentos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMarketplaceRoute = AppMarketplaceRouteImport.update({
+  id: '/marketplace',
+  path: '/marketplace',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMarketingRoute = AppMarketingRouteImport.update({
+  id: '/marketing',
+  path: '/marketing',
   getParentRoute: () => AppRoute,
 } as any)
 const AppInboxRoute = AppInboxRouteImport.update({
@@ -115,6 +151,11 @@ const AppEscopoRoute = AppEscopoRouteImport.update({
   path: '/escopo',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDocumentacaoRoute = AppDocumentacaoRouteImport.update({
+  id: '/documentacao',
+  path: '/documentacao',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppDiarioRoute = AppDiarioRouteImport.update({
   id: '/diario',
   path: '/diario',
@@ -123,6 +164,11 @@ const AppDiarioRoute = AppDiarioRouteImport.update({
 const AppDesenvolvimentoRoute = AppDesenvolvimentoRouteImport.update({
   id: '/desenvolvimento',
   path: '/desenvolvimento',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCrmRoute = AppCrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
   getParentRoute: () => AppRoute,
 } as any)
 const AppContratosRoute = AppContratosRouteImport.update({
@@ -145,9 +191,19 @@ const AppChatRoute = AppChatRouteImport.update({
   path: '/chat',
   getParentRoute: () => AppRoute,
 } as any)
+const AppBibliotecaRoute = AppBibliotecaRouteImport.update({
+  id: '/biblioteca',
+  path: '/biblioteca',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppBaseRoute = AppBaseRouteImport.update({
   id: '/base',
   path: '/base',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAutomacoesRoute = AppAutomacoesRouteImport.update({
+  id: '/automacoes',
+  path: '/automacoes',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAtividadeRoute = AppAtividadeRouteImport.update({
@@ -163,6 +219,16 @@ const AppAtendimentoRoute = AppAtendimentoRouteImport.update({
 const AppAprovacoesRoute = AppAprovacoesRouteImport.update({
   id: '/aprovacoes',
   path: '/aprovacoes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAcademiaRoute = AppAcademiaRouteImport.update({
+  id: '/academia',
+  path: '/academia',
   getParentRoute: () => AppRoute,
 } as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
@@ -203,24 +269,35 @@ export interface FileRoutesByFullPath {
   '/mcp': typeof McpRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/app/academia': typeof AppAcademiaRoute
+  '/app/analytics': typeof AppAnalyticsRoute
   '/app/aprovacoes': typeof AppAprovacoesRoute
   '/app/atendimento': typeof AppAtendimentoRoute
   '/app/atividade': typeof AppAtividadeRoute
+  '/app/automacoes': typeof AppAutomacoesRoute
   '/app/base': typeof AppBaseRoute
+  '/app/biblioteca': typeof AppBibliotecaRoute
   '/app/chat': typeof AppChatRoute
   '/app/clientes': typeof AppClientesRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/contratos': typeof AppContratosRoute
+  '/app/crm': typeof AppCrmRoute
   '/app/desenvolvimento': typeof AppDesenvolvimentoRoute
   '/app/diario': typeof AppDiarioRoute
+  '/app/documentacao': typeof AppDocumentacaoRoute
   '/app/escopo': typeof AppEscopoRoute
   '/app/financeiro': typeof AppFinanceiroRoute
   '/app/health': typeof AppHealthRoute
   '/app/horas': typeof AppHorasRoute
   '/app/ia': typeof AppIaRoute
   '/app/inbox': typeof AppInboxRoute
+  '/app/marketing': typeof AppMarketingRoute
+  '/app/marketplace': typeof AppMarketplaceRoute
+  '/app/pagamentos': typeof AppPagamentosRoute
   '/app/projetos': typeof AppProjetosRoute
   '/app/propostas': typeof AppPropostasRoute
+  '/app/suporte': typeof AppSuporteRoute
+  '/app/templates': typeof AppTemplatesRoute
   '/proposta/$id': typeof PropostaIdRoute
   '/app/': typeof AppIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -234,24 +311,35 @@ export interface FileRoutesByTo {
   '/mcp': typeof McpRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/app/academia': typeof AppAcademiaRoute
+  '/app/analytics': typeof AppAnalyticsRoute
   '/app/aprovacoes': typeof AppAprovacoesRoute
   '/app/atendimento': typeof AppAtendimentoRoute
   '/app/atividade': typeof AppAtividadeRoute
+  '/app/automacoes': typeof AppAutomacoesRoute
   '/app/base': typeof AppBaseRoute
+  '/app/biblioteca': typeof AppBibliotecaRoute
   '/app/chat': typeof AppChatRoute
   '/app/clientes': typeof AppClientesRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/contratos': typeof AppContratosRoute
+  '/app/crm': typeof AppCrmRoute
   '/app/desenvolvimento': typeof AppDesenvolvimentoRoute
   '/app/diario': typeof AppDiarioRoute
+  '/app/documentacao': typeof AppDocumentacaoRoute
   '/app/escopo': typeof AppEscopoRoute
   '/app/financeiro': typeof AppFinanceiroRoute
   '/app/health': typeof AppHealthRoute
   '/app/horas': typeof AppHorasRoute
   '/app/ia': typeof AppIaRoute
   '/app/inbox': typeof AppInboxRoute
+  '/app/marketing': typeof AppMarketingRoute
+  '/app/marketplace': typeof AppMarketplaceRoute
+  '/app/pagamentos': typeof AppPagamentosRoute
   '/app/projetos': typeof AppProjetosRoute
   '/app/propostas': typeof AppPropostasRoute
+  '/app/suporte': typeof AppSuporteRoute
+  '/app/templates': typeof AppTemplatesRoute
   '/proposta/$id': typeof PropostaIdRoute
   '/app': typeof AppIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -267,24 +355,35 @@ export interface FileRoutesById {
   '/mcp': typeof McpRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/app/academia': typeof AppAcademiaRoute
+  '/app/analytics': typeof AppAnalyticsRoute
   '/app/aprovacoes': typeof AppAprovacoesRoute
   '/app/atendimento': typeof AppAtendimentoRoute
   '/app/atividade': typeof AppAtividadeRoute
+  '/app/automacoes': typeof AppAutomacoesRoute
   '/app/base': typeof AppBaseRoute
+  '/app/biblioteca': typeof AppBibliotecaRoute
   '/app/chat': typeof AppChatRoute
   '/app/clientes': typeof AppClientesRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
   '/app/contratos': typeof AppContratosRoute
+  '/app/crm': typeof AppCrmRoute
   '/app/desenvolvimento': typeof AppDesenvolvimentoRoute
   '/app/diario': typeof AppDiarioRoute
+  '/app/documentacao': typeof AppDocumentacaoRoute
   '/app/escopo': typeof AppEscopoRoute
   '/app/financeiro': typeof AppFinanceiroRoute
   '/app/health': typeof AppHealthRoute
   '/app/horas': typeof AppHorasRoute
   '/app/ia': typeof AppIaRoute
   '/app/inbox': typeof AppInboxRoute
+  '/app/marketing': typeof AppMarketingRoute
+  '/app/marketplace': typeof AppMarketplaceRoute
+  '/app/pagamentos': typeof AppPagamentosRoute
   '/app/projetos': typeof AppProjetosRoute
   '/app/propostas': typeof AppPropostasRoute
+  '/app/suporte': typeof AppSuporteRoute
+  '/app/templates': typeof AppTemplatesRoute
   '/proposta/$id': typeof PropostaIdRoute
   '/app/': typeof AppIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -301,24 +400,35 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/app/academia'
+    | '/app/analytics'
     | '/app/aprovacoes'
     | '/app/atendimento'
     | '/app/atividade'
+    | '/app/automacoes'
     | '/app/base'
+    | '/app/biblioteca'
     | '/app/chat'
     | '/app/clientes'
     | '/app/configuracoes'
     | '/app/contratos'
+    | '/app/crm'
     | '/app/desenvolvimento'
     | '/app/diario'
+    | '/app/documentacao'
     | '/app/escopo'
     | '/app/financeiro'
     | '/app/health'
     | '/app/horas'
     | '/app/ia'
     | '/app/inbox'
+    | '/app/marketing'
+    | '/app/marketplace'
+    | '/app/pagamentos'
     | '/app/projetos'
     | '/app/propostas'
+    | '/app/suporte'
+    | '/app/templates'
     | '/proposta/$id'
     | '/app/'
     | '/.lovable/oauth/consent'
@@ -332,24 +442,35 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/app/academia'
+    | '/app/analytics'
     | '/app/aprovacoes'
     | '/app/atendimento'
     | '/app/atividade'
+    | '/app/automacoes'
     | '/app/base'
+    | '/app/biblioteca'
     | '/app/chat'
     | '/app/clientes'
     | '/app/configuracoes'
     | '/app/contratos'
+    | '/app/crm'
     | '/app/desenvolvimento'
     | '/app/diario'
+    | '/app/documentacao'
     | '/app/escopo'
     | '/app/financeiro'
     | '/app/health'
     | '/app/horas'
     | '/app/ia'
     | '/app/inbox'
+    | '/app/marketing'
+    | '/app/marketplace'
+    | '/app/pagamentos'
     | '/app/projetos'
     | '/app/propostas'
+    | '/app/suporte'
+    | '/app/templates'
     | '/proposta/$id'
     | '/app'
     | '/.lovable/oauth/consent'
@@ -364,24 +485,35 @@ export interface FileRouteTypes {
     | '/mcp'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/app/academia'
+    | '/app/analytics'
     | '/app/aprovacoes'
     | '/app/atendimento'
     | '/app/atividade'
+    | '/app/automacoes'
     | '/app/base'
+    | '/app/biblioteca'
     | '/app/chat'
     | '/app/clientes'
     | '/app/configuracoes'
     | '/app/contratos'
+    | '/app/crm'
     | '/app/desenvolvimento'
     | '/app/diario'
+    | '/app/documentacao'
     | '/app/escopo'
     | '/app/financeiro'
     | '/app/health'
     | '/app/horas'
     | '/app/ia'
     | '/app/inbox'
+    | '/app/marketing'
+    | '/app/marketplace'
+    | '/app/pagamentos'
     | '/app/projetos'
     | '/app/propostas'
+    | '/app/suporte'
+    | '/app/templates'
     | '/proposta/$id'
     | '/app/'
     | '/.lovable/oauth/consent'
@@ -453,6 +585,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PropostaIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/templates': {
+      id: '/app/templates'
+      path: '/templates'
+      fullPath: '/app/templates'
+      preLoaderRoute: typeof AppTemplatesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/suporte': {
+      id: '/app/suporte'
+      path: '/suporte'
+      fullPath: '/app/suporte'
+      preLoaderRoute: typeof AppSuporteRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/propostas': {
       id: '/app/propostas'
       path: '/propostas'
@@ -465,6 +611,27 @@ declare module '@tanstack/react-router' {
       path: '/projetos'
       fullPath: '/app/projetos'
       preLoaderRoute: typeof AppProjetosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/pagamentos': {
+      id: '/app/pagamentos'
+      path: '/pagamentos'
+      fullPath: '/app/pagamentos'
+      preLoaderRoute: typeof AppPagamentosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/marketplace': {
+      id: '/app/marketplace'
+      path: '/marketplace'
+      fullPath: '/app/marketplace'
+      preLoaderRoute: typeof AppMarketplaceRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/marketing': {
+      id: '/app/marketing'
+      path: '/marketing'
+      fullPath: '/app/marketing'
+      preLoaderRoute: typeof AppMarketingRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/inbox': {
@@ -509,6 +676,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppEscopoRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/documentacao': {
+      id: '/app/documentacao'
+      path: '/documentacao'
+      fullPath: '/app/documentacao'
+      preLoaderRoute: typeof AppDocumentacaoRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/diario': {
       id: '/app/diario'
       path: '/diario'
@@ -521,6 +695,13 @@ declare module '@tanstack/react-router' {
       path: '/desenvolvimento'
       fullPath: '/app/desenvolvimento'
       preLoaderRoute: typeof AppDesenvolvimentoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/crm': {
+      id: '/app/crm'
+      path: '/crm'
+      fullPath: '/app/crm'
+      preLoaderRoute: typeof AppCrmRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/contratos': {
@@ -551,11 +732,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppChatRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/biblioteca': {
+      id: '/app/biblioteca'
+      path: '/biblioteca'
+      fullPath: '/app/biblioteca'
+      preLoaderRoute: typeof AppBibliotecaRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/base': {
       id: '/app/base'
       path: '/base'
       fullPath: '/app/base'
       preLoaderRoute: typeof AppBaseRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/automacoes': {
+      id: '/app/automacoes'
+      path: '/automacoes'
+      fullPath: '/app/automacoes'
+      preLoaderRoute: typeof AppAutomacoesRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/atividade': {
@@ -577,6 +772,20 @@ declare module '@tanstack/react-router' {
       path: '/aprovacoes'
       fullPath: '/app/aprovacoes'
       preLoaderRoute: typeof AppAprovacoesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/analytics': {
+      id: '/app/analytics'
+      path: '/analytics'
+      fullPath: '/app/analytics'
+      preLoaderRoute: typeof AppAnalyticsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/academia': {
+      id: '/app/academia'
+      path: '/academia'
+      fullPath: '/app/academia'
+      preLoaderRoute: typeof AppAcademiaRouteImport
       parentRoute: typeof AppRoute
     }
     '/.well-known/oauth-protected-resource': {
@@ -618,46 +827,68 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppAcademiaRoute: typeof AppAcademiaRoute
+  AppAnalyticsRoute: typeof AppAnalyticsRoute
   AppAprovacoesRoute: typeof AppAprovacoesRoute
   AppAtendimentoRoute: typeof AppAtendimentoRoute
   AppAtividadeRoute: typeof AppAtividadeRoute
+  AppAutomacoesRoute: typeof AppAutomacoesRoute
   AppBaseRoute: typeof AppBaseRoute
+  AppBibliotecaRoute: typeof AppBibliotecaRoute
   AppChatRoute: typeof AppChatRoute
   AppClientesRoute: typeof AppClientesRoute
   AppConfiguracoesRoute: typeof AppConfiguracoesRoute
   AppContratosRoute: typeof AppContratosRoute
+  AppCrmRoute: typeof AppCrmRoute
   AppDesenvolvimentoRoute: typeof AppDesenvolvimentoRoute
   AppDiarioRoute: typeof AppDiarioRoute
+  AppDocumentacaoRoute: typeof AppDocumentacaoRoute
   AppEscopoRoute: typeof AppEscopoRoute
   AppFinanceiroRoute: typeof AppFinanceiroRoute
   AppHealthRoute: typeof AppHealthRoute
   AppHorasRoute: typeof AppHorasRoute
   AppIaRoute: typeof AppIaRoute
   AppInboxRoute: typeof AppInboxRoute
+  AppMarketingRoute: typeof AppMarketingRoute
+  AppMarketplaceRoute: typeof AppMarketplaceRoute
+  AppPagamentosRoute: typeof AppPagamentosRoute
   AppProjetosRoute: typeof AppProjetosRoute
   AppPropostasRoute: typeof AppPropostasRoute
+  AppSuporteRoute: typeof AppSuporteRoute
+  AppTemplatesRoute: typeof AppTemplatesRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAcademiaRoute: AppAcademiaRoute,
+  AppAnalyticsRoute: AppAnalyticsRoute,
   AppAprovacoesRoute: AppAprovacoesRoute,
   AppAtendimentoRoute: AppAtendimentoRoute,
   AppAtividadeRoute: AppAtividadeRoute,
+  AppAutomacoesRoute: AppAutomacoesRoute,
   AppBaseRoute: AppBaseRoute,
+  AppBibliotecaRoute: AppBibliotecaRoute,
   AppChatRoute: AppChatRoute,
   AppClientesRoute: AppClientesRoute,
   AppConfiguracoesRoute: AppConfiguracoesRoute,
   AppContratosRoute: AppContratosRoute,
+  AppCrmRoute: AppCrmRoute,
   AppDesenvolvimentoRoute: AppDesenvolvimentoRoute,
   AppDiarioRoute: AppDiarioRoute,
+  AppDocumentacaoRoute: AppDocumentacaoRoute,
   AppEscopoRoute: AppEscopoRoute,
   AppFinanceiroRoute: AppFinanceiroRoute,
   AppHealthRoute: AppHealthRoute,
   AppHorasRoute: AppHorasRoute,
   AppIaRoute: AppIaRoute,
   AppInboxRoute: AppInboxRoute,
+  AppMarketingRoute: AppMarketingRoute,
+  AppMarketplaceRoute: AppMarketplaceRoute,
+  AppPagamentosRoute: AppPagamentosRoute,
   AppProjetosRoute: AppProjetosRoute,
   AppPropostasRoute: AppPropostasRoute,
+  AppSuporteRoute: AppSuporteRoute,
+  AppTemplatesRoute: AppTemplatesRoute,
   AppIndexRoute: AppIndexRoute,
 }
 

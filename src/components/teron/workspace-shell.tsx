@@ -3,25 +3,37 @@ import {
   Activity,
   Bell,
   BookOpen,
+  Boxes,
+  Building2,
   CheckSquare,
   CircleDollarSign,
   Clock,
   Command,
+  CreditCard,
   FileSignature,
   FileText,
   FolderKanban,
+  GaugeCircle,
+  GraduationCap,
   Heart,
   HeartHandshake,
   Inbox,
   LayoutDashboard,
+  LibraryBig,
+  LifeBuoy,
   type LucideIcon,
+  Megaphone,
   MessageSquare,
   Scale,
   Search,
+  Server,
   Settings,
   Sparkles,
+  Store,
+  Target,
   Timer,
   Users,
+  Workflow,
 } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -33,24 +45,33 @@ type NavGroup = { label: string; items: NavItem[] };
 
 const groups: NavGroup[] = [
   {
-    label: "Workspace",
+    label: "Command",
     items: [
-      { label: "Hoje", to: "/app", icon: LayoutDashboard },
+      { label: "Command Center", to: "/app", icon: LayoutDashboard },
       { label: "Inbox", to: "/app/inbox", icon: Inbox, badge: "4" },
       { label: "Assistente IA", to: "/app/ia", icon: Sparkles, badge: "5" },
+      { label: "Automações", to: "/app/automacoes", icon: Workflow },
       { label: "Atividade", to: "/app/atividade", icon: Activity },
     ],
   },
   {
-    label: "Comercial",
+    label: "Aquisição",
     items: [
-      { label: "Clientes", to: "/app/clientes", icon: Users },
-      { label: "Propostas", to: "/app/propostas", icon: FileText, badge: "2" },
-      { label: "Contratos", to: "/app/contratos", icon: FileSignature },
+      { label: "Marketing", to: "/app/marketing", icon: Megaphone },
+      { label: "CRM", to: "/app/crm", icon: Target, badge: "9" },
     ],
   },
   {
-    label: "Operação",
+    label: "Vendas",
+    items: [
+      { label: "Propostas", to: "/app/propostas", icon: FileText, badge: "2" },
+      { label: "Contratos", to: "/app/contratos", icon: FileSignature },
+      { label: "Pagamentos", to: "/app/pagamentos", icon: CreditCard },
+      { label: "Clientes", to: "/app/clientes", icon: Users },
+    ],
+  },
+  {
+    label: "Entrega",
     items: [
       { label: "Projetos", to: "/app/projetos", icon: FolderKanban },
       { label: "Aprovações", to: "/app/aprovacoes", icon: CheckSquare, badge: "2" },
@@ -58,20 +79,28 @@ const groups: NavGroup[] = [
       { label: "Horas", to: "/app/horas", icon: Clock },
       { label: "Diário", to: "/app/diario", icon: Timer },
       { label: "Comunicação", to: "/app/chat", icon: MessageSquare },
-      { label: "Base", to: "/app/base", icon: BookOpen },
     ],
   },
   {
-    label: "Cliente",
+    label: "Operação",
     items: [
+      { label: "Financeiro", to: "/app/financeiro", icon: CircleDollarSign, badge: "1" },
+      { label: "Analytics", to: "/app/analytics", icon: GaugeCircle },
+      { label: "Biblioteca", to: "/app/biblioteca", icon: LibraryBig },
+      { label: "Base Técnica", to: "/app/base", icon: Server },
+      { label: "Suporte", to: "/app/suporte", icon: LifeBuoy, badge: "5" },
+      { label: "Templates", to: "/app/templates", icon: BookOpen },
       { label: "Health Score", to: "/app/health", icon: Heart },
-      { label: "Atendimento", to: "/app/atendimento", icon: HeartHandshake },
     ],
   },
   {
-    label: "Financeiro",
+    label: "Empresa",
     items: [
-      { label: "Faturas", to: "/app/financeiro", icon: CircleDollarSign, badge: "1" },
+      { label: "Documentação", to: "/app/documentacao", icon: Building2 },
+      { label: "Academia", to: "/app/academia", icon: GraduationCap },
+      { label: "Marketplace", to: "/app/marketplace", icon: Store },
+      { label: "Atendimento", to: "/app/atendimento", icon: HeartHandshake },
+      { label: "Configurações", to: "/app/configuracoes", icon: Settings },
     ],
   },
 ];
@@ -105,7 +134,7 @@ export function WorkspaceShell({
           className="mx-3 mt-3 flex items-center gap-2 rounded-md border border-sidebar-border/80 bg-background/40 px-2.5 py-1.5 text-left text-xs text-muted-foreground transition-colors hover:bg-accent"
         >
           <Search className="size-3.5" />
-          <span className="flex-1">Buscar…</span>
+          <span className="flex-1">Buscar em tudo…</span>
           <span className="inline-flex items-center gap-0.5 rounded border border-sidebar-border/80 bg-muted/40 px-1 py-px font-mono text-[10px]">
             <Command className="size-2.5" />K
           </span>
@@ -134,7 +163,14 @@ export function WorkspaceShell({
                             : "text-sidebar-foreground/80 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
                         )}
                       >
-                        <item.icon className={cn("size-4 shrink-0", active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground")} />
+                        <item.icon
+                          className={cn(
+                            "size-4 shrink-0",
+                            active
+                              ? "text-foreground"
+                              : "text-muted-foreground group-hover:text-foreground",
+                          )}
+                        />
                         <span className="flex-1 truncate">{item.label}</span>
                         {item.badge && (
                           <span className="rounded bg-muted/70 px-1.5 py-px text-[10px] font-medium text-muted-foreground">
@@ -151,21 +187,15 @@ export function WorkspaceShell({
         </nav>
 
         <div className="border-t border-sidebar-border/70 p-2">
-          <Link
-            to="/app/configuracoes"
-            className="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-[13px] text-sidebar-foreground/80 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
-          >
-            <Settings className="size-4 text-muted-foreground" />
-            Configurações
-          </Link>
           <div className="mt-2 flex items-center gap-2 rounded-md px-2 py-1.5">
             <div className="grid size-7 place-items-center rounded-full bg-gradient-to-br from-[oklch(0.7_0.14_250)] to-[oklch(0.68_0.2_320)] text-[11px] font-semibold text-white">
-              RS
+              TR
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[12px] font-medium text-foreground">Rafael Santos</p>
+              <p className="truncate text-[12px] font-medium text-foreground">Thomas Reis</p>
               <p className="truncate text-[10px] text-muted-foreground">TERON OS · Owner</p>
             </div>
+            <Boxes className="size-3.5 text-muted-foreground" />
           </div>
         </div>
       </aside>
