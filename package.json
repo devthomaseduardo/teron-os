@@ -14,7 +14,9 @@
     "db:down": "docker compose down",
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "bot:dev": "cd bot && npm run dev",
+    "bot:start": "cd bot && npm start"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
