@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as McpRouteImport } from './routes/mcp'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ClienteRouteImport } from './routes/cliente'
 import { Route as AppRouteImport } from './routes/app'
@@ -23,6 +22,7 @@ import { Route as AppProjetosRouteImport } from './routes/app.projetos'
 import { Route as AppPagamentosRouteImport } from './routes/app.pagamentos'
 import { Route as AppMarketplaceRouteImport } from './routes/app.marketplace'
 import { Route as AppMarketingRouteImport } from './routes/app.marketing'
+import { Route as AppLeadsRouteImport } from './routes/app.leads'
 import { Route as AppInboxRouteImport } from './routes/app.inbox'
 import { Route as AppIaRouteImport } from './routes/app.ia'
 import { Route as AppHorasRouteImport } from './routes/app.horas'
@@ -45,17 +45,10 @@ import { Route as AppAtendimentoRouteImport } from './routes/app.atendimento'
 import { Route as AppAprovacoesRouteImport } from './routes/app.aprovacoes'
 import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
 import { Route as AppAcademiaRouteImport } from './routes/app.academia'
-import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
-import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
+import { Route as ApiPaymentRouteImport } from './routes/api.payment'
+import { Route as ApiLeadRouteImport } from './routes/api.lead'
 import { Route as ClienteOnboardingProjetoRouteImport } from './routes/cliente.onboarding.$projeto'
-import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
-import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 
-const McpRoute = McpRouteImport.update({
-  id: '/mcp',
-  path: '/mcp',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -119,6 +112,11 @@ const AppMarketplaceRoute = AppMarketplaceRouteImport.update({
 const AppMarketingRoute = AppMarketingRouteImport.update({
   id: '/marketing',
   path: '/marketing',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLeadsRoute = AppLeadsRouteImport.update({
+  id: '/leads',
+  path: '/leads',
   getParentRoute: () => AppRoute,
 } as any)
 const AppInboxRoute = AppInboxRouteImport.update({
@@ -231,44 +229,30 @@ const AppAcademiaRoute = AppAcademiaRouteImport.update({
   path: '/academia',
   getParentRoute: () => AppRoute,
 } as any)
-const Char91DotwellKnownChar93OauthProtectedResourceRoute =
-  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
-    id: '/.well-known/oauth-protected-resource',
-    path: '/.well-known/oauth-protected-resource',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char91DotmcpChar93ListToolsRoute =
-  Char91DotmcpChar93ListToolsRouteImport.update({
-    id: '/.mcp/list-tools',
-    path: '/.mcp/list-tools',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+const ApiPaymentRoute = ApiPaymentRouteImport.update({
+  id: '/api/payment',
+  path: '/api/payment',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiLeadRoute = ApiLeadRouteImport.update({
+  id: '/api/lead',
+  path: '/api/lead',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClienteOnboardingProjetoRoute =
   ClienteOnboardingProjetoRouteImport.update({
     id: '/onboarding/$projeto',
     path: '/onboarding/$projeto',
     getParentRoute: () => ClienteRoute,
   } as any)
-const Char91DotmcpChar93InvokeToolToolRoute =
-  Char91DotmcpChar93InvokeToolToolRouteImport.update({
-    id: '/.mcp/invoke-tool/$tool',
-    path: '/.mcp/invoke-tool/$tool',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
-  id: '/.lovable/oauth/consent',
-  path: '/.lovable/oauth/consent',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/cliente': typeof ClienteRouteWithChildren
   '/login': typeof LoginRoute
-  '/mcp': typeof McpRoute
-  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
-  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/api/lead': typeof ApiLeadRoute
+  '/api/payment': typeof ApiPaymentRoute
   '/app/academia': typeof AppAcademiaRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/aprovacoes': typeof AppAprovacoesRoute
@@ -291,6 +275,7 @@ export interface FileRoutesByFullPath {
   '/app/horas': typeof AppHorasRoute
   '/app/ia': typeof AppIaRoute
   '/app/inbox': typeof AppInboxRoute
+  '/app/leads': typeof AppLeadsRoute
   '/app/marketing': typeof AppMarketingRoute
   '/app/marketplace': typeof AppMarketplaceRoute
   '/app/pagamentos': typeof AppPagamentosRoute
@@ -300,17 +285,14 @@ export interface FileRoutesByFullPath {
   '/app/templates': typeof AppTemplatesRoute
   '/proposta/$id': typeof PropostaIdRoute
   '/app/': typeof AppIndexRoute
-  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
-  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/cliente/onboarding/$projeto': typeof ClienteOnboardingProjetoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cliente': typeof ClienteRouteWithChildren
   '/login': typeof LoginRoute
-  '/mcp': typeof McpRoute
-  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
-  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/api/lead': typeof ApiLeadRoute
+  '/api/payment': typeof ApiPaymentRoute
   '/app/academia': typeof AppAcademiaRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/aprovacoes': typeof AppAprovacoesRoute
@@ -333,6 +315,7 @@ export interface FileRoutesByTo {
   '/app/horas': typeof AppHorasRoute
   '/app/ia': typeof AppIaRoute
   '/app/inbox': typeof AppInboxRoute
+  '/app/leads': typeof AppLeadsRoute
   '/app/marketing': typeof AppMarketingRoute
   '/app/marketplace': typeof AppMarketplaceRoute
   '/app/pagamentos': typeof AppPagamentosRoute
@@ -342,8 +325,6 @@ export interface FileRoutesByTo {
   '/app/templates': typeof AppTemplatesRoute
   '/proposta/$id': typeof PropostaIdRoute
   '/app': typeof AppIndexRoute
-  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
-  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/cliente/onboarding/$projeto': typeof ClienteOnboardingProjetoRoute
 }
 export interface FileRoutesById {
@@ -352,9 +333,8 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/cliente': typeof ClienteRouteWithChildren
   '/login': typeof LoginRoute
-  '/mcp': typeof McpRoute
-  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
-  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/api/lead': typeof ApiLeadRoute
+  '/api/payment': typeof ApiPaymentRoute
   '/app/academia': typeof AppAcademiaRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/aprovacoes': typeof AppAprovacoesRoute
@@ -377,6 +357,7 @@ export interface FileRoutesById {
   '/app/horas': typeof AppHorasRoute
   '/app/ia': typeof AppIaRoute
   '/app/inbox': typeof AppInboxRoute
+  '/app/leads': typeof AppLeadsRoute
   '/app/marketing': typeof AppMarketingRoute
   '/app/marketplace': typeof AppMarketplaceRoute
   '/app/pagamentos': typeof AppPagamentosRoute
@@ -386,8 +367,6 @@ export interface FileRoutesById {
   '/app/templates': typeof AppTemplatesRoute
   '/proposta/$id': typeof PropostaIdRoute
   '/app/': typeof AppIndexRoute
-  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
-  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/cliente/onboarding/$projeto': typeof ClienteOnboardingProjetoRoute
 }
 export interface FileRouteTypes {
@@ -397,9 +376,8 @@ export interface FileRouteTypes {
     | '/app'
     | '/cliente'
     | '/login'
-    | '/mcp'
-    | '/.mcp/list-tools'
-    | '/.well-known/oauth-protected-resource'
+    | '/api/lead'
+    | '/api/payment'
     | '/app/academia'
     | '/app/analytics'
     | '/app/aprovacoes'
@@ -422,6 +400,7 @@ export interface FileRouteTypes {
     | '/app/horas'
     | '/app/ia'
     | '/app/inbox'
+    | '/app/leads'
     | '/app/marketing'
     | '/app/marketplace'
     | '/app/pagamentos'
@@ -431,17 +410,14 @@ export interface FileRouteTypes {
     | '/app/templates'
     | '/proposta/$id'
     | '/app/'
-    | '/.lovable/oauth/consent'
-    | '/.mcp/invoke-tool/$tool'
     | '/cliente/onboarding/$projeto'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/cliente'
     | '/login'
-    | '/mcp'
-    | '/.mcp/list-tools'
-    | '/.well-known/oauth-protected-resource'
+    | '/api/lead'
+    | '/api/payment'
     | '/app/academia'
     | '/app/analytics'
     | '/app/aprovacoes'
@@ -464,6 +440,7 @@ export interface FileRouteTypes {
     | '/app/horas'
     | '/app/ia'
     | '/app/inbox'
+    | '/app/leads'
     | '/app/marketing'
     | '/app/marketplace'
     | '/app/pagamentos'
@@ -473,8 +450,6 @@ export interface FileRouteTypes {
     | '/app/templates'
     | '/proposta/$id'
     | '/app'
-    | '/.lovable/oauth/consent'
-    | '/.mcp/invoke-tool/$tool'
     | '/cliente/onboarding/$projeto'
   id:
     | '__root__'
@@ -482,9 +457,8 @@ export interface FileRouteTypes {
     | '/app'
     | '/cliente'
     | '/login'
-    | '/mcp'
-    | '/.mcp/list-tools'
-    | '/.well-known/oauth-protected-resource'
+    | '/api/lead'
+    | '/api/payment'
     | '/app/academia'
     | '/app/analytics'
     | '/app/aprovacoes'
@@ -507,6 +481,7 @@ export interface FileRouteTypes {
     | '/app/horas'
     | '/app/ia'
     | '/app/inbox'
+    | '/app/leads'
     | '/app/marketing'
     | '/app/marketplace'
     | '/app/pagamentos'
@@ -516,8 +491,6 @@ export interface FileRouteTypes {
     | '/app/templates'
     | '/proposta/$id'
     | '/app/'
-    | '/.lovable/oauth/consent'
-    | '/.mcp/invoke-tool/$tool'
     | '/cliente/onboarding/$projeto'
   fileRoutesById: FileRoutesById
 }
@@ -526,23 +499,13 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   ClienteRoute: typeof ClienteRouteWithChildren
   LoginRoute: typeof LoginRoute
-  McpRoute: typeof McpRoute
-  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
-  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  ApiLeadRoute: typeof ApiLeadRoute
+  ApiPaymentRoute: typeof ApiPaymentRoute
   PropostaIdRoute: typeof PropostaIdRoute
-  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
-  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/mcp': {
-      id: '/mcp'
-      path: '/mcp'
-      fullPath: '/mcp'
-      preLoaderRoute: typeof McpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -632,6 +595,13 @@ declare module '@tanstack/react-router' {
       path: '/marketing'
       fullPath: '/app/marketing'
       preLoaderRoute: typeof AppMarketingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/leads': {
+      id: '/app/leads'
+      path: '/leads'
+      fullPath: '/app/leads'
+      preLoaderRoute: typeof AppLeadsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/inbox': {
@@ -788,18 +758,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAcademiaRouteImport
       parentRoute: typeof AppRoute
     }
-    '/.well-known/oauth-protected-resource': {
-      id: '/.well-known/oauth-protected-resource'
-      path: '/.well-known/oauth-protected-resource'
-      fullPath: '/.well-known/oauth-protected-resource'
-      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+    '/api/payment': {
+      id: '/api/payment'
+      path: '/api/payment'
+      fullPath: '/api/payment'
+      preLoaderRoute: typeof ApiPaymentRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.mcp/list-tools': {
-      id: '/.mcp/list-tools'
-      path: '/.mcp/list-tools'
-      fullPath: '/.mcp/list-tools'
-      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+    '/api/lead': {
+      id: '/api/lead'
+      path: '/api/lead'
+      fullPath: '/api/lead'
+      preLoaderRoute: typeof ApiLeadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cliente/onboarding/$projeto': {
@@ -808,20 +778,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/cliente/onboarding/$projeto'
       preLoaderRoute: typeof ClienteOnboardingProjetoRouteImport
       parentRoute: typeof ClienteRoute
-    }
-    '/.mcp/invoke-tool/$tool': {
-      id: '/.mcp/invoke-tool/$tool'
-      path: '/.mcp/invoke-tool/$tool'
-      fullPath: '/.mcp/invoke-tool/$tool'
-      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.lovable/oauth/consent': {
-      id: '/.lovable/oauth/consent'
-      path: '/.lovable/oauth/consent'
-      fullPath: '/.lovable/oauth/consent'
-      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
-      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -849,6 +805,7 @@ interface AppRouteChildren {
   AppHorasRoute: typeof AppHorasRoute
   AppIaRoute: typeof AppIaRoute
   AppInboxRoute: typeof AppInboxRoute
+  AppLeadsRoute: typeof AppLeadsRoute
   AppMarketingRoute: typeof AppMarketingRoute
   AppMarketplaceRoute: typeof AppMarketplaceRoute
   AppPagamentosRoute: typeof AppPagamentosRoute
@@ -882,6 +839,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppHorasRoute: AppHorasRoute,
   AppIaRoute: AppIaRoute,
   AppInboxRoute: AppInboxRoute,
+  AppLeadsRoute: AppLeadsRoute,
   AppMarketingRoute: AppMarketingRoute,
   AppMarketplaceRoute: AppMarketplaceRoute,
   AppPagamentosRoute: AppPagamentosRoute,
@@ -910,13 +868,9 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   ClienteRoute: ClienteRouteWithChildren,
   LoginRoute: LoginRoute,
-  McpRoute: McpRoute,
-  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
-  Char91DotwellKnownChar93OauthProtectedResourceRoute:
-    Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  ApiLeadRoute: ApiLeadRoute,
+  ApiPaymentRoute: ApiPaymentRoute,
   PropostaIdRoute: PropostaIdRoute,
-  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
-  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

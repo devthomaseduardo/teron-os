@@ -3,7 +3,6 @@ import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { TeronWordmark } from "@/components/teron/logo";
-import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/login")({
@@ -83,17 +82,13 @@ function LoginPage() {
     setBusy(true);
     setError(null);
     try {
-      // Preserve the intended destination across the OAuth round-trip.
-      sessionStorage.setItem("teron:next", target);
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}/login`,
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}${target}`,
+        },
       });
-      if (result.error) throw result.error instanceof Error ? result.error : new Error(String(result.error));
-      if (result.redirected) return;
-      // Popup flow finished — session is set, navigate now.
-      const saved = sessionStorage.getItem("teron:next") ?? target;
-      sessionStorage.removeItem("teron:next");
-      navigate({ to: saved });
+      if (error) throw error;
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
       setBusy(false);
