@@ -28,6 +28,8 @@ import { TeronWordmark } from "@/components/teron/logo";
 import { StatusPill } from "@/components/teron/status-pill";
 import { currency, publicProposalDemo } from "@/lib/teron-data";
 import { AiBriefingCopilot } from "@/components/teron/ai-briefing-copilot";
+import { createMercadoPagoPix } from "@/services/mercadopago";
+import { createStripeCheckoutSession } from "@/services/stripe";
 
 export const Route = createFileRoute("/proposta/$id")({
   head: ({ params }) => ({
@@ -112,7 +114,7 @@ function ProposalPortal() {
   const basePrice = 800; // Base Landing Page
   const [selectedExtras, setSelectedExtras] = useState<string[]>(["whatsapp"]);
   const [cpfCnpj, setCpfCnpj] = useState("");
-  const [clientEmail, setClientEmail] = useState(data.client.email || "");
+  const [clientEmail, setClientEmail] = useState((data.client as any).email || "");
   const [otpCode, setOtpCode] = useState("");
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
@@ -468,14 +470,13 @@ function ProposalPortal() {
                   <button
                     onClick={async () => {
                       try {
-                        const res = await createMercadoPagoPixFn({
-                          data: {
-                            proposalId: id,
-                            amount: entryPayment,
-                            email: clientEmail || data.client.email,
-                            name: data.client.contact,
-                            company: data.client.company,
-                          },
+                        const res = await createMercadoPagoPix({
+                          proposalId: id,
+                          amount: entryPayment,
+                          email: clientEmail || (data.client as any).email || "cliente@estudio.com",
+                          firstName: data.client.contact || "Cliente",
+                          lastName: data.client.company || "Empresa",
+                          description: `Entrada da Proposta ${id}`,
                         });
                         if (res.success) {
                           alert(`PIX Mercado Pago Gerado com Sucesso!\nCódigo Copia e Cola:\n${res.qrCode}`);
@@ -518,13 +519,12 @@ function ProposalPortal() {
                   <button
                     onClick={async () => {
                       try {
-                        const res = await createStripeCheckoutFn({
-                          data: {
-                            proposalId: id,
-                            amount: entryPayment,
-                            email: clientEmail || data.client.email,
-                            company: data.client.company,
-                          },
+                        const res = await createStripeCheckoutSession({
+                          proposalId: id,
+                          amount: entryPayment,
+                          customerEmail: clientEmail || (data.client as any).email || "cliente@estudio.com",
+                          companyName: data.client.company || "Empresa",
+                          description: `Entrada da Proposta ${id}`,
                         });
                         if (res.success && res.url) {
                           alert(`Redirecionando para o Stripe Checkout:\n${res.url}`);
@@ -579,7 +579,7 @@ function ProposalPortal() {
                 Sua Workstation B2B foi ativada. O próximo passo é enviar os materiais obrigatórios para iniciarmos a produção.
               </p>
               <a
-                href={`/cliente/onboarding/${id}?cliente=${encodeURIComponent(data.client.contact)}&empresa=${encodeURIComponent(data.client.company)}&email=${encodeURIComponent(clientEmail || data.client.email)}&endereco=${encodeURIComponent(data.client.address)}&projeto=${encodeURIComponent(data.project)}&briefing=${encodeURIComponent(data.summary)}&prazo=${encodeURIComponent(data.deadline)}`}
+                href={`/cliente/onboarding/${id}?cliente=${encodeURIComponent(data.client.contact)}&empresa=${encodeURIComponent(data.client.company)}&email=${encodeURIComponent(clientEmail || (data.client as any).email || "")}&endereco=${encodeURIComponent((data.client as any).address || "")}&projeto=${encodeURIComponent(data.project)}&briefing=${encodeURIComponent(data.summary)}&prazo=${encodeURIComponent((data as any).deadline || "")}`}
                 className="mt-8 inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-transform hover:scale-105"
               >
                 Acessar Workstation B2B <ArrowRight className="size-4" />

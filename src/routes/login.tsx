@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { TeronWordmark } from "@/components/teron/logo";
-import { supabase } from "@/integrations/supabase/client";
+import { loginUserFn, registerUserFn, verifySessionFn } from "@/services/auth";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -40,11 +40,14 @@ function LoginPage() {
   // Already signed in? Send them straight to their destination.
   useEffect(() => {
     let cancelled = false;
-    supabase.auth.getSession().then(({ data }) => {
-      if (!cancelled && data.session) {
-        window.location.replace(target);
-      }
-    });
+    const token = typeof window !== "undefined" ? localStorage.getItem("teron_auth_token") : null;
+    if (token) {
+      verifySessionFn({ data: { token } }).then((user) => {
+        if (!cancelled && user) {
+          window.location.replace(target);
+        }
+      });
+    }
     return () => {
       cancelled = true;
     };
@@ -57,40 +60,27 @@ function LoginPage() {
     setNotice(null);
     try {
       if (mode === "signup") {
-        const emailRedirectTo = `${window.location.origin}${target}`;
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo },
-        });
-        if (error) throw error;
-        setNotice("Conta criada. Verifique seu e-mail para confirmar o acesso.");
+        const res = await registerUserFn({ data: { email, password } });
+        if (!res.success) {
+          setError(res.error);
+          return;
+        }
+        localStorage.setItem("teron_auth_token", res.token);
+        setNotice("Conta criada com sucesso! Redirecionando...");
+        setTimeout(() => window.location.replace(target), 800);
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
+        const res = await loginUserFn({ data: { email, password } });
+        if (!res.success) {
+          setError(res.error);
+          return;
+        }
+        localStorage.setItem("teron_auth_token", res.token);
         window.location.replace(target);
         return;
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
-      setBusy(false);
-    }
-  }
-
-  async function handleGoogle() {
-    setBusy(true);
-    setError(null);
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}${target}`,
-        },
-      });
-      if (error) throw error;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
       setBusy(false);
     }
   }
@@ -124,93 +114,71 @@ function LoginPage() {
               : "Configure seu workspace TERON em segundos."}
           </p>
 
-          <div className="mt-8 space-y-3">
-            <button
-              onClick={handleGoogle}
-              disabled={busy}
-              className="flex w-full items-center justify-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-accent disabled:opacity-50"
-            >
-              <GoogleIcon /> Continuar com Google
-            </button>
-          </div>
-
-          <div className="my-6 flex items-center gap-3 text-[11px] text-muted-foreground">
-            <span className="h-px flex-1 bg-border" />
-            OU
-            <span className="h-px flex-1 bg-border" />
-          </div>
-
-          <form className="space-y-3" onSubmit={handleEmail}>
-            <div>
-              <label className="mb-1.5 block text-[12px] font-medium text-foreground">E-mail</label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="voce@estudio.com"
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none placeholder:text-muted-foreground/60 focus:border-ring focus:ring-2 focus:ring-ring/30"
-              />
-            </div>
-            <div>
-              <div className="mb-1.5 flex items-center justify-between">
-                <label className="text-[12px] font-medium text-foreground">Senha</label>
+          <div className="mt-8">
+            <form className="space-y-3" onSubmit={handleEmail}>
+              <div>
+                <label className="mb-1.5 block text-[12px] font-medium text-foreground">E-mail</label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="voce@estudio.com"
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none placeholder:text-muted-foreground/60 focus:border-ring focus:ring-2 focus:ring-ring/30"
+                />
               </div>
-              <input
-                type="password"
-                required
-                minLength={6}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30"
-              />
-            </div>
-            {error && (
-              <p role="alert" className="rounded-md bg-destructive/10 p-2 text-[12px] text-destructive">
-                {error}
-              </p>
-            )}
-            {notice && (
-              <p className="rounded-md bg-muted/40 p-2 text-[12px] text-muted-foreground">{notice}</p>
-            )}
-            <button
-              type="submit"
-              disabled={busy}
-              className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-foreground px-3 py-2 text-sm font-medium text-background hover:opacity-90"
-            >
-              {mode === "signin" ? "Entrar no workspace" : "Criar workspace"}{" "}
-              <ArrowRight className="size-3.5" />
-            </button>
-          </form>
+              <div>
+                <div className="mb-1.5 flex items-center justify-between">
+                  <label className="text-[12px] font-medium text-foreground">Senha</label>
+                </div>
+                <input
+                  type="password"
+                  required
+                  minLength={6}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30"
+                />
+              </div>
+              {error && (
+                <p role="alert" className="rounded-md bg-destructive/10 p-2 text-[12px] text-destructive">
+                  {error}
+                </p>
+              )}
+              {notice && (
+                <p className="rounded-md bg-muted/40 p-2 text-[12px] text-muted-foreground">{notice}</p>
+              )}
+              <button
+                type="submit"
+                disabled={busy}
+                className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-foreground px-3 py-2 text-sm font-medium text-background hover:opacity-90"
+              >
+                {mode === "signin" ? "Entrar no workspace" : "Criar workspace"}{" "}
+                <ArrowRight className="size-3.5" />
+              </button>
+            </form>
 
-          <p className="mt-6 text-center text-[12px] text-muted-foreground">
-            {mode === "signin" ? (
-              <>
-                Ainda não tem conta?{" "}
-                <button onClick={() => setMode("signup")} className="text-foreground hover:underline">
-                  Criar workspace
-                </button>
-              </>
-            ) : (
-              <>
-                Já tem uma conta?{" "}
-                <button onClick={() => setMode("signin")} className="text-foreground hover:underline">
-                  Entrar
-                </button>
-              </>
-            )}
-          </p>
+            <p className="mt-6 text-center text-[12px] text-muted-foreground">
+              {mode === "signin" ? (
+                <>
+                  Ainda não tem conta?{" "}
+                  <button onClick={() => setMode("signup")} className="text-foreground hover:underline">
+                    Criar workspace
+                  </button>
+                </>
+              ) : (
+                <>
+                  Já tem uma conta?{" "}
+                  <button onClick={() => setMode("signin")} className="text-foreground hover:underline">
+                    Entrar
+                  </button>
+                </>
+              )}
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  );
-}
-
-function GoogleIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-4" aria-hidden="true">
-      <path fill="#EA4335" d="M12 10.2v3.9h5.5c-.24 1.4-1.7 4.1-5.5 4.1a6.2 6.2 0 1 1 0-12.4c1.94 0 3.24.83 3.98 1.54l2.72-2.63C16.94 3.03 14.7 2 12 2a10 10 0 1 0 0 20c5.77 0 9.6-4.06 9.6-9.77 0-.66-.07-1.16-.17-1.66H12z"/>
-    </svg>
   );
 }

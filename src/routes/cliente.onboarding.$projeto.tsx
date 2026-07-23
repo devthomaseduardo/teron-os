@@ -1,4 +1,5 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
+import { useState, useMemo } from "react";
 import {
   CheckCircle2,
   Clock,
@@ -29,7 +30,6 @@ import {
   ShieldCheck,
   GitCommit,
 } from "lucide-react";
-import { useState } from "react";
 
 import { TeronWordmark } from "@/components/teron/logo";
 import { StatusPill } from "@/components/teron/status-pill";

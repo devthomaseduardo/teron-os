@@ -83,7 +83,7 @@ function TopNav() {
           <a href="#processo" className="hover:text-foreground">Processo</a>
         </nav>
         <div className="ml-auto flex items-center gap-2">
-          <Link to="/login" className="hidden text-[13px] text-muted-foreground hover:text-foreground sm:inline-flex">Entrar</Link>
+          <a href="/login" className="hidden text-[13px] text-muted-foreground hover:text-foreground sm:inline-flex">Entrar</a>
           <Link to="/proposta/$id" params={{ id: "abc123" }} className="inline-flex items-center gap-1.5 rounded-md bg-foreground px-3 py-1.5 text-[13px] font-medium text-background hover:opacity-90">
             Ver proposta demo <ArrowRight className="size-3.5" />
           </Link>
