@@ -88,7 +88,7 @@ export async function processLeadCreation(data: LeadInput) {
     prazo: leadRecord.deadline,
   }).toString();
 
-  const appUrl = process.env.APP_URL || "http://localhost:3005";
+  const appUrl = process.env.APP_URL || "https://os.thomaseduardo.com.br";
   const proposalUrl = `${appUrl}/proposta/${proposalId}?${queryParams}`;
 
   return {

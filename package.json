@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --port 3005",
-    "build": "vite build",
-    "build:dev": "vite build --mode development",
+    "build": "prisma generate && vite build",
+    "build:dev": "prisma generate && vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
