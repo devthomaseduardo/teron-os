@@ -29,6 +29,10 @@ import { listTickets, updateTicket, openTicketsCount } from '../ops/tickets.js';
 import {
   loadPlatform,
   savePlatform,
+  upsertTenant,
+  deleteTenant,
+  authenticateOwner,
+  findTenantBySlug,
   botHealthHint,
 } from '../platform/tenants.js';
 import { listNiches } from '../config/niches/index.js';
@@ -74,7 +78,7 @@ import { resolveNicheLabels } from './niche-labels.js';
 
 const PUBLIC = path.join(process.cwd(), 'panel', 'public');
 const PORT = Number(process.env.PANEL_PORT || 8787);
-const PANEL_TOKEN = process.env.PANEL_TOKEN || 'navalha-dev';
+const PANEL_TOKEN = process.env.PANEL_TOKEN || 'teron-dev';
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || process.env.PANEL_TOKEN || 'admin-dev';
 
 function json(res: http.ServerResponse, code: number, body: unknown): void {
@@ -92,7 +96,7 @@ function readBody(req: http.IncomingMessage): Promise<string> {
   return new Promise((resolve, reject) => {
     const chunks: Buffer[] = [];
     req.on('data', (c) => chunks.push(c));
-    req.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+    req.on('end', () => resolve(Buffer.concat(chunks as unknown as Uint8Array[]).toString('utf8')));
     req.on('error', reject);
   });
 }
@@ -117,7 +121,7 @@ function requestToken(req: http.IncomingMessage): string {
 function resolveOwnerTenant(req: http.IncomingMessage): string | null {
   const t = requestToken(req);
   if (!t) {
-    if (PANEL_TOKEN === 'navalha-dev') return process.env.TENANT_ID || null;
+    if (PANEL_TOKEN === 'teron-dev') return process.env.TENANT_ID || null;
     return null;
   }
   if (t === PANEL_TOKEN || t === ADMIN_TOKEN) {
@@ -131,13 +135,13 @@ function authOwner(req: http.IncomingMessage): boolean {
   const t = requestToken(req);
   if (t && (t === PANEL_TOKEN || t === ADMIN_TOKEN)) return true;
   if (t && resolveToken(t)) return true;
-  return PANEL_TOKEN === 'navalha-dev' && !t;
+  return PANEL_TOKEN === 'teron-dev' && !t;
 }
 
 function authAdmin(req: http.IncomingMessage): boolean {
   const t = requestToken(req);
   if (t === ADMIN_TOKEN || t === PANEL_TOKEN) return true;
-  return ADMIN_TOKEN === 'admin-dev' || ADMIN_TOKEN === 'navalha-dev';
+  return ADMIN_TOKEN === 'admin-dev' || ADMIN_TOKEN === 'teron-dev';
 }
 
 function maskSecret(s: string): string {
@@ -254,6 +258,47 @@ async function handleApi(
     }
   }
 
+  // ── Auth Público (Login de Dono do Tenant) ───────────────
+  if (pathname === '/api/auth/login' && req.method === 'POST') {
+    const body = JSON.parse((await readBody(req)) || '{}');
+    const identifier = String(body.identifier || body.email || body.slug || '').trim();
+    const password = String(body.password || body.token || body.secret || '').trim();
+
+    if (!identifier) {
+      json(res, 400, { ok: false, error: 'identifier_required', message: 'Informe seu usuário, e-mail ou slug.' });
+      return;
+    }
+
+    const tenant = authenticateOwner(identifier, password);
+    if (tenant) {
+      json(res, 200, {
+        ok: true,
+        tenant,
+        token: tenant.ownerToken || tenant.slug || 'teron-dev',
+        role: 'owner',
+      });
+    } else {
+      json(res, 401, {
+        ok: false,
+        error: 'invalid_credentials',
+        message: 'Credenciais inválidas. Verifique o usuário e a senha.',
+      });
+    }
+    return;
+  }
+
+  if (pathname === '/api/niches' && req.method === 'GET') {
+    json(res, 200, { niches: listNiches() });
+    return;
+  }
+
+  if (pathname === '/api/niche-labels' && req.method === 'GET') {
+    const url = new URL(req.url || '/', 'http://x');
+    const nicheId = url.searchParams.get('nicheId') || 'generic';
+    json(res, 200, resolveNicheLabels(nicheId));
+    return;
+  }
+
   // ── Super-admin ──────────────────────────────────────────
   if (pathname.startsWith('/api/admin')) {
     if (!authAdmin(req)) {
@@ -306,18 +351,29 @@ async function handleApi(
       const result = provisionTenant({
         name: body.name || 'Novo cliente',
         slug: body.slug,
-        nicheId: body.nicheId || 'barbershop',
+        nicheId: body.nicheId || 'generic',
         plan: body.plan || 'starter',
-        email: body.email,
+        email: body.email || body.ownerEmail,
         panelBaseUrl:
           process.env.PANEL_PUBLIC_URL || `http://localhost:${PORT}`,
       });
+
+      const p = loadPlatform();
+      const t = p.tenants.find((x) => x.id === result.tenant.id || x.slug === result.tenant.slug);
+      if (t) {
+        if (body.ownerName) t.ownerName = body.ownerName;
+        if (body.email || body.ownerEmail) t.ownerEmail = body.email || body.ownerEmail;
+        if (body.password || body.ownerPassword) t.ownerPassword = body.password || body.ownerPassword;
+        if (result.accessToken) t.ownerToken = result.accessToken;
+        upsertTenant(t);
+      }
+
       json(res, 200, {
-        tenant: result.tenant,
+        tenant: t || result.tenant,
         setupUrl: result.setupUrl,
         accessToken: result.accessToken,
         message:
-          'Cliente criado! Envie o setupUrl para ele configurar sozinho (loja, PIX, WhatsApp).',
+          'Cliente criado com sucesso! O dono já pode acessar o painel.',
         platform: loadPlatform(),
       });
       return;
@@ -355,12 +411,20 @@ async function handleApi(
       return;
     }
 
+    const tenantDeleteMatch = pathname.match(/^\/api\/admin\/tenants\/([^/]+)$/);
+    if (tenantDeleteMatch && req.method === 'DELETE') {
+      const id = tenantDeleteMatch[1];
+      const platform = deleteTenant(id);
+      json(res, 200, { ok: true, message: 'Tenant removido com sucesso', platform });
+      return;
+    }
+
     const tenantPatch = pathname.match(/^\/api\/admin\/tenants\/([^/]+)$/);
     if (tenantPatch && req.method === 'PATCH') {
       const id = tenantPatch[1];
       const body = JSON.parse((await readBody(req)) || '{}');
       const p = loadPlatform();
-      const cur = p.tenants.find((x) => x.id === id);
+      const cur = p.tenants.find((x) => x.id === id || x.slug === id);
       if (!cur) {
         json(res, 404, { error: 'not_found' });
         return;

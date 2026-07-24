@@ -1,17 +1,17 @@
 services:
-  agente-barbearia:
+  agente-bot:
     build: .
-    container_name: agente-barbearia
+    container_name: agente-bot
     restart: unless-stopped
     # Chromium em container precisa de shm maior
     shm_size: "1gb"
     environment:
       - ENGINE_MODE=${ENGINE_MODE:-hybrid}
-      - NICHE_ID=barbershop
+      - NICHE_ID=${NICHE_ID:-generic}
       - SESSION_NAME=${SESSION_NAME:-assistente}
-      - DEVICE_NAME=Barbearia Navalha Fina
+      - DEVICE_NAME=Empresa Modelo
       - ASSISTANT_NAME=${ASSISTANT_NAME:-Alex}
-      - COMPANY_NAME=Barbearia Navalha Fina
+      - COMPANY_NAME=Empresa Modelo
       - CHROME_PATH=/usr/bin/chromium
       - AI_SELECTED=${AI_SELECTED:-GEMINI}
       - GEMINI_KEY=${GEMINI_KEY:-}
@@ -52,7 +52,7 @@ services:
     command: ["node", "dist/panel/server.cjs"]
     environment:
       - PANEL_PORT=8787
-      - PANEL_TOKEN=${PANEL_TOKEN:-navalha-dev}
+      - PANEL_TOKEN=${PANEL_TOKEN:-teron-dev}
       - NICHE_ID=barbershop
     ports:
       - "${PANEL_PORT:-8787}:8787"

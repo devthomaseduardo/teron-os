@@ -21,7 +21,20 @@ export function processCommercial(
   session: CommercialSession;
   reply: {
     text?: string;
-    list?: typeof mainMenu;
+    list?: {
+      title: string;
+      description: string;
+      buttonText: string;
+      footer?: string;
+      sections: {
+        title: string;
+        rows: {
+          rowId: string;
+          title: string;
+          description?: string;
+        }[];
+      }[];
+    };
     buttons?: { id: string; text: string }[];
   };
   action?: 'create_proposal';

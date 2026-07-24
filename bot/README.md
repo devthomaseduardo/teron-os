@@ -58,8 +58,8 @@ docker compose up -d --build
 **Tokens dev (troque em produção):**
 
 ```env
-PANEL_TOKEN=navalha-dev
-ADMIN_TOKEN=navalha-dev   # se omitido, usa PANEL_TOKEN
+PANEL_TOKEN=teron-dev
+ADMIN_TOKEN=teron-dev   # se omitido, usa PANEL_TOKEN
 ```
 
 ```bash
@@ -225,8 +225,8 @@ AI_SELECTED=GEMINI
 GEMINI_KEY=
 CHROME_PATH=/usr/bin/chromium
 PANEL_PORT=8787
-PANEL_TOKEN=navalha-dev
-ADMIN_TOKEN=navalha-dev
+PANEL_TOKEN=teron-dev
+ADMIN_TOKEN=teron-dev
 MERCADOPAGO_ACCESS_TOKEN=
 PANEL_PUBLIC_URL=http://localhost:8787
 TENANT_ID=                 # opcional: slug do tenant no bot

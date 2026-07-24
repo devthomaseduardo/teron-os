@@ -50,10 +50,10 @@ RUN npm run build \
 # Volumes esperados: /app/data /app/tokens /app/config
 ENV SESSION_NAME=assistente \
     ENGINE_MODE=hybrid \
-    NICHE_ID=barbershop \
-    DEVICE_NAME="Barbearia Navalha Fina" \
+    NICHE_ID=generic \
+    DEVICE_NAME="Empresa Modelo" \
     ASSISTANT_NAME=Alex \
-    COMPANY_NAME="Barbearia Navalha Fina"
+    COMPANY_NAME="Empresa Modelo"
 
 EXPOSE 3000 8787
 

@@ -1,15 +1,15 @@
 {
   "shop": {
-    "name": "Barbearia Navalha Fina",
-    "address": "Rua das Tesouras, 120 — Centro",
+    "name": "Barbearia Modelo",
+    "address": "Rua Central, 120 — Centro",
     "phone": "(11) 97707-0209",
     "timezone": "America/Sao_Paulo",
-    "greeting": "Bem-vindo à Barbearia Navalha Fina! ✂️",
+    "greeting": "Bem-vindo à Barbearia Modelo! ✂️",
     "slotMinutes": 30,
     "daysOpen": [1, 2, 3, 4, 5, 6],
     "notes": "Seg a sáb · Dom fechado · Chegue 5 min antes",
-    "pixKey": "barbearia@navalhafina.com.br",
-    "pixName": "Barbearia Navalha Fina",
+    "pixKey": "barbearia@empresa.com.br",
+    "pixName": "Barbearia Modelo",
     "waitBufferMin": 5,
     "lat": -23.55052,
     "lng": -46.633308

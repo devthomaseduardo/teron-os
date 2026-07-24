@@ -51,7 +51,7 @@ export function createMercadoPagoProvider(): PaymentProvider {
         payer: {
           email:
             req.payerEmail ||
-            `cliente+${req.externalId.replace(/\W/g, '')}@navalhafina.local`,
+            `cliente+${req.externalId.replace(/\W/g, '')}@empresa.local`,
           first_name: (req.payerName || 'Cliente').split(' ')[0],
         },
       };

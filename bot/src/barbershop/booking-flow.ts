@@ -488,7 +488,7 @@ export async function runBarbershopFlow(
     const appt = getAppointmentByChat(chatId, false);
 
     // pós-agendamento atalhos 1-3 do tplBooked
-    if (appt && (current === 'done' || current === 'payment' || current === 'idle' || current === 'menu')) {
+    if (appt && (current === 'done' || (current as string) === 'payment' || current === 'idle' || current === 'menu')) {
       if (ne === 'pagar' || (ne === '1' && current === 'done' && appt.payment?.status !== 'confirmed')) {
         // if just finished booking, 1 = pay
       }
@@ -610,7 +610,7 @@ export async function runBarbershopFlow(
     if (
       ne === 'paguei' ||
       n.includes('comprovante') ||
-      (ne === '1' && current === 'awaiting_pay_confirm')
+      (ne === '1' && (current as string) === 'awaiting_pay_confirm')
     ) {
       if (appt) {
         confirmPayment(appt.id, 'client');

@@ -115,7 +115,7 @@ async function start(client: Whatsapp): Promise<void> {
   // Tenta obter o número real do host
   let myNumber = '';
   try {
-    const host = (await client.getHostDevice()) as Record<string, unknown>;
+    const host = (await client.getHostDevice()) as unknown as Record<string, unknown>;
     fileLog('wa', `hostDevice raw=${JSON.stringify(host).slice(0, 300)}`);
     myNumber = extractPhone(host);
     if (myNumber) {

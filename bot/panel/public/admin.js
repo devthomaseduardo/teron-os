@@ -134,8 +134,11 @@ function renderOverview(d) {
     <div class="stat"><span>Agendamentos</span><span>${health.appointments || 0}</span></div>
   `;
 
+  const tenantsList = p.tenants || [];
+  document.getElementById('tenantsCount').textContent = `${tenantsList.length} cliente${tenantsList.length === 1 ? '' : 's'}`;
+
   const tb = document.querySelector('#tenantsTable tbody');
-  tb.innerHTML = (p.tenants || [])
+  tb.innerHTML = tenantsList
     .map(
       (t) => `
     <tr>
@@ -143,14 +146,19 @@ function renderOverview(d) {
         <strong>${esc(t.name)}</strong>
         <div class="muted-sm mono">${esc(t.id)}</div>
       </td>
+      <td>
+        <div><strong>${esc(t.ownerName || 'Não informado')}</strong></div>
+        <div class="muted-sm">${esc(t.ownerEmail || '—')}</div>
+      </td>
       <td>${esc(t.nicheId)}</td>
       <td>${esc(t.plan)}</td>
       <td>${chip(t.status)}</td>
       <td class="mono">${esc(t.slug)}</td>
       <td class="gap-2">
-        <button class="btn btn-sm btn-primary" data-access="${esc(t.slug)}">Link dono</button>
+        <button class="btn btn-sm btn-primary" data-access="${esc(t.slug)}" title="Copiar link de acesso do dono">Link Dono</button>
         <button class="btn btn-sm btn-success" data-tid="${t.id}" data-st="live">Live</button>
         <button class="btn btn-sm btn-warn" data-tid="${t.id}" data-st="suspended">Suspender</button>
+        <button class="btn btn-sm btn-danger" data-delete="${t.id}">Excluir</button>
       </td>
     </tr>`
     )
@@ -163,10 +171,24 @@ function renderOverview(d) {
           method: 'PATCH',
           body: JSON.stringify({ status: btn.getAttribute('data-st') }),
         });
-        toast('Tenant atualizado');
+        toast('Status do cliente atualizado');
         await refresh();
       } catch (e) {
         toast('Erro: ' + String(e.message).slice(0, 80));
+      }
+    });
+  });
+
+  tb.querySelectorAll('[data-delete]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const id = btn.getAttribute('data-delete');
+      if (!confirm(`Tem certeza que deseja excluir o cliente ${id}?`)) return;
+      try {
+        await api(`/api/admin/tenants/${id}`, { method: 'DELETE' });
+        toast('Cliente removido');
+        await refresh();
+      } catch (e) {
+        toast('Erro ao excluir: ' + String(e.message).slice(0, 80));
       }
     });
   });
@@ -185,8 +207,8 @@ function renderOverview(d) {
         } catch {
           /* */
         }
-        prompt('Link para o cliente (ele configura sozinho):', url);
-        toast('Link gerado');
+        prompt('Link de acesso para o dono da empresa:', url);
+        toast('Link gerado e copiado');
       } catch (e) {
         toast('Erro: ' + String(e.message).slice(0, 80));
       }
@@ -369,12 +391,15 @@ document.getElementById('btnCreateTenant').addEventListener('click', async () =>
       body: JSON.stringify({
         name: document.getElementById('tName').value,
         slug: document.getElementById('tSlug').value,
+        ownerName: document.getElementById('tOwnerName')?.value,
+        ownerEmail: document.getElementById('tOwnerEmail')?.value,
+        ownerPassword: document.getElementById('tOwnerPassword')?.value,
         nicheId: document.getElementById('tNiche').value,
         plan: document.getElementById('tPlan').value,
       }),
     });
     const url = r.setupUrl || '';
-    toast('Cliente criado! Link de acesso copiado se possível.');
+    toast('Cliente criado com sucesso!');
     if (url) {
       try {
         await navigator.clipboard.writeText(url);
@@ -382,12 +407,15 @@ document.getElementById('btnCreateTenant').addEventListener('click', async () =>
         /* ignore */
       }
       prompt(
-        'Envie este link para o cliente configurar SOZINHO (loja, PIX, WhatsApp):',
+        'Envie este link para o dono da loja acessar e configurar seu negócio:',
         url
       );
     }
     document.getElementById('tName').value = '';
     document.getElementById('tSlug').value = '';
+    if (document.getElementById('tOwnerName')) document.getElementById('tOwnerName').value = '';
+    if (document.getElementById('tOwnerEmail')) document.getElementById('tOwnerEmail').value = '';
+    if (document.getElementById('tOwnerPassword')) document.getElementById('tOwnerPassword').value = '';
     await refresh();
   } catch (e) {
     toast('Erro: ' + String(e.message).slice(0, 80));

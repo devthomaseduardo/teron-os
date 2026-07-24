@@ -29,6 +29,11 @@ export interface TenantMeta {
   createdAt: string;
   /** slug do subdomínio painel: {slug}.seudominio.com */
   slug: string;
+  ownerName?: string;
+  ownerEmail?: string;
+  ownerPassword?: string;
+  ownerToken?: string;
+  whatsappPhone?: string;
 }
 
 export interface MediaKind {

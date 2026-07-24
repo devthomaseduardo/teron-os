@@ -196,7 +196,7 @@ export async function createWhatsAppClient(
             }
           } else if (
             statusSession === 'notLogged' ||
-            statusSession === 'desconnectedMobile'
+            statusSession === 'disconnectedMobile'
           ) {
             ui?.setStatus('qr', statusSession);
             ui?.warn(

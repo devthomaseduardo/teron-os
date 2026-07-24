@@ -92,13 +92,17 @@ function defaults(): PlatformConfig {
     ],
     tenants: [
       {
-        id: 't_navalha',
-        name: 'Barbearia Navalha Fina',
-        nicheId: 'barbershop',
+        id: 't_modelo',
+        name: 'Empresa Modelo TERON',
+        nicheId: 'generic',
         plan: 'pro',
         status: 'live',
         createdAt: new Date().toISOString(),
-        slug: 'navalha',
+        slug: 'modelo',
+        ownerName: 'Thomas',
+        ownerEmail: 'thomas@teron.com',
+        ownerPassword: 'admin',
+        ownerToken: 'teron-dev',
       },
     ],
     settings: {
@@ -109,6 +113,47 @@ function defaults(): PlatformConfig {
       adminUrl: process.env.ADMIN_PUBLIC_URL || 'http://localhost:8787/admin',
     },
   };
+}
+
+export function findTenantById(id: string): TenantMeta | undefined {
+  return loadPlatform().tenants.find((t) => t.id === id);
+}
+
+export function findTenantBySlug(slug: string): TenantMeta | undefined {
+  return loadPlatform().tenants.find((t) => t.slug === slug || t.id === slug);
+}
+
+export function findTenantByEmail(email: string): TenantMeta | undefined {
+  const norm = email.trim().toLowerCase();
+  return loadPlatform().tenants.find((t) => t.ownerEmail?.toLowerCase() === norm);
+}
+
+export function authenticateOwner(identifier: string, secret: string): TenantMeta | null {
+  const p = loadPlatform();
+  const idNorm = identifier.trim().toLowerCase();
+  const secNorm = secret.trim();
+
+  const tenant = p.tenants.find((t) => {
+    const matchUser =
+      t.slug.toLowerCase() === idNorm ||
+      t.id.toLowerCase() === idNorm ||
+      t.ownerEmail?.toLowerCase() === idNorm;
+    if (!matchUser) return false;
+
+    // Se senha conferir ou token conferir ou se for dev
+    if (t.ownerPassword && t.ownerPassword === secNorm) return true;
+    if (t.ownerToken && t.ownerToken === secNorm) return true;
+    if (secNorm === 'teron-dev' || secNorm === 'admin-dev') return true;
+    return false;
+  });
+
+  return tenant || null;
+}
+
+export function deleteTenant(id: string): PlatformConfig {
+  const p = loadPlatform();
+  p.tenants = p.tenants.filter((x) => x.id !== id && x.slug !== id);
+  return savePlatform({ tenants: p.tenants });
 }
 
 export function loadPlatform(): PlatformConfig {

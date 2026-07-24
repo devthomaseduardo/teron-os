@@ -8,7 +8,7 @@ export const teronNiche: NicheTemplate = {
     'Atendimento comercial, automação de WhatsApp, suporte e onboarding integrado ao Teron OS.',
   persona: {
     name: process.env.ASSISTANT_NAME || 'Teron Bot',
-    role: 'Assistente Comercial',
+    role: 'sales',
     tone: 'amigavel',
     companyName: process.env.COMPANY_NAME || 'Teron OS',
     companyDescription:

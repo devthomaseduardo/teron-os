@@ -3,30 +3,30 @@ import type { NicheTemplate } from '../types.js';
 /** Barbearia fictícia — agendamento com 8 barbeiros */
 export const barbershopNiche: NicheTemplate = {
   id: 'barbershop',
-  name: 'Barbearia Navalha Fina',
+  name: 'Barbearia Modelo',
   description:
     'Agendamento, preços, horários e confirmação com 8 barbeiros e escalas diferentes.',
   persona: {
     name: process.env.ASSISTANT_NAME || 'Alex',
     role: 'assistant',
     tone: 'amigavel',
-    companyName: process.env.COMPANY_NAME || 'Barbearia Navalha Fina',
+    companyName: process.env.COMPANY_NAME || 'Barbearia Modelo',
     companyDescription:
-      'Barbearia com 8 profissionais, cortes, barba, pigmentação e hidratação. Agendamento pelo WhatsApp.',
+      'Barbearia com profissionais qualificados, cortes, barba e estestica. Agendamento pelo WhatsApp.',
     boundaries: [
-      'Não inventa horários fora da agenda real dos barbeiros',
+      'Não inventa horários fora da agenda real dos profissionais',
       'Não confirma valor diferente da tabela',
       'Não atende domingo (fechado)',
     ],
     goals: [
-      'Agendar com serviço, barbeiro, dia e horário',
+      'Agendar com serviço, profissional, dia e horário',
       'Informar preços e duração',
       'Confirmar reserva',
       'Passar endereço',
     ],
     greeting:
-      'Olá! ✂️ Bem-vindo à Barbearia Navalha Fina. Quer agendar, ver preços ou conhecer os barbeiros?',
-    farewell: 'Valeu! Te esperamos na Navalha Fina 💈',
+      'Olá! ✂️ Bem-vindo à Barbearia Modelo. Quer agendar, ver preços ou conhecer nossos profissionais?',
+    farewell: 'Valeu! Te esperamos 💈',
     handoffMessage: 'Vou te passar para a recepção humana 👤',
   },
   intents: [
@@ -36,7 +36,7 @@ export const barbershopNiche: NicheTemplate = {
       priority: 10,
       reply: {
         replies: [
-          'Olá! ✂️ Barbearia Navalha Fina. Digite *menu* para opções ou *agendar* para marcar horário.',
+          'Olá! ✂️ Barbearia Modelo. Digite *menu* para opções ou *agendar* para marcar horário.',
         ],
         exclusive: true,
       },

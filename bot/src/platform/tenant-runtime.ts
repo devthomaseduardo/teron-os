@@ -353,7 +353,7 @@ export function loadOwner(slug: string): OwnerCredentials | null {
 }
 
 export function resolveToken(token: string): { slug: string; owner: OwnerCredentials } | null {
-  if (!token || token === 'navalha-dev' || token === 'admin-dev') {
+  if (!token || token === 'teron-dev' || token === 'admin-dev') {
     // tokens de dev → root legacy
     return null;
   }
@@ -436,7 +436,7 @@ export function setupStatus(slug: string): {
   };
 }
 
-/** Migra tenant navalha a partir da raiz (uma vez) */
+/** Migra tenant inicial a partir da raiz (uma vez) */
 export function ensureDefaultTenantFromRoot(): void {
   const platform = loadPlatform();
   if (!platform.tenants?.length) return;

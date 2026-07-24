@@ -12,7 +12,28 @@
   }
 })();
 
-const TOKEN = localStorage.getItem('panel_token') || 'navalha-dev';
+function getToken() {
+  return localStorage.getItem('panel_token') || 'teron-dev';
+}
+
+function showLoginModal(errorMsg = '') {
+  const modal = document.getElementById('loginModal');
+  const err = document.getElementById('loginError');
+  if (modal) modal.style.display = 'flex';
+  if (err) {
+    if (errorMsg) {
+      err.textContent = errorMsg;
+      err.style.display = 'block';
+    } else {
+      err.style.display = 'none';
+    }
+  }
+}
+
+function hideLoginModal() {
+  const modal = document.getElementById('loginModal');
+  if (modal) modal.style.display = 'none';
+}
 
 const TITLES = {
   dashboard: ['Início', 'Resumo do dia · atendimentos · urgências'],
@@ -24,7 +45,6 @@ const TITLES = {
   config: ['Configurações', 'Negócio, equipe, horários e WhatsApp'],
 };
 
-/** rotas antigas → view unificada */
 const VIEW_ALIASES = {
   fila: 'agenda',
   pix: 'pagamentos',
@@ -83,10 +103,14 @@ async function api(path, opts = {}) {
     ...opts,
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${TOKEN}`,
+      Authorization: `Bearer ${getToken()}`,
       ...(opts.headers || {}),
     },
   });
+  if (res.status === 401 && !path.includes('/api/auth/login')) {
+    showLoginModal();
+    throw new Error('Sessão expirada. Faça login novamente.');
+  }
   if (!res.ok) throw new Error((await res.text()) || res.statusText);
   return res.json();
 }
@@ -1619,7 +1643,58 @@ setInterval(() => {
 setInterval(() => {
   if (state.view === 'whatsapp') loadWaStatus().catch(() => {});
 }, 5000);
-// mensagens sempre polled leve (mesmo fora da aba) se SSE ok a cada 4s só se view mensagens
+// Login modal submit
+document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const identifier = document.getElementById('loginIdentifier')?.value.trim();
+  const password = document.getElementById('loginPassword')?.value.trim();
+  const btn = document.getElementById('btnLoginSubmit');
+
+  if (btn) btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ identifier, password }),
+    }).then((r) => r.json());
+
+    if (res.ok && res.token) {
+      localStorage.setItem('panel_token', res.token);
+      if (res.tenant?.slug) localStorage.setItem('panel_tenant', res.tenant.slug);
+      if (res.tenant?.ownerName) localStorage.setItem('panel_owner', res.tenant.ownerName);
+      if (res.tenant?.name) localStorage.setItem('panel_shop', res.tenant.name);
+
+      hideLoginModal();
+      toast(`Bem-vindo, ${res.tenant?.ownerName || res.tenant?.name || 'Dono'}!`);
+      const ownerBadge = document.getElementById('ownerBadge');
+      if (ownerBadge) ownerBadge.textContent = res.tenant?.ownerName || res.tenant?.name || 'Dono';
+      await refresh(true);
+      await loadSetup();
+    } else {
+      showLoginModal(res.message || 'Credenciais inválidas. Tente novamente.');
+    }
+  } catch (err) {
+    showLoginModal('Erro de conexão ao realizar login.');
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+});
+
+document.getElementById('btnLogout')?.addEventListener('click', () => {
+  localStorage.removeItem('panel_token');
+  localStorage.removeItem('panel_tenant');
+  localStorage.removeItem('panel_owner');
+  localStorage.removeItem('panel_shop');
+  showLoginModal('Você se desconectou. Entre com suas credenciais para continuar.');
+});
+
+// Update initial owner badge if stored
+const ownerNameStored = localStorage.getItem('panel_owner');
+if (ownerNameStored && document.getElementById('ownerBadge')) {
+  document.getElementById('ownerBadge').textContent = ownerNameStored;
+}
+
 setInterval(() => {
   if (state.view === 'mensagens' || !state.live) {
     renderMessages({ silent: true }).catch(() => {});

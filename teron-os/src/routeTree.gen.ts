@@ -28,6 +28,8 @@ import { Route as AppAtividadeRouteImport } from './routes/app.atividade'
 import { Route as AppAutomacoesRouteImport } from './routes/app.automacoes'
 import { Route as AppBaseRouteImport } from './routes/app.base'
 import { Route as AppBibliotecaRouteImport } from './routes/app.biblioteca'
+import { Route as AppBotRouteImport } from './routes/app.bot'
+import { Route as AppBotAdminRouteImport } from './routes/app.bot-admin'
 import { Route as AppChatRouteImport } from './routes/app.chat'
 import { Route as AppClientesRouteImport } from './routes/app.clientes'
 import { Route as AppConfiguracoesRouteImport } from './routes/app.configuracoes'
@@ -149,6 +151,16 @@ const AppBaseRoute = AppBaseRouteImport.update({
 const AppBibliotecaRoute = AppBibliotecaRouteImport.update({
   id: '/biblioteca',
   path: '/biblioteca',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBotRoute = AppBotRouteImport.update({
+  id: '/bot',
+  path: '/bot',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBotAdminRoute = AppBotAdminRouteImport.update({
+  id: '/bot-admin',
+  path: '/bot-admin',
   getParentRoute: () => AppRoute,
 } as any)
 const AppChatRoute = AppChatRouteImport.update({
@@ -307,6 +319,8 @@ export interface FileRoutesByFullPath {
   '/app/automacoes': typeof AppAutomacoesRoute
   '/app/base': typeof AppBaseRoute
   '/app/biblioteca': typeof AppBibliotecaRoute
+  '/app/bot': typeof AppBotRoute
+  '/app/bot-admin': typeof AppBotAdminRoute
   '/app/chat': typeof AppChatRoute
   '/app/clientes': typeof AppClientesRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
@@ -354,6 +368,8 @@ export interface FileRoutesByTo {
   '/app/automacoes': typeof AppAutomacoesRoute
   '/app/base': typeof AppBaseRoute
   '/app/biblioteca': typeof AppBibliotecaRoute
+  '/app/bot': typeof AppBotRoute
+  '/app/bot-admin': typeof AppBotAdminRoute
   '/app/chat': typeof AppChatRoute
   '/app/clientes': typeof AppClientesRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
@@ -403,6 +419,8 @@ export interface FileRoutesById {
   '/app/automacoes': typeof AppAutomacoesRoute
   '/app/base': typeof AppBaseRoute
   '/app/biblioteca': typeof AppBibliotecaRoute
+  '/app/bot': typeof AppBotRoute
+  '/app/bot-admin': typeof AppBotAdminRoute
   '/app/chat': typeof AppChatRoute
   '/app/clientes': typeof AppClientesRoute
   '/app/configuracoes': typeof AppConfiguracoesRoute
@@ -453,6 +471,8 @@ export interface FileRouteTypes {
     | '/app/automacoes'
     | '/app/base'
     | '/app/biblioteca'
+    | '/app/bot'
+    | '/app/bot-admin'
     | '/app/chat'
     | '/app/clientes'
     | '/app/configuracoes'
@@ -500,6 +520,8 @@ export interface FileRouteTypes {
     | '/app/automacoes'
     | '/app/base'
     | '/app/biblioteca'
+    | '/app/bot'
+    | '/app/bot-admin'
     | '/app/chat'
     | '/app/clientes'
     | '/app/configuracoes'
@@ -548,6 +570,8 @@ export interface FileRouteTypes {
     | '/app/automacoes'
     | '/app/base'
     | '/app/biblioteca'
+    | '/app/bot'
+    | '/app/bot-admin'
     | '/app/chat'
     | '/app/clientes'
     | '/app/configuracoes'
@@ -727,6 +751,20 @@ declare module '@tanstack/react-router' {
       path: '/biblioteca'
       fullPath: '/app/biblioteca'
       preLoaderRoute: typeof AppBibliotecaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/bot': {
+      id: '/app/bot'
+      path: '/bot'
+      fullPath: '/app/bot'
+      preLoaderRoute: typeof AppBotRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/bot-admin': {
+      id: '/app/bot-admin'
+      path: '/bot-admin'
+      fullPath: '/app/bot-admin'
+      preLoaderRoute: typeof AppBotAdminRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/chat': {
@@ -930,6 +968,8 @@ interface AppRouteChildren {
   AppAutomacoesRoute: typeof AppAutomacoesRoute
   AppBaseRoute: typeof AppBaseRoute
   AppBibliotecaRoute: typeof AppBibliotecaRoute
+  AppBotRoute: typeof AppBotRoute
+  AppBotAdminRoute: typeof AppBotAdminRoute
   AppChatRoute: typeof AppChatRoute
   AppClientesRoute: typeof AppClientesRoute
   AppConfiguracoesRoute: typeof AppConfiguracoesRoute
@@ -964,6 +1004,8 @@ const AppRouteChildren: AppRouteChildren = {
   AppAutomacoesRoute: AppAutomacoesRoute,
   AppBaseRoute: AppBaseRoute,
   AppBibliotecaRoute: AppBibliotecaRoute,
+  AppBotRoute: AppBotRoute,
+  AppBotAdminRoute: AppBotAdminRoute,
   AppChatRoute: AppChatRoute,
   AppClientesRoute: AppClientesRoute,
   AppConfiguracoesRoute: AppConfiguracoesRoute,

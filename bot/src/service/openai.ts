@@ -62,10 +62,40 @@ export async function mainOpenAI({
   // Verifica o status da execução e obtém a resposta do modelo
   const messages = await checkRunStatus({ threadId: thread.id, runId: run.id });
   const responseAI = messages.data[0]
-    .content[0] as OpenAI.Beta.Threads.Messages.MessageContentText;
+    .content[0] as any;
 
   // Retorna o texto da resposta
   return responseAI.text.value;
+}
+
+/** Retorna histórico real do OpenAI (as any para compatibilidade) */
+export async function getThreadMessages(opts: {
+  tenantId: string;
+  threadId: string;
+}): Promise<any> {
+  return await new Promise((resolve, _reject) => {
+    // Função para verificar periodicamente o status da execução
+    const verify = async (): Promise<void> => {
+      // Recupera o status da execução do thread
+      const runStatus = await openai.beta.threads.runs.retrieve(
+        opts.threadId,
+        ''
+      );
+
+      // Se a execução estiver completa, obtém a lista de mensagens e resolve a promessa
+      if (runStatus.status === 'completed') {
+        const messages = await openai.beta.threads.messages.list(opts.threadId);
+        resolve(messages);
+      } else {
+        // Se a execução ainda não estiver completa, aguarda 3 segundos e verifica novamente
+        console.log('Aguardando resposta da OpenAI...');
+        setTimeout(verify, 3000);
+      }
+    };
+
+    // Inicia a verificação do status
+    verify();
+  });
 }
 
 // Função auxiliar para verificar o status da execução do thread
@@ -75,7 +105,7 @@ async function checkRunStatus({
 }: {
   threadId: string;
   runId: string;
-}): Promise<OpenAI.Beta.Threads.Messages.ThreadMessagesPage> {
+}): Promise<any> {
   return await new Promise((resolve, _reject) => {
     // Função para verificar periodicamente o status da execução
     const verify = async (): Promise<void> => {

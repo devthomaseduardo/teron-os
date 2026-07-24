@@ -286,7 +286,7 @@ function printMessages(limit: number): void {
 
 function printLeads(limit: number): void {
   const leads = loadLeads().slice(-limit).reverse();
-  console.log(paint(c.bgYellow + c.black + c.bold, ` LEADS (${leads.length}) `));
+  console.log(paint(c.yellow + c.black + c.bold, ` LEADS (${leads.length}) `));
   if (!leads.length) {
     console.log(dim('\n  Nenhum lead em data/leads.jsonl.\n'));
     return;
