@@ -94,9 +94,9 @@ function LoginPage() {
           <TeronWordmark />
           <div>
             <p className="max-w-md font-display text-2xl font-medium leading-snug text-foreground">
-              "A TERON substituiu 4 ferramentas do nosso estúdio. Nossos clientes finalmente sentem que estão sendo bem cuidados."
+              "A TERON é a ferramenta que faltava para a gestão de estúdios. Simplifica processos, organiza o fluxo de trabalho e melhora a comunicação com os clientes."
             </p>
-            <p className="mt-4 text-sm text-muted-foreground">Marina Prado · Founder, Pallas Studio</p>
+            <p className="mt-4 text-sm text-muted-foreground">Thomas Eduardo · Desenvolvedor</p>
           </div>
         </div>
       </div>
