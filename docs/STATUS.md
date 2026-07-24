@@ -1,42 +1,54 @@
 # Status — TERON OS
 
-## Pipeline completo (implementado)
+## Pipeline completo (código)
 
 ```
-WhatsApp (teron-flow)
-  → POST /api/lead          (Lead + Proposal)
-  → link /proposta/{token}
+WhatsApp (NICHE_ID=teron)
+  → discovery / recrutador / produto TERON
+  → POST /api/lead
+  → Proposal.publicToken
 
-Cliente abre proposta
-  → GET /api/proposal/{token}   (marca visualizada)
-  → POST accept                 (status aceita + cria Project + clientAccessToken)
-  → /cliente/onboarding/{token}
+Cliente
+  → GET  /api/proposal/{token}
+  → POST accept  → Project + clientAccessToken
+  → /proposta/{token}  (useProposal)
+  → /cliente/onboarding/{clientAccessToken}
+      GET/PATCH /api/project/{token}  (checklist no Postgres)
 
 Admin
-  → GET /api/leads
-  → GET /api/proposals
-  → /app/leads e /app/propostas (sem mock)
+  → GET /api/leads      → /app/leads
+  → GET /api/proposals  → /app/propostas
+  → GET /api/projects   → /app/projetos
+
+Pagamento
+  → processPaymentWebhookFn / POST /api/payment
+  → aceita proposta + cria Project se faltar
 ```
 
-## Hook da proposta
+## Sem demo
 
-`src/hooks/use-proposal.ts`
-- `load` / `accept` / `reject`
-- Fallback de query params para links antigos do bot
+- Leads, propostas e projetos começam **vazios**
+- Workstation só abre com token real
+- Proposta pública lê do banco (fallback query string)
 
-Na página `proposta.$id.tsx`, use:
+## Rodar
 
-```tsx
-const { id } = useParams({ from: "/proposta/$id" });
-const { view, loading, error, accept } = useProposal(id);
+```bash
+npm run db:migrate
+npm run dev
+
+# bot
+cd bot && cp .env.example .env   # preencher GEMINI_KEY se hybrid
+# NICHE_ID=teron
+# TERON_OS_URL=http://localhost:3005
+npm run bot:dev   # ou o script do monorepo
 ```
 
 ## Segurança
 
-- `.env` no gitignore
-- Remova `.env` do tracking se ainda estiver no histórico
-- Rotacione chaves
+- `.env` no gitignore — não commitar secrets
+- Rotacionar chaves se `.env` já foi commitado
 
 ## Mercado
 
-Ver [docs/MARKET.md](./MARKET.md)
+Ver [MARKET.md](./MARKET.md)
