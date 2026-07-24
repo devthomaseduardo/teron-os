@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: admin_teron
+      POSTGRES_PASSWORD: UM_SENHA_MUITO_FORTE_AQUI_123
+      POSTGRES_DB: teron_os
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - teron-net
+
+  app:
+    # Ajuste o build se necessario, ou use a imagem correta
+    build: .
+    restart: always
+    environment:
+      DATABASE_URL: "postgresql://admin_teron:UM_SENHA_MUITO_FORTE_AQUI_123@db:5432/teron_os"
+      SESSION_SECRET: "GERE_UM_HASH_ALEATORIO_FORTE_AQUI"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    networks:
+      - teron-net
+
+networks:
+  teron-net:
+    driver: bridge
