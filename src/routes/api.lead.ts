@@ -7,6 +7,7 @@ export interface LeadInput {
   company?: string;
   email?: string;
   phone?: string;
+  whatsappId?: string;
   address?: string;
   city?: string;
   projectType?: string;
@@ -15,87 +16,112 @@ export interface LeadInput {
   briefing?: string;
   project_details?: string;
   totalInvestment?: number;
+  answers?: Record<string, unknown>;
 }
 
-export const leadsStore = new Map<string, any>();
-
 export async function processLeadCreation(data: LeadInput) {
-  const {
-    name,
-    company,
-    email,
-    phone,
-    address,
-    city,
-    projectType,
-    project_type,
-    deadline,
-    briefing,
-    project_details,
-    totalInvestment,
-  } = data;
-
-  const clientName = name || "Cliente B2B";
-  const companyName = company || "Empresa Contratante";
-  const clientEmail = email || "cliente@empresa.com.br";
-  const clientPhone = phone || "(11) 99999-9999";
-  const clientAddress = address || city || "São Paulo, SP";
-  const typeOfProject = projectType || project_type || "Portal Dealer B2B & Plataforma Web";
-  const projectDeadline = deadline || "15 dias úteis";
-  const projectBriefing = briefing || project_details || "Desenvolvimento de plataforma web B2B de alta velocidade.";
-  const total = totalInvestment || 2800;
+  const clientName = data.name || "Cliente B2B";
+  const companyName = data.company || "Empresa Contratante";
+  const clientEmail = data.email || null;
+  const clientPhone = data.phone || null;
+  const whatsappId = data.whatsappId || data.phone || null;
+  const clientAddress = data.address || data.city || null;
+  const typeOfProject =
+    data.projectType || data.project_type || "Portal Dealer B2B & Plataforma Web";
+  const projectDeadline = data.deadline || "15 dias úteis";
+  const projectBriefing =
+    data.briefing ||
+    data.project_details ||
+    "Desenvolvimento de plataforma web B2B de alta velocidade.";
+  const total = data.totalInvestment || 2800;
   const entry = total * 0.5;
 
-  const slug = (companyName || clientName || "cliente")
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, "-")
-    .replace(/-+/g, "-");
-  const randomSuffix = Math.floor(10000 + Math.random() * 90000);
-  const proposalId = `os-${slug}-${randomSuffix}`;
+  // 1. Cria o Lead
+  const lead = await prisma.lead.create({
+    data: {
+      name: clientName,
+      company: companyName,
+      email: clientEmail,
+      phone: clientPhone,
+      whatsappId,
+      address: clientAddress,
+      projectType: typeOfProject,
+      deadline: projectDeadline,
+      briefing: projectBriefing,
+      answers: data.answers || {
+        name: clientName,
+        company: companyName,
+        email: clientEmail,
+        city: data.city,
+        projectType: typeOfProject,
+        deadline: projectDeadline,
+        briefing: projectBriefing,
+      },
+      totalInvestment: total,
+      entryPayment: entry,
+      status: "proposta_enviada",
+      source: "whatsapp",
+    },
+  });
 
-  const leadRecord = {
-    id: proposalId,
-    name: clientName,
-    company: companyName,
-    email: clientEmail,
-    phone: clientPhone,
-    address: clientAddress,
-    projectType: typeOfProject,
-    deadline: projectDeadline,
-    briefing: projectBriefing,
-    totalInvestment: total,
-    entryPayment: entry,
-    status: "proposta_enviada",
-  };
+  // 2. Cria a Proposal vinculada
+  const validUntil = new Date();
+  validUntil.setDate(validUntil.getDate() + 7);
 
-  leadsStore.set(proposalId, leadRecord);
+  const proposal = await prisma.proposal.create({
+    data: {
+      leadId: lead.id,
+      title: `Proposta — ${companyName}`,
+      content: projectBriefing,
+      amount: total,
+      entryAmount: entry,
+      status: "enviada",
+      validUntil,
+      version: 1,
+    },
+  });
 
-  try {
-    await prisma.lead.create({
-      data: leadRecord,
-    });
-  } catch (err) {
-    console.error("[Prisma] Failed to save lead to PostgreSQL:", err);
-  }
+  const appUrl = (process.env.APP_URL || "https://os.thomaseduardo.com.br").replace(
+    /\/$/,
+    ""
+  );
 
+  // Link limpo usando publicToken (sem query params pesados)
+  const proposalUrl = `${appUrl}/proposta/${proposal.publicToken}`;
+
+  // Também mantém compatibilidade com query params (para a página atual)
   const queryParams = new URLSearchParams({
-    cliente: leadRecord.name,
-    empresa: leadRecord.company,
-    email: leadRecord.email,
-    endereco: leadRecord.address,
-    projeto: leadRecord.projectType,
-    briefing: leadRecord.briefing,
-    prazo: leadRecord.deadline,
+    cliente: clientName,
+    empresa: companyName,
+    email: clientEmail || "",
+    endereco: clientAddress || "",
+    projeto: typeOfProject,
+    briefing: projectBriefing,
+    prazo: projectDeadline,
   }).toString();
 
-  const appUrl = process.env.APP_URL || "https://os.thomaseduardo.com.br";
-  const proposalUrl = `${appUrl}/proposta/${proposalId}?${queryParams}`;
+  const proposalUrlWithParams = `${proposalUrl}?${queryParams}`;
 
   return {
     success: true,
-    proposalId,
-    url: proposalUrl,
-    lead: leadRecord,
+    leadId: lead.id,
+    proposalId: proposal.id,
+    publicToken: proposal.publicToken,
+    url: proposalUrlWithParams,
+    proposalUrl: proposalUrlWithParams,
+    lead: {
+      id: lead.id,
+      name: lead.name,
+      company: lead.company,
+      email: lead.email,
+      phone: lead.phone,
+      projectType: lead.projectType,
+      deadline: lead.deadline,
+      briefing: lead.briefing,
+      totalInvestment: lead.totalInvestment,
+      entryPayment: lead.entryPayment,
+      status: lead.status,
+    },
     message: "Proposta comercial gerada com sucesso via TERON OS!",
   };
 }
@@ -107,5 +133,23 @@ export const createLeadFn = createServerFn({ method: "POST" })
   });
 
 export const Route = createFileRoute("/api/lead")({
+  // Handler HTTP tradicional para o bot (fetch direto)
+  server: {
+    handlers: {
+      POST: async ({ request }) => {
+        try {
+          const body = (await request.json()) as LeadInput;
+          const result = await processLeadCreation(body);
+          return Response.json(result);
+        } catch (err) {
+          console.error("[api/lead] error:", err);
+          return Response.json(
+            { success: false, error: "Failed to create lead/proposal" },
+            { status: 500 }
+          );
+        }
+      },
+    },
+  },
   component: () => null,
 });
