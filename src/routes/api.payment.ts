@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { createMercadoPagoPix, createMercadoPagoPreference } from "../services/mercadopago";
+import { createMercadoPagoPix } from "../services/mercadopago";
 import { createStripeCheckoutSession } from "../services/stripe";
+import { prisma } from "@/lib/prisma";
 
 export interface PaymentWebhookInput {
   proposalId: string;
@@ -26,72 +27,135 @@ export interface StripeCheckoutServerInput {
   company: string;
 }
 
-export const paymentsStore = new Map<string, any>();
-
-/**
- * Server Function: Gerar PIX via Mercado Pago
- */
 export const createMercadoPagoPixFn = createServerFn({ method: "POST" })
   .validator((data: MercadoPagoPixServerInput) => data)
   .handler(async ({ data }) => {
     const names = data.name.split(" ");
-    const result = await createMercadoPagoPix({
+    return createMercadoPagoPix({
       proposalId: data.proposalId,
       amount: data.amount,
       email: data.email,
       firstName: names[0] || "Cliente",
       lastName: names.slice(1).join(" ") || "B2B",
-      description: `Entrada 50% OS #${data.proposalId} — ${data.company}`,
+      description: `Entrada 50% OS #${data.proposalId} \u2014 ${data.company}`,
     });
-
-    return result;
   });
 
-/**
- * Server Function: Gerar Checkout no Stripe
- */
 export const createStripeCheckoutFn = createServerFn({ method: "POST" })
   .validator((data: StripeCheckoutServerInput) => data)
   .handler(async ({ data }) => {
-    const result = await createStripeCheckoutSession({
+    return createStripeCheckoutSession({
       proposalId: data.proposalId,
       amount: data.amount,
       customerEmail: data.email,
       companyName: data.company,
-      description: `Entrada 50% OS #${data.proposalId} — ${data.company}`,
+      description: `Entrada 50% OS #${data.proposalId} \u2014 ${data.company}`,
     });
-
-    return result;
   });
 
-/**
- * Server Function: Confirmar Pagamento & Liberar Workstation B2B
- */
+/** Confirma pagamento: aceita proposta + garante Project */
 export const processPaymentWebhookFn = createServerFn({ method: "POST" })
   .validator((data: PaymentWebhookInput) => data)
   .handler(async ({ data }) => {
     const { proposalId, paymentMethod, amount, transactionId, status } = data;
 
-    const record = {
-      proposalId,
-      paymentMethod,
-      amount,
-      transactionId: transactionId || `tx_${Math.random().toString(36).substring(2, 9)}`,
-      status: status || "paid",
-      paidAt: new Date().toISOString(),
-      workstationUnlocked: true,
-    };
+    if (status !== "paid") {
+      return { success: false, message: "Pagamento n\u00e3o confirmado", status };
+    }
 
-    paymentsStore.set(proposalId, record);
+    // proposalId pode ser publicToken ou id
+    let proposal = await prisma.proposal.findFirst({
+      where: {
+        OR: [{ publicToken: proposalId }, { id: proposalId }],
+      },
+      include: { lead: true, project: true },
+    });
+
+    if (!proposal) {
+      return {
+        success: false,
+        message: "Proposta n\u00e3o encontrada",
+        workstationUrl: null,
+      };
+    }
+
+    await prisma.proposal.update({
+      where: { id: proposal.id },
+      data: {
+        status: "aceita",
+        acceptedAt: proposal.acceptedAt || new Date(),
+      },
+    });
+
+    if (proposal.leadId) {
+      await prisma.lead.update({
+        where: { id: proposal.leadId },
+        data: { status: "aceita" },
+      });
+    }
+
+    let project = proposal.project;
+    if (!project) {
+      project = await prisma.project.create({
+        data: {
+          title: proposal.title,
+          clientName: proposal.lead?.name || "Cliente",
+          clientEmail: proposal.lead?.email || null,
+          clientCompany: proposal.lead?.company || null,
+          status: "onboarding",
+          deadline: proposal.lead?.deadline || null,
+          budget: proposal.amount || amount,
+          description: proposal.content || proposal.lead?.briefing || null,
+          leadId: proposal.leadId,
+          proposalId: proposal.id,
+          clientPortal: {
+            checklist: [
+              { id: "logo", label: "Logotipo", done: false, required: true },
+              { id: "texts", label: "Textos", done: false, required: true },
+              { id: "images", label: "Imagens", done: false, required: true },
+              { id: "access", label: "Acessos", done: false, required: false },
+            ],
+            notes: [
+              {
+                text: `Pagamento ${paymentMethod} confirmado \u00b7 ${transactionId || "sem id"}`,
+                at: new Date().toISOString(),
+              },
+            ],
+            payment: {
+              method: paymentMethod,
+              amount,
+              transactionId: transactionId || null,
+              paidAt: new Date().toISOString(),
+            },
+          },
+        },
+      });
+    }
 
     return {
       success: true,
-      message: "Pagamento confirmado! Workstation B2B desbloqueada com sucesso.",
-      record,
-      workstationUrl: `/cliente/onboarding/${proposalId}`,
+      message: "Pagamento confirmado. Workstation liberada.",
+      workstationUrl: `/cliente/onboarding/${project.clientAccessToken}`,
+      projectId: project.id,
+      clientAccessToken: project.clientAccessToken,
     };
   });
 
 export const Route = createFileRoute("/api/payment")({
+  server: {
+    handlers: {
+      POST: async ({ request }) => {
+        try {
+          const body = (await request.json()) as PaymentWebhookInput;
+          // Reusa a mesma l\u00f3gica
+          const result = await processPaymentWebhookFn({ data: body } as any);
+          return Response.json(result);
+        } catch (err) {
+          console.error("[api/payment]", err);
+          return Response.json({ success: false, error: "Erro" }, { status: 500 });
+        }
+      },
+    },
+  },
   component: () => null,
 });
