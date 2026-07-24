@@ -1,6 +1,6 @@
 /**
- * Servidor de Integração Mercado Pago — Teron OS
- * Suporta PIX com QR Code, Cartão de Crédito e Mercado Pago Checkout
+ * Integração Mercado Pago — TERON OS
+ * Sem token configurado: NÃO inventa pagamento aprovado (só erro claro).
  */
 
 export interface MercadoPagoPixRequest {
@@ -24,27 +24,19 @@ export interface MercadoPagoPixResponse {
   error?: string;
 }
 
-/**
- * Cria cobrança PIX via API v1 do Mercado Pago
- */
 export async function createMercadoPagoPix(data: MercadoPagoPixRequest): Promise<MercadoPagoPixResponse> {
   const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
 
-  // Se não houver chave real configurada no .env, gera payload de teste estruturado
-  if (!accessToken || accessToken.includes("YOUR_")) {
-    const fakePaymentId = Math.floor(100000000 + Math.random() * 900000000);
-    const fakePixCode = `00020126580014br.gov.bcb.pix0136mp-${fakePaymentId}@teron-studio.com5204000053039865405${data.amount.toFixed(2)}5802BR5920TERON STUDIO B2B6009SAO PAULO62070503***6304ABCD`;
-
+  if (!accessToken || accessToken.includes("YOUR_") || accessToken.trim() === "") {
     return {
-      success: true,
-      paymentId: fakePaymentId,
-      qrCode: fakePixCode,
-      qrCodeBase64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
-      status: "pending",
+      success: false,
+      error:
+        "Mercado Pago não configurado. Defina MERCADOPAGO_ACCESS_TOKEN no .env (sem valor de demonstração).",
     };
   }
 
   try {
+    const appUrl = (process.env.APP_URL || "http://localhost:3005").replace(/\/$/, "");
     const response = await fetch("https://api.mercadopago.com/v1/payments", {
       method: "POST",
       headers: {
@@ -53,7 +45,7 @@ export async function createMercadoPagoPix(data: MercadoPagoPixRequest): Promise
         "X-Idempotency-Key": `pix_${data.proposalId}_${Date.now()}`,
       },
       body: JSON.stringify({
-        transaction_amount: data.amount,
+        transaction_amount: Number(data.amount),
         description: data.description,
         payment_method_id: "pix",
         payer: {
@@ -66,7 +58,7 @@ export async function createMercadoPagoPix(data: MercadoPagoPixRequest): Promise
           },
         },
         external_reference: data.proposalId,
-        notification_url: `${process.env.APP_URL || "http://localhost:3005"}/api/payment?provider=mercadopago`,
+        notification_url: `${appUrl}/api/payment/webhook?provider=mercadopago`,
       }),
     });
 
@@ -75,7 +67,7 @@ export async function createMercadoPagoPix(data: MercadoPagoPixRequest): Promise
     if (!response.ok) {
       return {
         success: false,
-        error: result.message || "Falha ao comunicar com o Mercado Pago",
+        error: result.message || result.error || "Falha ao comunicar com o Mercado Pago",
       };
     }
 
@@ -97,9 +89,6 @@ export async function createMercadoPagoPix(data: MercadoPagoPixRequest): Promise
   }
 }
 
-/**
- * Cria Preferência de Checkout Mercado Pago (Cartão + PIX + Boleto)
- */
 export async function createMercadoPagoPreference(data: {
   proposalId: string;
   title: string;
@@ -108,13 +97,14 @@ export async function createMercadoPagoPreference(data: {
 }) {
   const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
 
-  if (!accessToken || accessToken.includes("YOUR_")) {
+  if (!accessToken || accessToken.includes("YOUR_") || accessToken.trim() === "") {
     return {
-      success: true,
-      initPoint: `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=demo-${data.proposalId}`,
-      preferenceId: `demo-pref-${data.proposalId}`,
+      success: false,
+      error: "Mercado Pago não configurado. Defina MERCADOPAGO_ACCESS_TOKEN no .env.",
     };
   }
+
+  const appUrl = (process.env.APP_URL || "http://localhost:3005").replace(/\/$/, "");
 
   try {
     const response = await fetch("https://api.mercadopago.com/checkout/preferences", {
@@ -133,16 +123,15 @@ export async function createMercadoPagoPreference(data: {
             unit_price: data.amount,
           },
         ],
-        payer: {
-          email: data.email,
-        },
+        payer: { email: data.email },
         back_urls: {
-          success: `${process.env.APP_URL || "http://localhost:3005"}/cliente/onboarding/${data.proposalId}?status=success`,
-          pending: `${process.env.APP_URL || "http://localhost:3005"}/cliente/onboarding/${data.proposalId}?status=pending`,
-          failure: `${process.env.APP_URL || "http://localhost:3005"}/proposta/${data.proposalId}?status=failure`,
+          success: `${appUrl}/proposta/${data.proposalId}?payment=success`,
+          pending: `${appUrl}/proposta/${data.proposalId}?payment=pending`,
+          failure: `${appUrl}/proposta/${data.proposalId}?payment=failure`,
         },
         auto_return: "approved",
         external_reference: data.proposalId,
+        notification_url: `${appUrl}/api/payment/webhook?provider=mercadopago`,
       }),
     });
 
@@ -155,9 +144,6 @@ export async function createMercadoPagoPreference(data: {
       error: result.message,
     };
   } catch (err: any) {
-    return {
-      success: false,
-      error: err.message,
-    };
+    return { success: false, error: err.message };
   }
 }
