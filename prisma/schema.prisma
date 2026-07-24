@@ -27,20 +27,24 @@ model Session {
 }
 
 model Lead {
-  id              String   @id @default(cuid())
+  id              String     @id @default(cuid())
   name            String
-  company         String
-  email           String
+  company         String?
+  email           String?
   phone           String?
+  whatsappId      String?    // chatId do WhatsApp
   address         String?
   projectType     String?
   deadline        String?
-  briefing        String?
-  totalInvestment Float    @default(0)
-  entryPayment    Float    @default(0)
-  status          String   @default("proposta_enviada")
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  briefing        String?    // resumo textual das respostas
+  answers         Json?      // respostas estruturadas do discovery
+  totalInvestment Float      @default(0)
+  entryPayment    Float      @default(0)
+  status          String     @default("novo") // novo | discovery | proposta_enviada | aceita | perdida
+  source          String     @default("whatsapp") // whatsapp | manual | site
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  proposals       Proposal[]
 }
 
 model Project {
@@ -56,12 +60,19 @@ model Project {
 }
 
 model Proposal {
-  id         String   @id @default(cuid())
-  title      String
-  content    String?
-  amount     Float    @default(0)
-  status     String   @default("rascunho")
-  validUntil DateTime?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id          String    @id @default(cuid())
+  leadId      String?
+  lead        Lead?     @relation(fields: [leadId], references: [id])
+  title       String
+  content     String?   // markdown / html da proposta
+  amount      Float     @default(0)
+  entryAmount Float     @default(0)
+  status      String    @default("rascunho") // rascunho | enviada | visualizada | aceita | recusada | expirada
+  validUntil  DateTime?
+  version     Int       @default(1)
+  publicToken String    @unique @default(cuid()) // usado no link público
+  viewedAt    DateTime?
+  acceptedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
