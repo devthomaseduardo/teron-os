@@ -11,20 +11,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 
 dotenv.config();
-import {
-  loadAppointments,
-  loadBarbershop,
-  loadShopOps,
-  saveShopOps,
-  todaysAppointments,
-  updateAppointment,
-  enqueueOwnerMessage,
-  cancelAppointment,
-  saveBarbershop,
-} from '../barbershop/store.js';
-import { confirmPayment } from '../barbershop/payment.js';
-import { ratingsSummary } from '../barbershop/ratings.js';
-import { estimateWait } from '../barbershop/queue.js';
+
 import { listTickets, updateTicket, openTicketsCount } from '../ops/tickets.js';
 import {
   loadPlatform,
@@ -42,9 +29,9 @@ import {
   savePaymentConfig,
   paymentProviderSummary,
   handleMercadoPagoWebhook,
-  confirmByExternalId,
+
 } from '../payments/index.js';
-import { enqueueOwnerMessage as pushOwner } from '../barbershop/store.js';
+import { enqueueOwnerMessage, enqueueOwnerMessage as pushOwner } from '../ops/outbox.js';
 import {
   provisionTenant,
   resolveToken,
@@ -52,7 +39,7 @@ import {
   setRequestTenant,
   getProcessTenant,
 } from '../platform/tenant-runtime.js';
-import type { VisitStatus } from '../barbershop/types.js';
+
 import {
   growthDashboard,
   growthFunnel,
@@ -309,21 +296,12 @@ async function handleApi(
     if (pathname === '/api/admin/overview' && req.method === 'GET') {
       const platform = loadPlatform();
       const health = botHealthHint();
-      const shop = loadBarbershop();
-      const today = todaysAppointments();
-      const ratings = ratingsSummary();
       json(res, 200, {
         platform,
         health,
         niches: listNiches(),
         liveTenant: {
-          shop: shop.shop,
-          services: shop.services.length,
-          barbers: shop.barbers.length,
-          today: today.length,
-          ticketsOpen: openTicketsCount(),
-          ratingAvg: ratings.avg,
-          ratingCount: ratings.count,
+          tickets: openTicketsCount(),
         },
       });
       return;
@@ -435,30 +413,7 @@ async function handleApi(
       return;
     }
 
-    if (pathname === '/api/admin/shop-config' && req.method === 'GET') {
-      json(res, 200, loadBarbershop());
-      return;
-    }
 
-    if (pathname === '/api/admin/shop-config' && req.method === 'POST') {
-      const body = JSON.parse((await readBody(req)) || '{}');
-      // merge shop fields
-      const cur = loadBarbershop();
-      if (body.shop) {
-        cur.shop = { ...cur.shop, ...body.shop };
-      }
-      if (Array.isArray(body.services)) cur.services = body.services;
-      if (Array.isArray(body.barbers)) cur.barbers = body.barbers;
-      if (typeof saveBarbershop === 'function') {
-        saveBarbershop(cur);
-      } else {
-        // fallback write config/barbershop.json
-        const f = path.join(process.cwd(), 'config', 'barbershop.json');
-        fs.writeFileSync(f, JSON.stringify(cur, null, 2), 'utf8');
-      }
-      json(res, 200, cur);
-      return;
-    }
 
     if (pathname === '/api/admin/business' && req.method === 'GET') {
       try {
@@ -508,19 +463,7 @@ async function handleApi(
         payload.type = url.searchParams.get('topic') || payload.type;
 
       const result = await handleMercadoPagoWebhook(payload);
-      if (result?.approved && result.externalId) {
-        const appt = confirmByExternalId(result.externalId, 'system');
-        if (appt) {
-          try {
-            pushOwner(
-              appt.chatId,
-              `Pagamento confirmado automaticamente ✅\nValor: R$ ${appt.price.toFixed(2).replace('.', ',')}\n\nValeu! Te esperamos 💈`
-            );
-          } catch {
-            /* ignore */
-          }
-        }
-      }
+
       json(res, 200, { ok: true, result });
     } catch (e) {
       json(res, 200, { ok: false, error: String(e) });
@@ -572,59 +515,7 @@ async function handleApi(
   }
 
   // setup self-service: loja + equipe + serviços + horários
-  if (pathname === '/api/setup/shop' && req.method === 'POST') {
-    const body = JSON.parse((await readBody(req)) || '{}');
-    const cur = loadBarbershop();
-    if (body.shop) {
-      cur.shop = {
-        ...cur.shop,
-        ...body.shop,
-        // daysOpen / slotMinutes do dono
-        daysOpen: Array.isArray(body.shop.daysOpen)
-          ? body.shop.daysOpen.map(Number)
-          : cur.shop.daysOpen,
-        slotMinutes:
-          body.shop.slotMinutes != null
-            ? Number(body.shop.slotMinutes) || cur.shop.slotMinutes
-            : cur.shop.slotMinutes,
-      };
-    }
-    if (Array.isArray(body.services)) cur.services = body.services;
-    if (Array.isArray(body.barbers)) {
-      // preserva schedule se o client mandou parcial
-      cur.barbers = body.barbers.map((b: Record<string, unknown>, i: number) => {
-        const prev = cur.barbers[i] || cur.barbers.find((x) => x.id === b.id);
-        return {
-          id: String(b.id || prev?.id || `b${i + 1}`),
-          name: String(b.name || prev?.name || 'Profissional'),
-          nickname: String(b.nickname || prev?.nickname || b.name || 'Pro'),
-          specialty: String(b.specialty || prev?.specialty || 'Geral'),
-          schedule:
-            (b.schedule as Record<string, [string, string]>) ||
-            prev?.schedule ||
-            {
-              '1': ['09:00', '18:00'],
-              '2': ['09:00', '18:00'],
-              '3': ['09:00', '18:00'],
-              '4': ['09:00', '18:00'],
-              '5': ['09:00', '18:00'],
-              '6': ['09:00', '14:00'],
-            },
-          onDuty: b.onDuty != null ? Boolean(b.onDuty) : prev?.onDuty !== false,
-        };
-      });
-    }
-    saveBarbershop(cur);
-    notifyChange('shop', 'panel', { action: 'setup_shop' });
-    json(res, 200, {
-      ok: true,
-      shop: cur.shop,
-      barbers: cur.barbers,
-      services: cur.services,
-      setup: setupStatus(tenantSlug || '_root'),
-    });
-    return;
-  }
+
 
   // mensagens WhatsApp (inbox do painel)
   if (pathname === '/api/messages' && req.method === 'GET') {
@@ -816,17 +707,7 @@ async function handleApi(
       body.mercadoPago.enabled = true;
     }
     const next = savePaymentConfig(body);
-    // sync chave PIX com barbershop shop se veio pixKey
-    if (body.pixKey?.key) {
-      try {
-        const shopCfg = loadBarbershop();
-        shopCfg.shop.pixKey = body.pixKey.key;
-        if (body.pixKey.holderName) shopCfg.shop.pixName = body.pixKey.holderName;
-        saveBarbershop(shopCfg);
-      } catch {
-        /* ignore */
-      }
-    }
+
     json(res, 200, {
       ...next,
       mercadoPago: {
@@ -840,26 +721,6 @@ async function handleApi(
     return;
   }
 
-  if (pathname === '/api/payments/test-pix' && req.method === 'POST') {
-    if (!authAdmin(req) && !authOwner(req)) {
-      json(res, 401, { error: 'unauthorized' });
-      return;
-    }
-    const body = JSON.parse((await readBody(req)) || '{}');
-    const amount = Number(body.amount || 1);
-    const { createPixForAppointment } = await import('../payments/index.js');
-    const fake = {
-      id: 'TEST' + Date.now(),
-      price: amount,
-      serviceName: 'Teste PIX',
-      clientName: 'Teste',
-      date: new Date().toISOString().slice(0, 10),
-      time: '12:00',
-    } as any;
-    const { charge } = await createPixForAppointment(fake);
-    json(res, 200, { charge, summary: paymentProviderSummary() });
-    return;
-  }
 
   // ── Tempo real (SSE) ─────────────────────────────────────
   if (pathname === '/api/events' && req.method === 'GET') {
@@ -878,53 +739,10 @@ async function handleApi(
   }
 
   if (pathname === '/api/dashboard' && req.method === 'GET') {
-    const todayList = todaysAppointments().slice().sort((a, b) =>
-      String(a.time || '').localeCompare(String(b.time || ''))
-    );
-    const waiting = todayList.filter((a) =>
-      ['waiting', 'checked_in', 'in_service'].includes(a.status)
-    );
-    const inService = todayList.filter((a) => a.status === 'in_service');
-    const inQueue = todayList.filter((a) =>
-      ['waiting', 'checked_in'].includes(a.status)
-    );
-    const pix = todayList.filter(
-      (a) =>
-        a.payment?.status === 'pending' || a.status === 'awaiting_payment'
-    );
-    const noShow = todayList.filter((a) => a.status === 'no_show');
-    const cancelled = todayList.filter((a) => a.status === 'cancelled');
-    const done = todayList.filter(
-      (a) => a.status === 'done' || a.status === 'rated'
-    );
-    const upcoming = todayList.filter((a) =>
-      ['booked', 'paid', 'awaiting_payment'].includes(a.status)
-    );
-    const paidToday = todayList.filter(
-      (a) => a.payment?.status === 'confirmed'
-    );
-    const revenuePaid = paidToday.reduce(
-      (s, a) => s + Number(a.payment?.amount ?? a.price ?? 0),
-      0
-    );
-    const revenuePending = pix.reduce(
-      (s, a) => s + Number(a.payment?.amount ?? a.price ?? 0),
-      0
-    );
-    const closedCount = done.length + paidToday.length;
-    const ticketBase = paidToday.length || done.length;
-    const avgTicket =
-      ticketBase > 0
-        ? revenuePaid / Math.max(paidToday.length, 1)
-        : 0;
-
-    const ratings = ratingsSummary();
-    const shop = loadBarbershop().shop;
-    const ops = loadShopOps();
     const growth = growthDashboard();
-
+    
     // niche universal labels
-    let nicheId = process.env.NICHE_ID || 'generic';
+    let nicheId = process.env.NICHE_ID || 'teron';
     try {
       const bizPath = path.join(process.cwd(), 'config', 'business.json');
       if (fs.existsSync(bizPath)) {
@@ -935,34 +753,8 @@ async function handleApi(
       /* ignore */
     }
     const labels = resolveNicheLabels(nicheId);
-    const todayISO = new Date().toISOString().slice(0, 10);
-
-    const dayReport = {
-      date: todayISO,
-      total: todayList.length,
-      upcoming: upcoming.length,
-      inQueue: inQueue.length,
-      inService: inService.length,
-      waiting: waiting.length, // queue + in service (compat)
-      completed: done.length,
-      noShow: noShow.length,
-      cancelled: cancelled.length,
-      payPending: pix.length,
-      revenuePaid: Math.round(revenuePaid * 100) / 100,
-      revenuePending: Math.round(revenuePending * 100) / 100,
-      avgTicket: Math.round(avgTicket * 100) / 100,
-      ticketsOpen: openTicketsCount(),
-    };
 
     json(res, 200, {
-      shop: {
-        name: shop.name,
-        phone: shop.phone,
-        address: shop.address,
-        pixKey: shop.pixKey,
-        pixName: shop.pixName,
-      },
-      ops,
       labels,
       nicheId,
       health: botHealthHint(),
@@ -970,149 +762,18 @@ async function handleApi(
         funnel: growth.funnel,
         openCount: growth.openCount,
       },
-      // relatório do dia (universal)
-      dayReport,
-      // compat antigas
-      kpis: {
-        today: todayList.length,
-        waiting: waiting.length,
-        pixPending: pix.length,
-        noShow: noShow.length,
-        growthOpen: growth.openCount,
-        ticketsOpen: dayReport.ticketsOpen,
-        ratingAvg: ratings.avg,
-        ratingCount: ratings.count,
-        done: done.length,
-        revenuePaid: dayReport.revenuePaid,
-        revenuePending: dayReport.revenuePending,
-        avgTicket: dayReport.avgTicket,
-        inQueue: dayReport.inQueue,
-        inService: dayReport.inService,
-        completed: dayReport.completed,
+      dayReport: {
+        ticketsOpen: openTicketsCount(),
       },
-      today: todayList,
-      waiting,
-      pix,
-      ratings,
+      kpis: {
+        growthOpen: growth.openCount,
+        ticketsOpen: openTicketsCount(),
+      }
     });
     return;
   }
 
-  if (pathname === '/api/bookings' && req.method === 'GET') {
-    const url = new URL(req.url || '/', 'http://x');
-    const day = url.searchParams.get('day');
-    let list = loadAppointments();
-    if (day) list = list.filter((a) => a.date === day);
-    else list = todaysAppointments();
-    list = list.slice().sort((a, b) => a.time.localeCompare(b.time));
-    json(res, 200, { bookings: list });
-    return;
-  }
 
-  const bookMatch = pathname.match(/^\/api\/bookings\/([^/]+)$/);
-  if (bookMatch && req.method === 'PATCH') {
-    const id = bookMatch[1];
-    const body = JSON.parse((await readBody(req)) || '{}');
-    const action = String(body.action || '');
-    const a = loadAppointments().find((x) => x.id === id);
-    if (!a) {
-      json(res, 404, { error: 'not_found' });
-      return;
-    }
-
-    if (action === 'arrived' || action === 'checkin') {
-      const booking = updateAppointment(id, { status: 'waiting' });
-      notifyChange('appointments', 'panel', { id, action });
-      json(res, 200, { booking });
-      return;
-    }
-    if (action === 'serve' || action === 'start') {
-      const booking = updateAppointment(id, { status: 'in_service' });
-      notifyChange('appointments', 'panel', { id, action });
-      json(res, 200, { booking });
-      return;
-    }
-    if (action === 'done' || action === 'finish') {
-      // evita reenviar "finalizado" se clicar 2x no painel
-      const alreadyDone = a.status === 'done' || a.status === 'rated';
-      const alreadyNotified = Boolean(a.notes && a.notes.includes('[done_notified]'));
-      const u = updateAppointment(id, {
-        status: 'done',
-        notes: alreadyNotified
-          ? a.notes
-          : `${(a.notes || '').trim()} [done_notified]`.trim(),
-      });
-      if (u && !alreadyDone && !alreadyNotified) {
-        const first = (u.clientName || '').split(' ')[0];
-        enqueueOwnerMessage(
-          u.chatId,
-          `Pronto, *${first}*! ✅\n\nSeu atendimento acabou de ser finalizado.\nSe puder, me manda uma notinha de *1 a 5* (ou digita *avaliar*) — ajuda demais 🙏`
-        );
-      }
-      notifyChange('appointments', 'panel', { id, action });
-      json(res, 200, { booking: u });
-      return;
-    }
-    if (action === 'no_show' || action === 'falta') {
-      const u = updateAppointment(id, { status: 'no_show' });
-      if (u) {
-        const first = (u.clientName || '').split(' ')[0];
-        enqueueOwnerMessage(
-          u.chatId,
-          `Oi, *${first}* 😊\n\nA gente registrou *falta* no horário das *${u.time}*.\nQuer remarcar? Manda *remarcar* — ou *0* pro menu.`
-        );
-      }
-      notifyChange('appointments', 'panel', { id, action });
-      json(res, 200, { booking: u });
-      return;
-    }
-    if (action === 'cancel') {
-      cancelAppointment(id);
-      enqueueOwnerMessage(
-        a.chatId,
-        `❌ *${a.clientName}*, seu horário de *${a.date} ${a.time}* foi cancelado.\n\nDigite *1* para remarcar.`
-      );
-      notifyChange('appointments', 'panel', { id, action });
-      json(res, 200, { ok: true });
-      return;
-    }
-    if (action === 'paid' || action === 'confirm_payment') {
-      const alreadyPaid = a.payment?.status === 'confirmed';
-      const alreadyNotified = Boolean(a.notes && a.notes.includes('[paid_notified]'));
-      confirmPayment(id, 'owner');
-      const u = loadAppointments().find((x) => x.id === id);
-      if (u && !alreadyPaid && !alreadyNotified) {
-        updateAppointment(id, {
-          notes: `${(u.notes || '').trim()} [paid_notified]`.trim(),
-        });
-        const first = (u.clientName || '').split(' ')[0];
-        enqueueOwnerMessage(
-          u.chatId,
-          `Pagamento confirmado, *${first}*! ✅\nValor: R$ ${u.price.toFixed(2).replace('.', ',')}\n\nValeu demais 🙏`
-        );
-      }
-      notifyChange('appointments', 'panel', { id, action });
-      json(res, 200, { booking: u });
-      return;
-    }
-    if (action === 'status' && body.status) {
-      const booking = updateAppointment(id, {
-        status: body.status as VisitStatus,
-      });
-      notifyChange('appointments', 'panel', { id, action, status: body.status });
-      json(res, 200, { booking });
-      return;
-    }
-    if (action === 'msg' && body.text) {
-      enqueueOwnerMessage(a.chatId, String(body.text));
-      notifyChange('outbox', 'panel', { id, action });
-      json(res, 200, { ok: true, queued: true });
-      return;
-    }
-
-    json(res, 400, { error: 'unknown_action', action });
-    return;
-  }
 
   if (pathname === '/api/tickets' && req.method === 'GET') {
     json(res, 200, { tickets: listTickets() });
@@ -1138,50 +799,7 @@ async function handleApi(
     return;
   }
 
-  if (pathname === '/api/ratings' && req.method === 'GET') {
-    json(res, 200, ratingsSummary());
-    return;
-  }
 
-  if (pathname === '/api/ops' && req.method === 'GET') {
-    json(res, 200, loadShopOps());
-    return;
-  }
-  if (pathname === '/api/ops' && req.method === 'POST') {
-    const body = JSON.parse((await readBody(req)) || '{}');
-    json(res, 200, saveShopOps({ ...loadShopOps(), ...body }));
-    return;
-  }
-
-  if (pathname === '/api/shop' && req.method === 'GET') {
-    json(res, 200, loadBarbershop());
-    return;
-  }
-
-  // salva loja completa (equipe + horários por dia)
-  if (pathname === '/api/shop' && req.method === 'POST') {
-    const body = JSON.parse((await readBody(req)) || '{}');
-    const cur = loadBarbershop();
-    if (body.shop) cur.shop = { ...cur.shop, ...body.shop };
-    if (Array.isArray(body.services)) cur.services = body.services;
-    if (Array.isArray(body.barbers)) cur.barbers = body.barbers;
-    saveBarbershop(cur);
-    notifyChange('shop', 'panel', { action: 'save_shop' });
-    notifyChange('appointments', 'panel', { action: 'shop_hours_changed' });
-    json(res, 200, { ok: true, config: cur });
-    return;
-  }
-
-  const etaMatch = pathname.match(/^\/api\/queue-eta\/([^/]+)$/);
-  if (etaMatch && req.method === 'GET') {
-    const a = loadAppointments().find((x) => x.id === etaMatch[1]);
-    if (!a) {
-      json(res, 404, { error: 'not_found' });
-      return;
-    }
-    json(res, 200, estimateWait(a));
-    return;
-  }
 
   json(res, 404, { error: 'not_found', path: pathname });
 }

@@ -112,15 +112,7 @@ async function main(): Promise<void> {
       printConnections();
       break;
 
-    case 'owner':
-    case 'dono':
-    case 'painel':
-    case 'shop':
-      {
-        const { runOwnerTerminal } = await import('./owner/terminal.js');
-        await runOwnerTerminal();
-      }
-      break;
+
 
     case 'help':
     case '-h':
@@ -166,7 +158,6 @@ ${bold('Uso')}
 ${bold('Comandos')}
   ${paint(c.green, 'run')}              Sobe o bot (dashboard WhatsApp)
   ${paint(c.yellow + c.bold, 'config')}           Sessão de configuração (IA grátis/paga)
-  ${paint(c.bgMagenta + c.white + c.bold, ' owner ')}          Terminal do DONO (fila, PIX, avaliações, msgs)
   ${paint(c.white, 'connections')}      Lista conexões Gemini/OpenAI/Ollama/Diretas
   ${paint(c.white, 'models')}           Cache de modelos base
   ${paint(c.magenta, 'analyze')}          Terminal live de análise de mensagens

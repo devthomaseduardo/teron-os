@@ -4,7 +4,7 @@ import { clinicNiche } from './clinic.js';
 import { realestateNiche } from './realestate.js';
 import { restaurantNiche } from './restaurant.js';
 import { ecommerceNiche } from './ecommerce.js';
-import { barbershopNiche } from './barbershop.js';
+
 import { teronNiche } from './teron.js';
 
 const niches: Record<string, NicheTemplate> = {
@@ -13,7 +13,7 @@ const niches: Record<string, NicheTemplate> = {
   realestate: realestateNiche,
   restaurant: restaurantNiche,
   ecommerce: ecommerceNiche,
-  barbershop: barbershopNiche,
+
   teron: teronNiche,
 };
 

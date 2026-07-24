@@ -17,7 +17,7 @@ export default defineConfig({
       server: { entry: "server" },
     }),
     // Gera .vercel/output (Build Output API). Sem isso o deploy sobe "Ready" mas vazio → 404 NOT_FOUND.
-    nitro(),
+    nitro({ preset: "vercel" }),
     react(),
     tailwindcss(),
   ],

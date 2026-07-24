@@ -2,7 +2,7 @@
  * Classifica demanda (pedido de serviço) — heurística + Gemini se disponível.
  */
 import type { ClassifiedDemand, OpportunityTemperature } from './types.js';
-import { loadBarbershop } from '../barbershop/store.js';
+
 
 const NICHE_KEYWORDS: Array<{ niche: string; label: string; keys: string[] }> = [
   {
@@ -164,11 +164,7 @@ function shopSuggestedReply(
   classification: Pick<ClassifiedDemand, 'nicheLabel' | 'neighborhood' | 'city'>
 ): string {
   let shopName = 'nossa loja';
-  try {
-    shopName = loadBarbershop().shop.name || shopName;
-  } catch {
-    /* */
-  }
+
   const where = classification.neighborhood || classification.city || 'sua região';
   return (
     `Oi! Vi que você procura ${classification.nicheLabel.toLowerCase()} em ${where}. ` +

@@ -152,22 +152,9 @@ async function start(client: Whatsapp): Promise<void> {
     await richSender.send(chatId, chatId, text, 'system');
   };
 
-  if (config.nicheId === 'barbershop') {
-    const { startEngageWorker } = await import('./barbershop/engage-worker.js');
-    const { startOutboxWorker } = await import('./barbershop/outbox-worker.js');
-    const { startReminderWorker } = await import('./barbershop/reminders.js');
-    const { sessionStore } = await import('./core/session.js');
-    startEngageWorker(client, pushText);
-    startOutboxWorker(pushText);
-    startReminderWorker(pushText, (chatId) => {
-      // próxima resposta 1/2/3 trata como lembrete
-      sessionStore.setProfile(chatId, 'awaiting_reminder', '1');
-    });
-    const { startLifecycleWorker } = await import('./ops/lifecycle.js');
-    startLifecycleWorker(pushText);
-    ui.ok('Workers: fila · outbox · lembretes · no-show/unpaid/avaliação');
-    fileLog('boot', 'barbershop workers started');
-  }
+  const { startOutboxWorker } = await import('./ops/outbox.js');
+  startOutboxWorker(pushText);
+  ui.ok('Workers: outbox');
 
   try {
     const { writeWaStatus } = await import('./platform/wa-status.js');

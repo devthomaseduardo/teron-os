@@ -32,7 +32,7 @@ function defaults(): PlatformConfig {
   return {
     platformName: 'Agente Comercial WhatsApp',
     supportEmail: 'developer.thomas@outlook.com.br',
-    defaultNiche: 'barbershop',
+    defaultNiche: 'teron',
     phases: [
       {
         id: 'A',

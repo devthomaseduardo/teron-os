@@ -3,7 +3,6 @@
  *
  * Estrutura:
  *   tenants/{slug}/
- *     config/barbershop.json
  *     config/business.json
  *     data/appointments.json, payments.json, ...
  *     owner.json   { token, passwordHint, email }
@@ -36,7 +35,6 @@ export interface TenantPaths {
   configDir: string;
   dataDir: string;
   tokensDir: string;
-  barbershopConfig: string;
   businessConfig: string;
   payments: string;
   appointments: string;
@@ -123,7 +121,6 @@ export function tenantPaths(slug?: string | null): TenantPaths {
       configDir: path.join(ROOT(), 'config'),
       dataDir: path.join(ROOT(), 'data'),
       tokensDir: path.join(ROOT(), 'tokens'),
-      barbershopConfig: path.join(ROOT(), 'config', 'barbershop.json'),
       businessConfig: path.join(ROOT(), 'config', 'business.json'),
       payments: path.join(ROOT(), 'data', 'payments.json'),
       appointments: path.join(ROOT(), 'data', 'appointments.json'),
@@ -141,7 +138,6 @@ export function tenantPaths(slug?: string | null): TenantPaths {
     configDir: path.join(root, 'config'),
     dataDir: path.join(root, 'data'),
     tokensDir: path.join(root, 'tokens'),
-    barbershopConfig: path.join(root, 'config', 'barbershop.json'),
     businessConfig: path.join(root, 'config', 'business.json'),
     payments: path.join(root, 'data', 'payments.json'),
     appointments: path.join(root, 'data', 'appointments.json'),
@@ -163,56 +159,12 @@ function newToken(): string {
   return 'own_' + crypto.randomBytes(24).toString('hex');
 }
 
-function defaultBarbershop(name: string): unknown {
-  return {
-    shop: {
-      name,
-      address: 'Configure o endereço no painel',
-      phone: '',
-      timezone: 'America/Sao_Paulo',
-      greeting: `Bem-vindo à ${name}!`,
-      slotMinutes: 30,
-      daysOpen: [1, 2, 3, 4, 5, 6],
-      notes: '',
-      pixKey: '',
-      pixName: name,
-      waitBufferMin: 5,
-      lat: -23.55,
-      lng: -46.63,
-    },
-    services: [
-      {
-        id: 'servico1',
-        name: 'Serviço principal',
-        price: 50,
-        durationMin: 30,
-        keywords: ['servico', 'corte'],
-      },
-    ],
-    barbers: [
-      {
-        id: 'prof1',
-        name: 'Profissional 1',
-        nickname: 'Pro',
-        specialty: 'Geral',
-        schedule: {
-          '1': ['09:00', '18:00'],
-          '2': ['09:00', '18:00'],
-          '3': ['09:00', '18:00'],
-          '4': ['09:00', '18:00'],
-          '5': ['09:00', '18:00'],
-          '6': ['09:00', '14:00'],
-        },
-        onDuty: true,
-      },
-    ],
-  };
-}
+
 
 function defaultBusiness(name: string, nicheId: string): unknown {
   return {
     mode: 'hybrid',
-    nicheId: nicheId || 'barbershop',
+    nicheId: nicheId || 'teron',
     sessionName: sanitizeSlug(name) || 'assistente',
     leadCapture: true,
     fallbackMessage: `Oi! Aqui é da *${name}*. Digite *menu* para ver opções.`,
@@ -254,18 +206,11 @@ export function provisionTenant(input: {
   ensureDirs(p);
 
   // configs iniciais se não existirem
-  if (!fs.existsSync(p.barbershopConfig)) {
-    fs.writeFileSync(
-      p.barbershopConfig,
-      JSON.stringify(defaultBarbershop(input.name), null, 2),
-      'utf8'
-    );
-  }
   if (!fs.existsSync(p.businessConfig)) {
     fs.writeFileSync(
       p.businessConfig,
       JSON.stringify(
-        defaultBusiness(input.name, input.nicheId || 'barbershop'),
+        defaultBusiness(input.name, input.nicheId || 'teron'),
         null,
         2
       ),
@@ -317,7 +262,7 @@ export function provisionTenant(input: {
   const tenant: TenantMeta = {
     id: 't_' + slug,
     name: input.name,
-    nicheId: input.nicheId || 'barbershop',
+    nicheId: input.nicheId || 'teron',
     plan: input.plan || 'starter',
     status: 'qr_pending',
     createdAt: new Date().toISOString(),
@@ -395,21 +340,8 @@ export function setupStatus(slug: string): {
   steps: Array<{ id: string; label: string; done: boolean }>;
 } {
   const p = tenantPaths(slug);
-  let shopNamed = false;
-  let hasServices = false;
-  let hasTeam = false;
   let hasPix = false;
   let hasMercadoPago = false;
-  try {
-    const b = JSON.parse(fs.readFileSync(p.barbershopConfig, 'utf8'));
-    shopNamed =
-      Boolean(b.shop?.name) &&
-      !String(b.shop.address || '').includes('Configure o endereço');
-    hasServices = Array.isArray(b.services) && b.services.length > 0;
-    hasTeam = Array.isArray(b.barbers) && b.barbers.length > 0;
-  } catch {
-    /* */
-  }
   try {
     const pay = JSON.parse(fs.readFileSync(p.payments, 'utf8'));
     hasPix = Boolean(pay.pixKey?.key);
@@ -418,19 +350,16 @@ export function setupStatus(slug: string): {
     /* */
   }
   const steps = [
-    { id: 'shop', label: 'Dados da loja', done: shopNamed },
-    { id: 'services', label: 'Serviços', done: hasServices },
-    { id: 'team', label: 'Equipe', done: hasTeam },
     { id: 'pay', label: 'Pagamentos (PIX ou Mercado Pago)', done: hasPix || hasMercadoPago },
     { id: 'wa', label: 'WhatsApp conectado', done: false }, // preenchido no panel com wa-status
   ];
   const done = steps.filter((s) => s.done).length;
   return {
-    shopNamed,
+    shopNamed: true,
     hasPix,
     hasMercadoPago,
-    hasServices,
-    hasTeam,
+    hasServices: true,
+    hasTeam: true,
     percent: Math.round((done / steps.length) * 100),
     steps,
   };
@@ -443,10 +372,7 @@ export function ensureDefaultTenantFromRoot(): void {
   const t = platform.tenants[0];
   if (!t.slug) return;
   const p = tenantPaths(t.slug);
-  if (fs.existsSync(p.barbershopConfig)) return;
-  // se root tem config, copia
-  const rootShop = path.join(ROOT(), 'config', 'barbershop.json');
-  if (!fs.existsSync(rootShop)) return;
+  if (fs.existsSync(p.businessConfig)) return;
   try {
     provisionTenant({
       name: t.name,
@@ -454,8 +380,6 @@ export function ensureDefaultTenantFromRoot(): void {
       nicheId: t.nicheId,
       plan: t.plan,
     });
-    // sobrescreve com config real da raiz
-    fs.copyFileSync(rootShop, p.barbershopConfig);
     const rootBiz = path.join(ROOT(), 'config', 'business.json');
     if (fs.existsSync(rootBiz)) fs.copyFileSync(rootBiz, p.businessConfig);
     const rootPay = path.join(ROOT(), 'data', 'payments.json');

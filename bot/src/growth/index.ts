@@ -16,7 +16,7 @@ import type {
   OpportunitySource,
   OpportunityStatus,
 } from './types.js';
-import { loadBarbershop } from '../barbershop/store.js';
+
 import { getProcessTenant } from '../platform/tenant-runtime.js';
 
 export type { GrowthOpportunity, GrowthFunnel } from './types.js';
@@ -56,13 +56,7 @@ export async function ingestPaste(input: {
   // placeholder: se tem bairro, marca “local”
   if (classification.neighborhood) distanceKm = 2.5 + Math.random() * 4;
 
-  const shop = (() => {
-    try {
-      return loadBarbershop().shop;
-    } catch {
-      return null;
-    }
-  })();
+  const shop = { name: '' };
 
   // enriquece suggested reply com nome real
   if (shop?.name && classification.suggestedReply) {
@@ -130,11 +124,7 @@ export function buildWhatsAppLink(opportunityId: string, phone?: string): {
   const o = getOpportunity(opportunityId);
   if (!o) return null;
   let shopPhone = phone || '';
-  try {
-    shopPhone = shopPhone || loadBarbershop().shop.phone || '';
-  } catch {
-    /* */
-  }
+
   // Para "responder" a um lead público sem número: abrimos wa.me vazio com texto
   // ou o número da loja para o dono encaminhar — padrão: compose only
   const msg = o.classification.suggestedReply || o.rawText.slice(0, 200);

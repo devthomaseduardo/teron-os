@@ -3,7 +3,7 @@ import { runScriptEngine } from '../engine/script-engine.js';
 import { runAiEngine } from '../engine/ai-engine.js';
 import { sessionStore } from './session.js';
 import { isWithinHours, interpolate } from '../util/text.js';
-import { runBarbershopFlow } from '../barbershop/booking-flow.js';
+
 
 export interface OrchestratorReply {
   text: string;
@@ -57,45 +57,6 @@ export async function processMessage(
     }
   }
 
-  // ── Barbearia: prioridade quando nicheId === 'barbershop' ──
-  const forceBarbershop =
-    config.nicheId === 'barbershop' ||
-    (session.topic === 'barbearia' && config.nicheId !== 'teron') ||
-    Boolean(
-      config.nicheId === 'barbershop' &&
-        session.profile.booking_step &&
-        session.profile.booking_step !== 'idle' &&
-        session.profile.booking_step !== 'done'
-    );
-
-  if (forceBarbershop) {
-    try {
-      const bb = await runBarbershopFlow(chatId, text);
-      if (bb?.handled) {
-        const outText =
-          (bb.text && bb.text.trim()) ||
-          bb.rich?.intro ||
-          bb.rich?.text ||
-          config.fallbackMessage;
-        sessionStore.touchBot(chatId, outText);
-        return {
-          text: outText,
-          source: bb.source || 'barbershop',
-          rich: bb.rich || { text: outText, keepTogether: true },
-        };
-      }
-    } catch (err) {
-      // se o fluxo quebrar, ainda manda menu modal em vez de fallback IA
-      try {
-        const { tplMenu } = await import('../barbershop/templates.js');
-        const menu = tplMenu();
-        sessionStore.touchBot(chatId, menu.text);
-        return { text: menu.text, source: 'barbershop+recovery', rich: menu };
-      } catch {
-        /* segue abaixo */
-      }
-    }
-  }
 
   // Fora do horário (se configurado)
   const hours = config.niche.businessHours;

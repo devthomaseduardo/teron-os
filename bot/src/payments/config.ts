@@ -1,22 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 import type { PaymentProviderConfig } from './types.js';
-import { loadBarbershop } from '../barbershop/store.js';
 import { tenantPaths } from '../platform/tenant-runtime.js';
 
 const FILE = () => tenantPaths().payments;
 
 export function defaultPaymentConfig(): PaymentProviderConfig {
-  const shop = (() => {
-    try {
-      return loadBarbershop().shop;
-    } catch {
-      return null;
-    }
-  })();
-
   return {
-    activeProvider: shop?.pixKey ? 'pix_key' : 'manual',
+    activeProvider: 'manual',
     enabledMethods: ['pix', 'card_credit', 'card_debit', 'cash', 'later'],
     mercadoPago: {
       enabled: false,
@@ -26,9 +17,9 @@ export function defaultPaymentConfig(): PaymentProviderConfig {
       sandbox: true,
     },
     pixKey: {
-      enabled: Boolean(shop?.pixKey),
-      key: shop?.pixKey || '',
-      holderName: shop?.pixName || shop?.name || '',
+      enabled: false,
+      key: '',
+      holderName: '',
       bank: 'outro',
       city: 'Sao Paulo',
     },

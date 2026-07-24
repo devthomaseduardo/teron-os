@@ -1,0 +1,18 @@
+{
+  "name": "teron-ecosystem",
+  "version": "1.0.0",
+  "description": "Monorepo para orquestração local do Ecossistema Teron (Bot + Painel + Workspace)",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -c \"cyan,magenta,yellow,blue\" -n \"OS,WORKSPACE,BOT,PANEL\" \"npm run dev:os\" \"npm run dev:workspace\" \"npm run dev:bot\" \"npm run dev:bot:panel\"",
+    "dev:os": "npm run dev --prefix teron-os",
+    "dev:workspace": "npm run dev --prefix teron-workspace",
+    "dev:bot": "npm run dev --prefix bot",
+    "dev:bot:panel": "npm run panel --prefix bot",
+    "install:all": "npm install && npm install --prefix teron-os && npm install --prefix teron-workspace && npm install --prefix bot",
+    "build:all": "npm run build --prefix teron-os && npm run build --prefix teron-workspace && npm run build --prefix bot"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
