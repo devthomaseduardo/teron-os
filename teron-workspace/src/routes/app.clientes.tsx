@@ -1,0 +1,113 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { Plus, Search } from "lucide-react";
+
+import { StatusPill } from "@/components/teron/status-pill";
+import { WorkspaceShell } from "@/components/teron/workspace-shell";
+import { currency } from "@/lib/utils";
+import { prisma } from "@/lib/prisma";
+
+export const getClients = createServerFn({ method: "GET" }).handler(async () => {
+  const leads = await prisma.lead.findMany({
+    where: {
+      status: { not: "perdida" } // Ocultar perdidos por padrão? Vamos mostrar todos, ou apenas os que viraram clientes
+    },
+    include: {
+      _count: { select: { projects: true } }
+    },
+    orderBy: { createdAt: "desc" }
+  });
+
+  return leads.map((l) => {
+    // Generate initials safely
+    const initials = l.name ? l.name.substring(0, 2).toUpperCase() : "NA";
+    
+    return {
+      id: l.id,
+      name: l.name,
+      contact: l.email || l.phone || "Sem contato",
+      status: l.status,
+      initials,
+      projects: l._count.projects,
+      mrr: l.totalInvestment || 0,
+      since: new Date(l.createdAt).toLocaleDateString("pt-BR", { month: "short", year: "numeric" }),
+    };
+  });
+});
+
+export const Route = createFileRoute("/app/clientes")({
+  head: () => ({ meta: [{ title: "Clientes — TERON Studio" }] }),
+  loader: () => getClients(),
+  component: ClientsPage,
+});
+
+const statusMap: Record<string, { label: string; tone: "success" | "info" | "warning" | "neutral" | "danger" }> = {
+  novo: { label: "Novo", tone: "info" },
+  discovery: { label: "Discovery", tone: "info" },
+  proposta_enviada: { label: "Proposta", tone: "warning" },
+  aceita: { label: "Cliente", tone: "success" },
+  perdida: { label: "Perdida", tone: "danger" },
+  recrutador: { label: "Recrutador", tone: "neutral" },
+};
+
+function ClientsPage() {
+  const clients = Route.useLoaderData();
+  
+  return (
+    <WorkspaceShell
+      eyebrow="Comercial"
+      title="Clientes"
+      description="Empresas, contatos e histórico completo em um só lugar."
+      action={
+        <button className="inline-flex items-center gap-1.5 rounded-md bg-foreground px-3 py-1.5 text-[13px] font-medium text-background hover:opacity-90">
+          <Plus className="size-3.5" /> Novo cliente
+        </button>
+      }
+    >
+      <div className="mb-4 flex items-center gap-2 rounded-md border border-input bg-card px-3 py-1.5">
+        <Search className="size-3.5 text-muted-foreground" />
+        <input placeholder="Buscar cliente…" className="w-full bg-transparent text-[13px] outline-none placeholder:text-muted-foreground/60" />
+      </div>
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+        {clients.map((c) => {
+          const s = statusMap[c.status] || { label: c.status, tone: "neutral" };
+          return (
+            <div key={c.id} className="rounded-xl border border-border bg-card p-5 transition-colors hover:border-foreground/20">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="grid size-10 place-items-center rounded-md bg-gradient-to-br from-[oklch(0.7_0.14_250)] to-[oklch(0.68_0.2_320)] text-[13px] font-semibold text-white">
+                    {c.initials}
+                  </div>
+                  <div>
+                    <p className="font-display text-[15px] font-semibold">{c.name}</p>
+                    <p className="text-[11px] text-muted-foreground">{c.contact}</p>
+                  </div>
+                </div>
+                <StatusPill tone={s.tone} dot>{s.label}</StatusPill>
+              </div>
+              <div className="mt-5 grid grid-cols-3 gap-3 border-t border-border pt-4 text-center">
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Projetos</p>
+                  <p className="mt-0.5 font-display text-base font-semibold">{c.projects}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Faturamento</p>
+                  <p className="mt-0.5 font-display text-base font-semibold">{currency(c.mrr)}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Desde</p>
+                  <p className="mt-0.5 font-display text-base font-semibold">{c.since}</p>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        {clients.length === 0 && (
+          <div className="col-span-full py-12 text-center text-sm text-muted-foreground">
+            Nenhum cliente cadastrado ainda.
+          </div>
+        )}
+      </div>
+    </WorkspaceShell>
+  );
+}
