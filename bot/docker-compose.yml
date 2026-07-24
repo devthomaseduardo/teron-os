@@ -62,4 +62,4 @@ services:
       - ./panel/public:/app/panel/public:ro
       - ./.env:/app/.env:ro
     depends_on:
-      - agente-barbearia
+      - agente-bot
