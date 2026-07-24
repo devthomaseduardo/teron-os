@@ -1,131 +1,100 @@
 # Fluxo Completo de Proposta — TERON OS
 
+> **Implementação real:** `bot/src/teron/teron-flow.ts` + `bot/src/teron/templates.ts`  
+> A pasta `bot/src/commercial/` foi um rascunho inicial e pode ser removida.
+
 ## Visão Geral
 
 ```
 Cliente (WhatsApp)
       ↓
-Modal Principal → clica "Fazer Proposta"
+Menu TERON → "Quero um orçamento" (rowId: 1)
       ↓
-Discovery Guiado (perguntas 1 a 1)
+Discovery guiado (8 etapas)
       ↓
-Geração da Proposta (script + IA)
+Bot chama POST /api/lead
       ↓
-Salva Lead + Proposal no Prisma
+OS cria Lead + Proposal (publicToken)
       ↓
-Envia link personalizado
+Bot envia link personalizado
       ↓
 Cliente abre /proposta/{publicToken}
       ↓
-Aceita / Solicita alteração / Paga entrada
+Simula → Assina (OTP) → Paga entrada → Workstation
 ```
 
-## 1. Menu Principal (Modal)
+## Menu Principal (já implementado)
 
-**Título:** TERON OS  
-**Descrição:** Como posso te ajudar hoje?  
-**Botão:** Ver opções
+| rowId | Título                | Ação                          |
+|-------|-----------------------|-------------------------------|
+| `1`   | Quero um orçamento   | Inicia discovery              |
+| `2`   | Já sou cliente       | Área do cliente               |
+| `3`   | Prazos e valores     | Info de preços                |
+| `4`   | Falar com o time     | Handoff humano                |
+| `5`   | Agendar uma call     | Link de agendamento           |
+| `6`   | Acessar o site       | Link da plataforma            |
 
-| rowId              | Título              | Descrição                          |
-|--------------------|---------------------|------------------------------------|
-| `menu_proposta`    | Fazer Proposta      | Orçamento personalizado            |
-| `menu_servicos`    | Ver Serviços        | Sites, sistemas, apps, automações  |
-| `menu_como_funciona`| Como funciona      | Entenda o processo                 |
-| `menu_portfolio`   | Portfólio / Cases   | Exemplos reais                     |
-| `menu_humano`      | Falar com humano    | Atendimento direto                 |
-| `menu_agendar`     | Agendar conversa    | Marcar uma call                    |
-| `menu_cliente`     | Já sou cliente      | Status do projeto e pagamentos      |
+## Discovery (8 etapas)
 
-## 2. Discovery (quando clica em Fazer Proposta)
+| Etapa | Campo              | Tipo        |
+|-------|--------------------|-------------|
+| 1     | Nome               | Texto       |
+| 2     | Empresa            | Texto       |
+| 3     | E-mail             | Texto (valida @) |
+| 4     | Cidade / Estado    | Texto       |
+| 5     | Website / Instagram| Texto       |
+| 6     | Tipo de projeto    | Modal (4 opções) |
+| 7     | Briefing / detalhes| Texto       |
+| 8     | Prazo              | Modal (4 opções) |
 
-Cada pergunta é enviada como **1 modal** ou mensagem + botões.
+Ao final da etapa 8:
+1. Grava lead local (`data/leads.jsonl`)
+2. Chama `POST {TERON_OS_URL}/api/lead`
+3. Recebe `url` / `proposalUrl`
+4. Envia mensagem final com o link
 
-### Perguntas na ordem:
+## API `/api/lead`
 
-1. **Nome completo**  
-   Texto livre
+Cria:
+- **Lead** (status: `proposta_enviada`, source: `whatsapp`)
+- **Proposal** (status: `enviada`, gera `publicToken`, validUntil +7 dias)
 
-2. **Empresa**  
-   Texto livre (ou "sou autônomo")
-
-3. **Tipo de projeto** (modal)
-   - `tipo_site` → Site institucional / Landing
-   - `tipo_sistema` → Sistema web / Dashboard
-   - `tipo_app` → Aplicativo
-   - `tipo_automacao` → Automação / Bot
-   - `tipo_outro` → Outro
-
-4. **Objetivo principal**  
-   Texto livre
-
-5. **Já tem site/sistema atual?**  
-   - `atual_sim` → Sim (pede o link)
-   - `atual_nao` → Não
-
-6. **Prazo desejado** (modal)
-   - `prazo_urgente` → Até 15 dias
-   - `prazo_30` → 30 dias
-   - `prazo_60` → 60 dias
-   - `prazo_flexivel` → Flexível
-
-7. **Faixa de investimento** (modal)
-   - `inv_3k` → Até R$ 3.000
-   - `inv_5k` → R$ 3.000 – 5.000
-   - `inv_10k` → R$ 5.000 – 10.000
-   - `inv_15k` → R$ 10.000 – 15.000
-   - `inv_acima` → Acima de R$ 15.000
-
-8. **Integrações necessárias?** (multi-select ou texto)
-   - WhatsApp, Pagamento, ERP, CRM, Outro
-
-9. **Observações finais**  
-   Texto livre (opcional)
-
-## 3. Geração da Proposta
-
-Após a última resposta:
-
-1. Bot mostra: "Perfeito! Estou montando sua proposta personalizada..."
-2. Processa com script + Gemini
-3. Cria registro no banco:
-   - `Lead` (status: `proposta_enviada`)
-   - `Proposal` (status: `enviada`, gera `publicToken`)
-4. Monta a mensagem final:
-
-```
-Pronto, {nome}! 🚀
-
-Monteei uma proposta personalizada para {empresa}.
-
-📋 Tipo: {tipo}
-💰 Investimento estimado: {valor}
-⏰ Prazo: {prazo}
-
-Acesse aqui (válido por 7 dias):
-https://os.thomaseduardo.com.br/proposta/{publicToken}
-
-Qualquer dúvida é só responder aqui.
+Retorna:
+```json
+{
+  "success": true,
+  "leadId": "...",
+  "proposalId": "...",
+  "publicToken": "...",
+  "url": "https://os.../proposta/{token}?cliente=...&empresa=..."
+}
 ```
 
-## 4. Página pública da Proposta
+## Página pública
 
-Rota: `/proposta/$id` (ou `/proposta/$publicToken`)
+Rota: `/proposta/$id`
 
-Deve mostrar:
-- Nome do cliente + empresa
-- Escopo resumido
-- Valor e condições
-- Botões: **Aceitar Proposta** | **Solicitar Alteração** | **Falar no WhatsApp**
+Etapas:
+1. Boas-vindas
+2. Diagnóstico IA
+3. Escopo
+4. Simulador (extras)
+5. Cronograma
+6. Contrato + OTP
+7. Pagamento (MP PIX + Stripe)
+8. Workstation liberada
 
-Ao aceitar → muda status + notifica o painel da OS.
+## Como ativar
 
-## 5. Estados da Proposta
+```env
+# bot/.env
+NICHE_ID=teron
+TERON_OS_URL=https://os.thomaseduardo.com.br
+```
 
-| Status        | Descrição                          |
-|---------------|------------------------------------|
-| `rascunho`    | Criada mas não enviada             |
-| `enviada`     | Link enviado ao cliente            |
-| `visualizada` | Cliente abriu o link               |
-| `aceita`      | Cliente aceitou                    |
-| `recusada`    | Cliente recusou / pediu alteração  |
-| `expirada`    | Passou do validUntil               |
+## Próximas melhorias
+
+- [ ] Página buscar dados pelo `publicToken` no banco (hoje depende de query params)
+- [ ] Notificar painel quando proposta é visualizada / aceita / paga
+- [ ] Adicionar faixa de investimento no discovery
+- [ ] Remover `bot/src/commercial/` (rascunho)
