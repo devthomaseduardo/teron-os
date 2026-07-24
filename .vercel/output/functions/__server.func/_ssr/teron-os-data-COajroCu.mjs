@@ -1,0 +1,627 @@
+//#region node_modules/.nitro/vite/services/ssr/assets/teron-os-data-COajroCu.js
+var landingPages = [
+	{
+		id: "lp1",
+		name: "Home institucional",
+		slug: "/",
+		visits: 8420,
+		conversion: 3.2,
+		status: "publicada"
+	},
+	{
+		id: "lp2",
+		name: "Landing — Aurora Health",
+		slug: "/aurora",
+		visits: 2140,
+		conversion: 6.8,
+		status: "publicada"
+	},
+	{
+		id: "lp3",
+		name: "Campanha Q3 — SaaS",
+		slug: "/saas-q3",
+		visits: 890,
+		conversion: 4.1,
+		status: "publicada"
+	},
+	{
+		id: "lp4",
+		name: "Portfólio 2026",
+		slug: "/portfolio",
+		visits: 3210,
+		conversion: 2.4,
+		status: "publicada"
+	},
+	{
+		id: "lp5",
+		name: "Piloto — Financeiro",
+		slug: "/financeiro-pilot",
+		visits: 0,
+		conversion: 0,
+		status: "rascunho"
+	}
+];
+var blogPosts = [
+	{
+		id: "b1",
+		title: "Como substituímos o WhatsApp por um cronograma inteligente",
+		author: "Thomas Reis",
+		date: "02/07",
+		views: 1420,
+		status: "publicado"
+	},
+	{
+		id: "b2",
+		title: "Do lead ao lucro: o novo SO da empresa de serviços",
+		author: "Helena V.",
+		date: "24/06",
+		views: 890,
+		status: "publicado"
+	},
+	{
+		id: "b3",
+		title: "Escopo travado: quando IA salva o projeto",
+		author: "Camila R.",
+		date: "—",
+		views: 0,
+		status: "rascunho"
+	}
+];
+var leads = [
+	{
+		id: "l1",
+		name: "Camila Herrera",
+		company: "Solstice Foods",
+		source: "landing",
+		stage: "proposta",
+		value: 118e3,
+		owner: "Thomas",
+		lastTouch: "há 2h"
+	},
+	{
+		id: "l2",
+		name: "Rafael Meneses",
+		company: "Vento Norte Log.",
+		source: "indicacao",
+		stage: "reunião",
+		value: 72e3,
+		owner: "Helena",
+		lastTouch: "ontem"
+	},
+	{
+		id: "l3",
+		name: "Ana Bertone",
+		company: "Helvetia Legal",
+		source: "linkedin",
+		stage: "qualificado",
+		value: 62e3,
+		owner: "Thomas",
+		lastTouch: "há 3 dias"
+	},
+	{
+		id: "l4",
+		name: "Diego Salles",
+		company: "Aurora Health",
+		source: "orgânico",
+		stage: "ganho",
+		value: 47500,
+		owner: "Camila",
+		lastTouch: "há 5 dias"
+	},
+	{
+		id: "l5",
+		name: "Fernanda Lopes",
+		company: "Nêutron BioTech",
+		source: "evento",
+		stage: "novo",
+		value: 0,
+		owner: "—",
+		lastTouch: "há 1h"
+	},
+	{
+		id: "l6",
+		name: "Bruno Kern",
+		company: "Nordica Motors",
+		source: "indicacao",
+		stage: "proposta",
+		value: 84e3,
+		owner: "Thomas",
+		lastTouch: "há 4h"
+	},
+	{
+		id: "l7",
+		name: "Isabela Cordeiro",
+		company: "Kite SaaS",
+		source: "landing",
+		stage: "ganho",
+		value: 32e3,
+		owner: "Helena",
+		lastTouch: "há 8 dias"
+	},
+	{
+		id: "l8",
+		name: "Marcos Otero",
+		company: "Fábrica Uno",
+		source: "linkedin",
+		stage: "perdido",
+		value: 0,
+		owner: "Thomas",
+		lastTouch: "há 12 dias"
+	},
+	{
+		id: "l9",
+		name: "Julia Prado",
+		company: "Cais 7 Ventures",
+		source: "landing",
+		stage: "novo",
+		value: 0,
+		owner: "—",
+		lastTouch: "há 30min"
+	}
+];
+var payments = [
+	{
+		id: "pay1",
+		client: "Aurora Health",
+		method: "pix",
+		amount: 12400,
+		when: "hoje · 09:42",
+		status: "confirmado",
+		installment: "Marco 2 · 3/4"
+	},
+	{
+		id: "pay2",
+		client: "Meridian Capital",
+		method: "cartão",
+		amount: 18500,
+		when: "ontem · 22:11",
+		status: "confirmado",
+		installment: "Mensal · Jul"
+	},
+	{
+		id: "pay3",
+		client: "Órion Retail",
+		method: "boleto",
+		amount: 14200,
+		when: "há 2 dias",
+		status: "processando"
+	},
+	{
+		id: "pay4",
+		client: "Nordica Motors",
+		method: "cartão",
+		amount: 25200,
+		when: "há 3 dias",
+		status: "falhou",
+		installment: "Entrada 1/4"
+	},
+	{
+		id: "pay5",
+		client: "Kite SaaS",
+		method: "pix",
+		amount: 4200,
+		when: "há 5 dias",
+		status: "confirmado",
+		installment: "Mensal · Jul"
+	},
+	{
+		id: "pay6",
+		client: "Lyra Labs",
+		method: "pix",
+		amount: 7600,
+		when: "há 8 dias",
+		status: "confirmado"
+	}
+];
+var libraryFolders = [
+	{
+		client: "Meridian Capital",
+		logos: 8,
+		fotos: 42,
+		videos: 3,
+		docs: 27,
+		fontes: 4,
+		sizeMB: 812
+	},
+	{
+		client: "Aurora Health",
+		logos: 6,
+		fotos: 128,
+		videos: 12,
+		docs: 34,
+		fontes: 2,
+		sizeMB: 2140
+	},
+	{
+		client: "Pallas Studio",
+		logos: 14,
+		fotos: 86,
+		videos: 4,
+		docs: 18,
+		fontes: 6,
+		sizeMB: 1420
+	},
+	{
+		client: "Órion Retail",
+		logos: 4,
+		fotos: 60,
+		videos: 8,
+		docs: 22,
+		fontes: 3,
+		sizeMB: 980
+	},
+	{
+		client: "Lyra Labs",
+		logos: 3,
+		fotos: 24,
+		videos: 2,
+		docs: 14,
+		fontes: 2,
+		sizeMB: 410
+	},
+	{
+		client: "Kite SaaS",
+		logos: 5,
+		fotos: 18,
+		videos: 1,
+		docs: 12,
+		fontes: 2,
+		sizeMB: 220
+	}
+];
+var tickets = [
+	{
+		id: "T-142",
+		subject: "Erro no gateway de pagamento (checkout)",
+		client: "Órion Retail",
+		priority: "crítica",
+		status: "em atendimento",
+		owner: "Camila R.",
+		sla: "2h30 restantes",
+		openedAt: "hoje 08:14"
+	},
+	{
+		id: "T-141",
+		subject: "Ajustar template de e-mail transacional",
+		client: "Aurora Health",
+		priority: "alta",
+		status: "aberto",
+		owner: "—",
+		sla: "6h",
+		openedAt: "ontem"
+	},
+	{
+		id: "T-140",
+		subject: "Solicitação de nova permissão de usuário",
+		client: "Meridian Capital",
+		priority: "média",
+		status: "aguardando cliente",
+		owner: "Helena",
+		sla: "24h",
+		openedAt: "há 2 dias"
+	},
+	{
+		id: "T-139",
+		subject: "Dúvida sobre exportação de relatório mensal",
+		client: "Lyra Labs",
+		priority: "baixa",
+		status: "resolvido",
+		owner: "Thomas",
+		sla: "—",
+		openedAt: "há 4 dias"
+	},
+	{
+		id: "T-138",
+		subject: "Bug em Safari na área do cliente",
+		client: "Kite SaaS",
+		priority: "alta",
+		status: "em atendimento",
+		owner: "Diego",
+		sla: "1h10",
+		openedAt: "hoje 07:22"
+	}
+];
+var templates = [
+	{
+		id: "t1",
+		name: "Proposta padrão · Software House",
+		kind: "proposta",
+		usedCount: 42,
+		updatedAt: "há 3 dias"
+	},
+	{
+		id: "t2",
+		name: "Contrato de prestação (CLT-free)",
+		kind: "contrato",
+		usedCount: 38,
+		updatedAt: "há 12 dias"
+	},
+	{
+		id: "t3",
+		name: "Cobrança amigável · vencimento",
+		kind: "cobrança",
+		usedCount: 214,
+		updatedAt: "há 1 dia"
+	},
+	{
+		id: "t4",
+		name: "Cobrança firme · atraso 5+ dias",
+		kind: "cobrança",
+		usedCount: 87,
+		updatedAt: "há 1 dia"
+	},
+	{
+		id: "t5",
+		name: "WhatsApp · boas-vindas cliente",
+		kind: "whatsapp",
+		usedCount: 156,
+		updatedAt: "há 8 dias"
+	},
+	{
+		id: "t6",
+		name: "E-mail · kickoff de projeto",
+		kind: "email",
+		usedCount: 62,
+		updatedAt: "há 20 dias"
+	},
+	{
+		id: "t7",
+		name: "Escopo modular · MVP SaaS",
+		kind: "escopo",
+		usedCount: 24,
+		updatedAt: "há 6 dias"
+	},
+	{
+		id: "t8",
+		name: "Cronograma 12 semanas · discovery-heavy",
+		kind: "cronograma",
+		usedCount: 19,
+		updatedAt: "há 2 dias"
+	},
+	{
+		id: "t9",
+		name: "Landing · captura de leads",
+		kind: "landing",
+		usedCount: 11,
+		updatedAt: "há 5 dias"
+	}
+];
+var companyKpis = {
+	receitaMes: 42e3,
+	lucroMes: 28e3,
+	margem: 66.7,
+	horasVendidas: 320,
+	horasTrabalhadas: 274,
+	projetosAtivos: 12,
+	propostasAbertas: 18,
+	taxaConversao: 34,
+	ticketMedio: 58500,
+	ltvMedio: 214e3
+};
+var receitaVsCusto = [
+	{
+		month: "Jan",
+		receita: 32,
+		custo: 18
+	},
+	{
+		month: "Fev",
+		receita: 28,
+		custo: 16
+	},
+	{
+		month: "Mar",
+		receita: 35,
+		custo: 19
+	},
+	{
+		month: "Abr",
+		receita: 41,
+		custo: 22
+	},
+	{
+		month: "Mai",
+		receita: 38,
+		custo: 21
+	},
+	{
+		month: "Jun",
+		receita: 46,
+		custo: 24
+	},
+	{
+		month: "Jul",
+		receita: 42,
+		custo: 14
+	}
+];
+var automations = [
+	{
+		id: "auto1",
+		name: "Pagamento confirmado → cria projeto",
+		trigger: "Pagamento de entrada confirmado",
+		steps: [
+			"Criar projeto",
+			"Criar workspace",
+			"Gerar cronograma",
+			"Enviar e-mail boas-vindas",
+			"Criar pasta na biblioteca",
+			"Assinar contrato",
+			"Notificar squad"
+		],
+		runsThisMonth: 12,
+		status: "ativa"
+	},
+	{
+		id: "auto2",
+		name: "Onboarding travado → alerta owner",
+		trigger: "Onboarding parado por 3+ dias",
+		steps: [
+			"Verificar checklist",
+			"Notificar owner",
+			"Enviar lembrete ao cliente",
+			"Registrar no Command Center"
+		],
+		runsThisMonth: 4,
+		status: "ativa"
+	},
+	{
+		id: "auto3",
+		name: "Fatura vencida → cobrança escalonada",
+		trigger: "Fatura vencida há 3+ dias",
+		steps: [
+			"Notificar financeiro",
+			"Enviar e-mail amigável",
+			"Aguardar 3 dias",
+			"Enviar cobrança firme",
+			"Aplicar multa/juros",
+			"Escalar para owner"
+		],
+		runsThisMonth: 3,
+		status: "ativa"
+	},
+	{
+		id: "auto4",
+		name: "Aprovação recebida → inicia próxima etapa",
+		trigger: "Cliente aprova entrega",
+		steps: [
+			"Registrar aprovação",
+			"Fechar tarefa",
+			"Abrir próxima sprint",
+			"Notificar responsáveis"
+		],
+		runsThisMonth: 27,
+		status: "ativa"
+	},
+	{
+		id: "auto5",
+		name: "Escopo fora do padrão → gera aditivo",
+		trigger: "IA detecta fora de escopo",
+		steps: [
+			"Estimar horas",
+			"Calcular valor",
+			"Gerar orçamento complementar",
+			"Enviar para aprovação"
+		],
+		runsThisMonth: 5,
+		status: "pausada"
+	}
+];
+var marketplaceApps = [
+	{
+		id: "m1",
+		name: "WhatsApp Business",
+		category: "comunicação",
+		installed: true,
+		description: "Sincroniza conversas com o Portal do Cliente."
+	},
+	{
+		id: "m2",
+		name: "Google Calendar",
+		category: "produtividade",
+		installed: true,
+		description: "Reuniões e marcos aparecem na agenda."
+	},
+	{
+		id: "m3",
+		name: "Stripe",
+		category: "pagamentos",
+		installed: false,
+		description: "Aceite cartão internacional e assinaturas."
+	},
+	{
+		id: "m4",
+		name: "Mercado Pago",
+		category: "pagamentos",
+		installed: true,
+		description: "PIX, boleto e cartão no Brasil."
+	},
+	{
+		id: "m5",
+		name: "GitHub",
+		category: "dev",
+		installed: true,
+		description: "Vincula repositórios e deploys aos projetos."
+	},
+	{
+		id: "m6",
+		name: "Figma",
+		category: "design",
+		installed: true,
+		description: "Aprovações puxam frames diretamente do Figma."
+	},
+	{
+		id: "m7",
+		name: "Notion",
+		category: "produtividade",
+		installed: false,
+		description: "Espelha a Base Técnica e SOPs."
+	},
+	{
+		id: "m8",
+		name: "Linear",
+		category: "produtividade",
+		installed: false,
+		description: "Sincroniza issues com sprints."
+	},
+	{
+		id: "m9",
+		name: "N8N",
+		category: "dados",
+		installed: false,
+		description: "Automações avançadas sem código."
+	},
+	{
+		id: "m10",
+		name: "Asaas",
+		category: "pagamentos",
+		installed: false,
+		description: "Boleto, PIX e emissão de NF-e."
+	}
+];
+var docs = [
+	{
+		id: "d1",
+		title: "SOP · Onboarding de novo cliente",
+		area: "SOP",
+		updatedAt: "há 6 dias",
+		owner: "Helena V."
+	},
+	{
+		id: "d2",
+		title: "Processo · Do lead ao contrato",
+		area: "processos",
+		updatedAt: "há 12 dias",
+		owner: "Thomas"
+	},
+	{
+		id: "d3",
+		title: "Manual da empresa · 2026",
+		area: "manual",
+		updatedAt: "há 1 mês",
+		owner: "Thomas"
+	},
+	{
+		id: "d4",
+		title: "Tutorial · Como usar o Command Center",
+		area: "tutorial",
+		updatedAt: "há 3 dias",
+		owner: "Camila R."
+	},
+	{
+		id: "d5",
+		title: "Vídeo · Kickoff de projeto (12min)",
+		area: "vídeo",
+		updatedAt: "há 8 dias",
+		owner: "Diego"
+	},
+	{
+		id: "d6",
+		title: "SOP · Fechamento de sprint",
+		area: "SOP",
+		updatedAt: "há 15 dias",
+		owner: "Diego"
+	}
+];
+//#endregion
+export { landingPages as a, marketplaceApps as c, templates as d, tickets as f, docs as i, payments as l, blogPosts as n, leads as o, companyKpis as r, libraryFolders as s, automations as t, receitaVsCusto as u };

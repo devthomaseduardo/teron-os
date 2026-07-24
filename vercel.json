@@ -1,4 +1,4 @@
 {
   "buildCommand": "prisma generate && vite build",
-  "framework": "vite"
+  "framework": "tanstack-start"
 }

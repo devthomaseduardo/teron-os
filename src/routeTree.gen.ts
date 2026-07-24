@@ -13,8 +13,12 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as ClienteRouteImport } from './routes/cliente'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ApiDashboardRouteImport } from './routes/api.dashboard'
 import { Route as ApiLeadRouteImport } from './routes/api.lead'
+import { Route as ApiLeadsRouteImport } from './routes/api.leads'
 import { Route as ApiPaymentRouteImport } from './routes/api.payment'
+import { Route as ApiProjectsRouteImport } from './routes/api.projects'
+import { Route as ApiProposalsRouteImport } from './routes/api.proposals'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppAcademiaRouteImport } from './routes/app.academia'
 import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
@@ -47,6 +51,9 @@ import { Route as AppPropostasRouteImport } from './routes/app.propostas'
 import { Route as AppSuporteRouteImport } from './routes/app.suporte'
 import { Route as AppTemplatesRouteImport } from './routes/app.templates'
 import { Route as PropostaIdRouteImport } from './routes/proposta.$id'
+import { Route as ApiPaymentWebhookRouteImport } from './routes/api.payment.webhook'
+import { Route as ApiProjectTokenRouteImport } from './routes/api.project.$token'
+import { Route as ApiProposalTokenRouteImport } from './routes/api.proposal.$token'
 import { Route as ClienteOnboardingProjetoRouteImport } from './routes/cliente.onboarding.$projeto'
 
 const IndexRoute = IndexRouteImport.update({
@@ -69,14 +76,34 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiDashboardRoute = ApiDashboardRouteImport.update({
+  id: '/api/dashboard',
+  path: '/api/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiLeadRoute = ApiLeadRouteImport.update({
   id: '/api/lead',
   path: '/api/lead',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiLeadsRoute = ApiLeadsRouteImport.update({
+  id: '/api/leads',
+  path: '/api/leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPaymentRoute = ApiPaymentRouteImport.update({
   id: '/api/payment',
   path: '/api/payment',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiProjectsRoute = ApiProjectsRouteImport.update({
+  id: '/api/projects',
+  path: '/api/projects',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiProposalsRoute = ApiProposalsRouteImport.update({
+  id: '/api/proposals',
+  path: '/api/proposals',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
@@ -239,6 +266,21 @@ const PropostaIdRoute = PropostaIdRouteImport.update({
   path: '/proposta/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPaymentWebhookRoute = ApiPaymentWebhookRouteImport.update({
+  id: '/webhook',
+  path: '/webhook',
+  getParentRoute: () => ApiPaymentRoute,
+} as any)
+const ApiProjectTokenRoute = ApiProjectTokenRouteImport.update({
+  id: '/api/project/$token',
+  path: '/api/project/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiProposalTokenRoute = ApiProposalTokenRouteImport.update({
+  id: '/api/proposal/$token',
+  path: '/api/proposal/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClienteOnboardingProjetoRoute =
   ClienteOnboardingProjetoRouteImport.update({
     id: '/onboarding/$projeto',
@@ -251,8 +293,12 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/cliente': typeof ClienteRouteWithChildren
   '/login': typeof LoginRoute
+  '/api/dashboard': typeof ApiDashboardRoute
   '/api/lead': typeof ApiLeadRoute
-  '/api/payment': typeof ApiPaymentRoute
+  '/api/leads': typeof ApiLeadsRoute
+  '/api/payment': typeof ApiPaymentRouteWithChildren
+  '/api/projects': typeof ApiProjectsRoute
+  '/api/proposals': typeof ApiProposalsRoute
   '/app/academia': typeof AppAcademiaRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/aprovacoes': typeof AppAprovacoesRoute
@@ -285,14 +331,21 @@ export interface FileRoutesByFullPath {
   '/app/templates': typeof AppTemplatesRoute
   '/proposta/$id': typeof PropostaIdRoute
   '/app/': typeof AppIndexRoute
+  '/api/payment/webhook': typeof ApiPaymentWebhookRoute
+  '/api/project/$token': typeof ApiProjectTokenRoute
+  '/api/proposal/$token': typeof ApiProposalTokenRoute
   '/cliente/onboarding/$projeto': typeof ClienteOnboardingProjetoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cliente': typeof ClienteRouteWithChildren
   '/login': typeof LoginRoute
+  '/api/dashboard': typeof ApiDashboardRoute
   '/api/lead': typeof ApiLeadRoute
-  '/api/payment': typeof ApiPaymentRoute
+  '/api/leads': typeof ApiLeadsRoute
+  '/api/payment': typeof ApiPaymentRouteWithChildren
+  '/api/projects': typeof ApiProjectsRoute
+  '/api/proposals': typeof ApiProposalsRoute
   '/app/academia': typeof AppAcademiaRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/aprovacoes': typeof AppAprovacoesRoute
@@ -325,6 +378,9 @@ export interface FileRoutesByTo {
   '/app/templates': typeof AppTemplatesRoute
   '/proposta/$id': typeof PropostaIdRoute
   '/app': typeof AppIndexRoute
+  '/api/payment/webhook': typeof ApiPaymentWebhookRoute
+  '/api/project/$token': typeof ApiProjectTokenRoute
+  '/api/proposal/$token': typeof ApiProposalTokenRoute
   '/cliente/onboarding/$projeto': typeof ClienteOnboardingProjetoRoute
 }
 export interface FileRoutesById {
@@ -333,8 +389,12 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/cliente': typeof ClienteRouteWithChildren
   '/login': typeof LoginRoute
+  '/api/dashboard': typeof ApiDashboardRoute
   '/api/lead': typeof ApiLeadRoute
-  '/api/payment': typeof ApiPaymentRoute
+  '/api/leads': typeof ApiLeadsRoute
+  '/api/payment': typeof ApiPaymentRouteWithChildren
+  '/api/projects': typeof ApiProjectsRoute
+  '/api/proposals': typeof ApiProposalsRoute
   '/app/academia': typeof AppAcademiaRoute
   '/app/analytics': typeof AppAnalyticsRoute
   '/app/aprovacoes': typeof AppAprovacoesRoute
@@ -367,6 +427,9 @@ export interface FileRoutesById {
   '/app/templates': typeof AppTemplatesRoute
   '/proposta/$id': typeof PropostaIdRoute
   '/app/': typeof AppIndexRoute
+  '/api/payment/webhook': typeof ApiPaymentWebhookRoute
+  '/api/project/$token': typeof ApiProjectTokenRoute
+  '/api/proposal/$token': typeof ApiProposalTokenRoute
   '/cliente/onboarding/$projeto': typeof ClienteOnboardingProjetoRoute
 }
 export interface FileRouteTypes {
@@ -376,8 +439,12 @@ export interface FileRouteTypes {
     | '/app'
     | '/cliente'
     | '/login'
+    | '/api/dashboard'
     | '/api/lead'
+    | '/api/leads'
     | '/api/payment'
+    | '/api/projects'
+    | '/api/proposals'
     | '/app/academia'
     | '/app/analytics'
     | '/app/aprovacoes'
@@ -410,14 +477,21 @@ export interface FileRouteTypes {
     | '/app/templates'
     | '/proposta/$id'
     | '/app/'
+    | '/api/payment/webhook'
+    | '/api/project/$token'
+    | '/api/proposal/$token'
     | '/cliente/onboarding/$projeto'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/cliente'
     | '/login'
+    | '/api/dashboard'
     | '/api/lead'
+    | '/api/leads'
     | '/api/payment'
+    | '/api/projects'
+    | '/api/proposals'
     | '/app/academia'
     | '/app/analytics'
     | '/app/aprovacoes'
@@ -450,6 +524,9 @@ export interface FileRouteTypes {
     | '/app/templates'
     | '/proposta/$id'
     | '/app'
+    | '/api/payment/webhook'
+    | '/api/project/$token'
+    | '/api/proposal/$token'
     | '/cliente/onboarding/$projeto'
   id:
     | '__root__'
@@ -457,8 +534,12 @@ export interface FileRouteTypes {
     | '/app'
     | '/cliente'
     | '/login'
+    | '/api/dashboard'
     | '/api/lead'
+    | '/api/leads'
     | '/api/payment'
+    | '/api/projects'
+    | '/api/proposals'
     | '/app/academia'
     | '/app/analytics'
     | '/app/aprovacoes'
@@ -491,6 +572,9 @@ export interface FileRouteTypes {
     | '/app/templates'
     | '/proposta/$id'
     | '/app/'
+    | '/api/payment/webhook'
+    | '/api/project/$token'
+    | '/api/proposal/$token'
     | '/cliente/onboarding/$projeto'
   fileRoutesById: FileRoutesById
 }
@@ -499,9 +583,15 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   ClienteRoute: typeof ClienteRouteWithChildren
   LoginRoute: typeof LoginRoute
+  ApiDashboardRoute: typeof ApiDashboardRoute
   ApiLeadRoute: typeof ApiLeadRoute
-  ApiPaymentRoute: typeof ApiPaymentRoute
+  ApiLeadsRoute: typeof ApiLeadsRoute
+  ApiPaymentRoute: typeof ApiPaymentRouteWithChildren
+  ApiProjectsRoute: typeof ApiProjectsRoute
+  ApiProposalsRoute: typeof ApiProposalsRoute
   PropostaIdRoute: typeof PropostaIdRoute
+  ApiProjectTokenRoute: typeof ApiProjectTokenRoute
+  ApiProposalTokenRoute: typeof ApiProposalTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -534,6 +624,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/dashboard': {
+      id: '/api/dashboard'
+      path: '/api/dashboard'
+      fullPath: '/api/dashboard'
+      preLoaderRoute: typeof ApiDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/lead': {
       id: '/api/lead'
       path: '/api/lead'
@@ -541,11 +638,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiLeadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/leads': {
+      id: '/api/leads'
+      path: '/api/leads'
+      fullPath: '/api/leads'
+      preLoaderRoute: typeof ApiLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/payment': {
       id: '/api/payment'
       path: '/api/payment'
       fullPath: '/api/payment'
       preLoaderRoute: typeof ApiPaymentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/projects': {
+      id: '/api/projects'
+      path: '/api/projects'
+      fullPath: '/api/projects'
+      preLoaderRoute: typeof ApiProjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/proposals': {
+      id: '/api/proposals'
+      path: '/api/proposals'
+      fullPath: '/api/proposals'
+      preLoaderRoute: typeof ApiProposalsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/': {
@@ -772,6 +890,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PropostaIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/payment/webhook': {
+      id: '/api/payment/webhook'
+      path: '/webhook'
+      fullPath: '/api/payment/webhook'
+      preLoaderRoute: typeof ApiPaymentWebhookRouteImport
+      parentRoute: typeof ApiPaymentRoute
+    }
+    '/api/project/$token': {
+      id: '/api/project/$token'
+      path: '/api/project/$token'
+      fullPath: '/api/project/$token'
+      preLoaderRoute: typeof ApiProjectTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/proposal/$token': {
+      id: '/api/proposal/$token'
+      path: '/api/proposal/$token'
+      fullPath: '/api/proposal/$token'
+      preLoaderRoute: typeof ApiProposalTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/cliente/onboarding/$projeto': {
       id: '/cliente/onboarding/$projeto'
       path: '/onboarding/$projeto'
@@ -863,14 +1002,32 @@ const ClienteRouteChildren: ClienteRouteChildren = {
 const ClienteRouteWithChildren =
   ClienteRoute._addFileChildren(ClienteRouteChildren)
 
+interface ApiPaymentRouteChildren {
+  ApiPaymentWebhookRoute: typeof ApiPaymentWebhookRoute
+}
+
+const ApiPaymentRouteChildren: ApiPaymentRouteChildren = {
+  ApiPaymentWebhookRoute: ApiPaymentWebhookRoute,
+}
+
+const ApiPaymentRouteWithChildren = ApiPaymentRoute._addFileChildren(
+  ApiPaymentRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   ClienteRoute: ClienteRouteWithChildren,
   LoginRoute: LoginRoute,
+  ApiDashboardRoute: ApiDashboardRoute,
   ApiLeadRoute: ApiLeadRoute,
-  ApiPaymentRoute: ApiPaymentRoute,
+  ApiLeadsRoute: ApiLeadsRoute,
+  ApiPaymentRoute: ApiPaymentRouteWithChildren,
+  ApiProjectsRoute: ApiProjectsRoute,
+  ApiProposalsRoute: ApiProposalsRoute,
   PropostaIdRoute: PropostaIdRoute,
+  ApiProjectTokenRoute: ApiProjectTokenRoute,
+  ApiProposalTokenRoute: ApiProposalTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
