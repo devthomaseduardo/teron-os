@@ -16,11 +16,23 @@ dist-ssr
 .nitro
 *.local
 
+# Secrets — NUNCA commitar
+.env
+.env.*
+!.env.example
+bot/.env
+bot/.env.*
+!bot/.env.example
+bot/tokens/
+bot/data/
+bot/tenants/
+bot/config/connections.json
+
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars
 
-# Editor directories and files
+# Editor
 .vscode/*
 !.vscode/extensions.json
 .idea

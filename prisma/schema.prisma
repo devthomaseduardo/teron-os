@@ -11,7 +11,7 @@ model User {
   email        String    @unique
   passwordHash String
   name         String?
-  role         String    @default("admin")
+  role         String    @default("admin") // admin | staff
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   sessions     Session[]
@@ -26,53 +26,69 @@ model Session {
   createdAt DateTime @default(now())
 }
 
+/// Lead vindo do bot / site / manual
 model Lead {
   id              String     @id @default(cuid())
   name            String
   company         String?
   email           String?
   phone           String?
-  whatsappId      String?    // chatId do WhatsApp
+  whatsappId      String?
   address         String?
   projectType     String?
   deadline        String?
-  briefing        String?    // resumo textual das respostas
-  answers         Json?      // respostas estruturadas do discovery
+  briefing        String?
+  answers         Json?
   totalInvestment Float      @default(0)
   entryPayment    Float      @default(0)
-  status          String     @default("novo") // novo | discovery | proposta_enviada | aceita | perdida
-  source          String     @default("whatsapp") // whatsapp | manual | site
+  status          String     @default("novo") // novo | discovery | proposta_enviada | aceita | perdida | recrutador
+  source          String     @default("whatsapp") // whatsapp | site | manual | recruiter
+  intent          String?    // proposta | recrutador | produto_teron | cliente
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
   proposals       Proposal[]
+  projects        Project[]
 }
 
-model Project {
-  id          String   @id @default(cuid())
-  title       String
-  clientName  String
-  status      String   @default("em_andamento")
-  deadline    String?
-  budget      Float    @default(0)
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
+/// Proposta comercial enviada ao cliente
 model Proposal {
   id          String    @id @default(cuid())
   leadId      String?
   lead        Lead?     @relation(fields: [leadId], references: [id])
   title       String
-  content     String?   // markdown / html da proposta
+  content     String?
   amount      Float     @default(0)
   entryAmount Float     @default(0)
   status      String    @default("rascunho") // rascunho | enviada | visualizada | aceita | recusada | expirada
   validUntil  DateTime?
   version     Int       @default(1)
-  publicToken String    @unique @default(cuid()) // usado no link público
+  publicToken String    @unique @default(cuid())
   viewedAt    DateTime?
   acceptedAt  DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  project     Project?
+}
+
+/// Projeto ativo (após proposta aceita / pago)
+model Project {
+  id              String   @id @default(cuid())
+  title           String
+  clientName      String
+  clientEmail     String?
+  clientCompany   String?
+  status          String   @default("em_andamento") // onboarding | em_andamento | pausado | concluido | cancelado
+  deadline        String?
+  budget          Float    @default(0)
+  description     String?
+  leadId          String?
+  lead            Lead?    @relation(fields: [leadId], references: [id])
+  proposalId      String?  @unique
+  proposal        Proposal? @relation(fields: [proposalId], references: [id])
+  /// Token de acesso do cliente à workstation (sem login complexo no início)
+  clientAccessToken String? @unique @default(cuid())
+  /// Dados visíveis no painel do cliente (checklist, links, notas)
+  clientPortal    Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
