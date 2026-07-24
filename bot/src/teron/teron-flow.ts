@@ -76,7 +76,7 @@ function handleFail(chatId: string, customErrorFn?: (fails: number) => RichMessa
   if (fails >= 3) {
     sessionStore.setHandoff(chatId, true);
     return rich({
-      text: 'Notei que tivemos um contratempo para compreender a resposta 😅\nPara agilizar o seu atendimento, estou te transferindo agora mesmo para um especialista humano do nosso time! 👤',
+      text: 'Notei que tivemos um contratempo para compreender a resposta \ud83d\ude05\nPara agilizar o seu atendimento, estou te transferindo agora mesmo para um especialista humano do nosso time! \ud83d\udc64',
       keepTogether: true,
     });
   }
@@ -126,7 +126,7 @@ export async function runTeronFlow(
   const text = (userText || '').trim();
   const n = normalize(text);
 
-  // 3.4 Comandos Globais de Escape (menu, voltar, cancelar, sair, 0)
+  // Comandos Globais de Escape (menu, voltar, cancelar, sair, 0)
   if (isEscapeCommand(text, n)) {
     sessionStore.setHandoff(chatId, false);
     sessionStore.clearFails(chatId);
@@ -137,7 +137,7 @@ export async function runTeronFlow(
 
   const current = stepOf(chatId);
 
-  // 2. ESTADO: FINALIZADO / PROPOSTA_ENVIADA (done)
+  // ESTADO: FINALIZADO / PROPOSTA_ENVIADA (done)
   if (current === 'done') {
     if (isEscapeCommand(text, n)) {
       sessionStore.setHandoff(chatId, false);
@@ -146,7 +146,6 @@ export async function runTeronFlow(
       return rich(tplTeronMenu());
     }
 
-    // 5. Etapa pós-resultado (gatilhos de onboarding: acessei, assinei, paguei, status)
     if (n.includes('status') || n.includes('onboarding') || n.includes('acessei') || n.includes('assinei') || n.includes('paguei')) {
       const name = sessionStore.get(chatId).profile.name || 'cliente';
       return rich(tplPosProposta(name));
@@ -157,13 +156,12 @@ export async function runTeronFlow(
       return rich(tplHandoff());
     }
 
-    // Qualquer outra interação reabre o menu inicial limpo via modal
     sessionStore.clearFails(chatId);
     setStep(chatId, 'menu');
     return rich(tplTeronMenu());
   }
 
-  // 2. ESTADO: MENU / START (Escolhas 1 a 6)
+  // ESTADO: MENU / START
   if (current === 'menu' || current === 'idle') {
     if (n === '1' || n.includes('orcamento') || n.includes('orçamento') || n.includes('proposta')) {
       setStep(chatId, 'step1_first_name');
@@ -192,13 +190,9 @@ export async function runTeronFlow(
     }
   }
 
-  // 2. ESTADO: QUALIFICACAO (Passo a Passo com Validação Permissiva & Escalonamento)
-
-  // ETAPA 1: Primeiro Nome
+  // ETAPA 1: Nome
   if (current === 'step1_first_name') {
-    if (text.length < 2) {
-      return handleFail(chatId);
-    }
+    if (text.length < 2) return handleFail(chatId);
     sessionStore.clearFails(chatId);
     const firstName = text.split(' ')[0];
     sessionStore.setProfile(chatId, 'name', firstName);
@@ -206,41 +200,35 @@ export async function runTeronFlow(
     return rich(tplAskStep2CompanyName(firstName));
   }
 
-  // ETAPA 2: Nome da Empresa
+  // ETAPA 2: Empresa
   if (current === 'step2_company_name') {
-    if (text.length < 2) {
-      return handleFail(chatId);
-    }
+    if (text.length < 2) return handleFail(chatId);
     sessionStore.clearFails(chatId);
     sessionStore.setProfile(chatId, 'company', text);
     setStep(chatId, 'step3_email');
     return rich(tplAskStep3Email());
   }
 
-  // ETAPA 3: E-mail Corporativo
+  // ETAPA 3: E-mail
   if (current === 'step3_email') {
     const validEmail = /\S+@\S+\.\S+/.test(text);
-    if (!validEmail) {
-      return handleFail(chatId, tplEmailError);
-    }
+    if (!validEmail) return handleFail(chatId, tplEmailError);
     sessionStore.clearFails(chatId);
     sessionStore.setProfile(chatId, 'email', text);
     setStep(chatId, 'step4_city');
     return rich(tplAskStep4City());
   }
 
-  // ETAPA 4: Cidade / Estado
+  // ETAPA 4: Cidade
   if (current === 'step4_city') {
-    if (text.length < 2) {
-      return handleFail(chatId);
-    }
+    if (text.length < 2) return handleFail(chatId);
     sessionStore.clearFails(chatId);
     sessionStore.setProfile(chatId, 'city', text);
     setStep(chatId, 'step5_website');
     return rich(tplAskStep5Website());
   }
 
-  // ETAPA 5: Website / Instagram
+  // ETAPA 5: Website
   if (current === 'step5_website') {
     sessionStore.clearFails(chatId);
     sessionStore.setProfile(chatId, 'website', text);
@@ -248,7 +236,7 @@ export async function runTeronFlow(
     return rich(tplAskStep6ProjectType());
   }
 
-  // ETAPA 6: Tipo de Projeto (Modal List ou Texto Livre)
+  // ETAPA 6: Tipo de Projeto
   if (current === 'step6_project_type') {
     let type = text.trim();
     if (n === '1' || n.includes('landing')) type = 'Landing Page';
@@ -256,27 +244,23 @@ export async function runTeronFlow(
     else if (n === '3' || n.includes('automação') || n.includes('automacao') || n.includes('whatsapp')) type = 'Automação WhatsApp & OS';
     else if (n === '4' || n.includes('medida') || n.includes('outro')) type = 'Sistema Sob Medida / Outro';
 
-    if (type.length < 2) {
-      return handleFail(chatId);
-    }
+    if (type.length < 2) return handleFail(chatId);
     sessionStore.clearFails(chatId);
     sessionStore.setProfile(chatId, 'project_type', type);
     setStep(chatId, 'step7_project_details');
     return rich(tplAskStep7ProjectDetails());
   }
 
-  // ETAPA 7: Detalhes / Briefing do Projeto
+  // ETAPA 7: Briefing
   if (current === 'step7_project_details') {
-    if (text.length < 2) {
-      return handleFail(chatId);
-    }
+    if (text.length < 2) return handleFail(chatId);
     sessionStore.clearFails(chatId);
     sessionStore.setProfile(chatId, 'project_details', text);
     setStep(chatId, 'step8_deadline');
     return rich(tplAskStep8Deadline());
   }
 
-  // ETAPA 8: Prazo e Conclusão (Modal List ou Texto Livre)
+  // ETAPA 8: Prazo + criação da proposta
   if (current === 'step8_deadline') {
     let deadline = text.trim();
     if (n === '1' || n.includes('15') || n.includes('urgente')) deadline = 'Até 15 dias (Urgente)';
@@ -288,7 +272,8 @@ export async function runTeronFlow(
     sessionStore.setProfile(chatId, 'deadline', deadline);
     const p = sessionStore.get(chatId).profile;
 
-    // Grava Lead B2B Teron no arquivo local de auditoria
+    const phoneDigits = chatId.replace(/\D/g, '');
+
     appendLead({
       chatId,
       profile: {
@@ -317,16 +302,28 @@ export async function runTeronFlow(
 
     try {
       const teronOsUrl = (process.env.TERON_OS_URL || 'https://os.thomaseduardo.com.br').replace(/\/$/, '');
+
       const leadPayload = {
         name: leadProfile.name,
         company: leadProfile.company,
         email: leadProfile.email,
-        phone: chatId.replace(/\D/g, ''),
+        phone: phoneDigits,
+        whatsappId: chatId,
         city: leadProfile.city,
         address: leadProfile.city || 'São Paulo, SP',
         projectType: leadProfile.project_type || 'Portal Dealer B2B & Plataforma Web',
         briefing: leadProfile.project_details || 'Desenvolvimento de sistema sob medida.',
         deadline: deadline,
+        answers: {
+          name: leadProfile.name,
+          company: leadProfile.company,
+          email: leadProfile.email,
+          city: leadProfile.city,
+          website: p.website || '',
+          projectType: leadProfile.project_type,
+          briefing: leadProfile.project_details,
+          deadline: deadline,
+        },
       };
 
       let res = await fetch(`${teronOsUrl}/api/lead`, {
@@ -345,13 +342,18 @@ export async function runTeronFlow(
 
       const rawRes = await res.text();
       try {
-        const data = JSON.parse(rawRes) as { url?: string; proposalUrl?: string; result?: { url?: string } };
+        const data = JSON.parse(rawRes) as {
+          url?: string;
+          proposalUrl?: string;
+          publicToken?: string;
+          result?: { url?: string };
+        };
         proposalUrl = data.url || data.proposalUrl || data.result?.url || '';
       } catch {
-        /* fallback texto não-json */
+        /* fallback */
       }
     } catch (err) {
-      console.warn('[teron-flow] Integração Teron OS offline ou sem resposta JSON:', err);
+      console.warn('[teron-flow] Integração Teron OS offline:', err);
     }
 
     if (!proposalUrl) {
