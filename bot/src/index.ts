@@ -340,6 +340,14 @@ async function ingestMessage(
       'raw',
       `via=${via} type=${message.type} fromMe=${message.fromMe} group=${message.isGroupMsg} from=${message.from} chatId=${typeof message.chatId === 'object' ? (message.chatId as any)?._serialized : message.chatId} body=${String(message.body || '').slice(0, 100)} rowId=${message.selectedRowId || message.listResponse?.singleSelectReply?.selectedRowId || ''}`
     );
+    if (String(message.from).includes('@lid')) {
+      fileLog('lid_debug', JSON.stringify({
+        from: message.from,
+        author: message.author,
+        sender: (message as any).sender,
+        id: message.id
+      }).slice(0, 1000));
+    }
     if (String(message.type) === 'list_response') {
       try {
         fileLog(
@@ -375,14 +383,35 @@ async function ingestMessage(
     }
 
     const chatIdRaw = message.chatId;
-    const chatId = String(
+    let chatId = String(
       (typeof chatIdRaw === 'object' && chatIdRaw
         ? chatIdRaw._serialized
         : chatIdRaw) ||
         message.from ||
         ''
     );
-    const target = String(message.from || chatId);
+    let target = String(message.from || chatId);
+
+    // WPPConnect workaround para @lid (Linked Devices)
+    if (target.includes('@lid')) {
+      const p1 = typeof message.author === 'string' ? message.author : (message.author as any)?._serialized;
+      const p2 = (message as any).sender?.id?._serialized || (message as any).sender?.id;
+      let resolved = (p1 && String(p1).includes('@c.us') ? String(p1) : null) || (p2 && String(p2).includes('@c.us') ? String(p2) : null);
+      
+      // Tenta pegar pelo formattedName (+55 11 9999-9999)
+      if (!resolved && (message as any).sender?.formattedName?.startsWith('+')) {
+        const digits = (message as any).sender.formattedName.replace(/\D/g, '');
+        if (digits.length >= 10) {
+          resolved = `${digits}@c.us`;
+        }
+      }
+
+      if (resolved) {
+        target = resolved;
+        if (chatId.includes('@lid')) chatId = resolved;
+      }
+    }
+
     if (!chatId || isGroupId(chatId) || isGroupId(target)) return;
 
     const body = extractIncomingText(message);

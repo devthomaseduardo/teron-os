@@ -18,7 +18,7 @@ const DEFAULT_DAYS: DaySchedule[] = [
   { day: 3, label: "Quarta-feira", enabled: true, openTime: "09:00", closeTime: "18:00" },
   { day: 4, label: "Quinta-feira", enabled: true, openTime: "09:00", closeTime: "18:00" },
   { day: 5, label: "Sexta-feira", enabled: true, openTime: "09:00", closeTime: "18:00" },
-  { day: 6, label: "Sábado", enabled: true, openTime: "09:00", closeTime: "14:00" },
+  { day: 6, label: "Sábado", enabled: false, openTime: "09:00", closeTime: "14:00" },
   { day: 0, label: "Domingo", enabled: false, openTime: "09:00", closeTime: "13:00" },
 ];
 
@@ -37,7 +37,7 @@ export function WeeklyScheduleEditor({ daysOpen = [1, 2, 3, 4, 5, 6], onChange }
 
   const toggleDay = (dayIndex: number) => {
     const next = schedule.map((d) =>
-      d.day === dayIndex ? { ...d, enabled: !d.enabled } : d
+      d.day === dayIndex ? { ...d, enabled: !d.enabled } : 
     );
     setSchedule(next);
     if (onChange) {

@@ -16,7 +16,7 @@ export function TeronWordmark({ className }: { className?: string }) {
     <div className={cn("flex items-center gap-2.5", className)}>
       <TeronMark />
       <span className="font-display text-[15px] font-semibold tracking-tight text-foreground">
-        TERON<span className="text-muted-foreground/70"> OS</span>
+        Thomas<span className="text-muted-foreground/70"> OS</span>
       </span>
     </div>
   );

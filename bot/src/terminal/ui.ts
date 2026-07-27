@@ -253,8 +253,9 @@ export class TerminalUI {
     const lines: string[] = [];
 
     // ── header fixo ──
-    lines.push(paint(c.bgCyan + c.black + c.bold, pad('  AGENTE COMERCIAL · TERMINAL  ', width)));
     lines.push(this.borderLine(width, 'top'));
+    lines.push(this.row(width, paint(c.cyan + c.bold, '  ◆ AGENTE COMERCIAL · TERON OS ◆  ')));
+    lines.push(this.borderLine(width, 'mid'));
 
     const statusBadge = this.statusBadge();
     lines.push(
@@ -313,11 +314,12 @@ export class TerminalUI {
     }
 
     // preenche espaço vazio do feed
-    while (lines.length < height - 1) {
+    while (lines.length < height - 2) {
       lines.push('');
     }
 
     // footer fixo
+    lines.push(this.borderLine(width, 'bot'));
     lines.push(
       paint(
         c.bgGray + c.white,
@@ -373,13 +375,18 @@ export class TerminalUI {
   }
 
   private borderLine(width: number, kind: 'top' | 'mid' | 'bot'): string {
-    const ch = kind === 'mid' ? '─' : '═';
-    return paint(c.cyan, ch.repeat(width));
+    const w = Math.max(0, width - 2);
+    if (kind === 'top') return paint(c.cyan, '╭' + '─'.repeat(w) + '╮');
+    if (kind === 'mid') return paint(c.cyan, '├' + '─'.repeat(w) + '┤');
+    if (kind === 'bot') return paint(c.cyan, '╰' + '─'.repeat(w) + '╯');
+    return '';
   }
 
   private row(width: number, content: string): string {
     const inner = truncate(content, width - 4);
-    return paint(c.cyan, '│ ') + inner;
+    const plainLen = stripAnsi(inner).length;
+    const padding = ' '.repeat(Math.max(0, width - 4 - plainLen));
+    return paint(c.cyan, '│ ') + inner + padding + paint(c.cyan, ' │');
   }
 
   destroy(): void {

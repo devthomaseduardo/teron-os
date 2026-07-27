@@ -116,7 +116,7 @@ export class RichSender {
 
     // ── LISTA MODAL ────────────────────────────────────────
     // Padrão: 1) mensagem de texto  2) modal só com opções
-    if (hasList && payload.list) {
+    if (hasList && payload.list && !target.includes('@lid')) {
       const listTitle = clip(payload.list.title || 'Opções', 24) || 'Opções';
       // cabeçalho do modal enxuto (o contexto vai na bolha de texto)
       const listDesc = clip(
@@ -212,7 +212,7 @@ export class RichSender {
     }
 
     // ── BOTÕES ─────────────────────────────────────────────
-    if (hasButtons && payload.buttons) {
+    if (hasButtons && payload.buttons && !target.includes('@lid')) {
       const body = clip(
         payload.intro || payload.text || text || 'Escolha uma opção',
         900
@@ -296,24 +296,44 @@ export class RichSender {
 
     // ── Texto ──────────────────────────────────────────────
     const mainText = (payload.text || text || '').trim();
-    if (!mainText) return;
+    if (!mainText && !hasList && !hasButtons) return;
+
+    // Se falhamos no @lid, envia fallback text-only aqui embaixo em vez de abortar
+    let finalPayloadText = mainText;
+    if (target.includes('@lid')) {
+      const preText = (payload.intro || payload.text || text || '').trim();
+      if (hasList && payload.list?.sections) {
+        const desc = payload.list.description || 'Escolha uma opção';
+        const combinedDesc = preText && preText !== desc ? `${preText}\n\n${desc}` : desc;
+        finalPayloadText = buildListFallback(
+          payload.list.title || 'Opções',
+          combinedDesc,
+          payload.list.sections
+        );
+      } else if (hasButtons && payload.buttons) {
+        const btnText = payload.buttons.map((b: any) => `• ${b.text || b.id}`).join('\n');
+        const combined = preText ? `${preText}\n\nEscolha:\n${btnText}` : `Escolha:\n${btnText}`;
+        finalPayloadText = combined;
+      }
+    }
+    if (!finalPayloadText) return;
 
     // anti-repeat texto idêntico
-    const sig = `text:${mainText.slice(0, 80)}`;
+    const sig = `text:${finalPayloadText.slice(0, 80)}`;
     const prev = this.lastSent.get(chatId);
     if (prev && prev.sig === sig && Date.now() - prev.at < 20_000) {
       ui?.sys('skip repeat text');
       return;
     }
 
-    if (!(payload.image?.caption && payload.image.caption === mainText)) {
-      await this.typing(target, computeTypingMs(mainText, this.cfg));
+    if (!(payload.image?.caption && payload.image.caption === finalPayloadText)) {
+      await this.typing(target, computeTypingMs(finalPayloadText, this.cfg));
       try {
-        await this.client.sendText(target, mainText);
+        await this.client.sendText(target, finalPayloadText);
         this.limiter.recordSend(chatId);
         this.lastSent.set(chatId, { sig, at: Date.now() });
-        logOut(chatId, target, mainText, source, ui);
-        ui?.outbound(target, mainText.slice(0, 80), source);
+        logOut(chatId, target, finalPayloadText, source, ui);
+        ui?.outbound(target, finalPayloadText.slice(0, 80), source);
       } catch (e) {
         const msg =
           e instanceof Error

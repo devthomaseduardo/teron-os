@@ -154,75 +154,75 @@ function TenantOwnerPage() {
       }
     >
       {/* ── Navegação de Abas do Dono ── */}
-      <div className="flex flex-wrap border-b border-border mb-6">
+      <div className="flex flex-wrap items-center gap-1.5 p-1.5 bg-muted/40 border border-border/50 rounded-xl mb-8 shadow-sm overflow-x-auto no-scrollbar">
         <button
           onClick={() => setTab("dashboard")}
-          className={`flex items-center gap-2 border-b-2 px-3.5 py-2.5 text-xs font-medium transition-colors ${
-            tab === "dashboard" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-lg transition-all duration-300 ${
+            tab === "dashboard" ? "bg-background text-foreground shadow-[0_2px_10px_-3px_rgba(0,0,0,0.1)] ring-1 ring-border/50" : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
           }`}
         >
           <Store className="size-3.5" /> Visão Geral
         </button>
         <button
           onClick={() => setTab("shop")}
-          className={`flex items-center gap-2 border-b-2 px-3.5 py-2.5 text-xs font-medium transition-colors ${
-            tab === "shop" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-lg transition-all duration-300 ${
+            tab === "shop" ? "bg-background text-foreground shadow-[0_2px_10px_-3px_rgba(0,0,0,0.1)] ring-1 ring-border/50" : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
           }`}
         >
           <Building2Icon className="size-3.5" /> Empresa
         </button>
         <button
           onClick={() => setTab("schedule")}
-          className={`flex items-center gap-2 border-b-2 px-3.5 py-2.5 text-xs font-medium transition-colors ${
-            tab === "schedule" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-lg transition-all duration-300 ${
+            tab === "schedule" ? "bg-background text-foreground shadow-[0_2px_10px_-3px_rgba(0,0,0,0.1)] ring-1 ring-border/50" : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
           }`}
         >
           <Clock className="size-3.5" /> Horários
         </button>
         <button
           onClick={() => setTab("team")}
-          className={`flex items-center gap-2 border-b-2 px-3.5 py-2.5 text-xs font-medium transition-colors ${
-            tab === "team" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-lg transition-all duration-300 ${
+            tab === "team" ? "bg-background text-foreground shadow-[0_2px_10px_-3px_rgba(0,0,0,0.1)] ring-1 ring-border/50" : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
           }`}
         >
           <Users className="size-3.5" /> Equipe ({shopConfig?.barbers?.length || 0})
         </button>
         <button
           onClick={() => setTab("services")}
-          className={`flex items-center gap-2 border-b-2 px-3.5 py-2.5 text-xs font-medium transition-colors ${
-            tab === "services" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-lg transition-all duration-300 ${
+            tab === "services" ? "bg-background text-foreground shadow-[0_2px_10px_-3px_rgba(0,0,0,0.1)] ring-1 ring-border/50" : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
           }`}
         >
           <Tag className="size-3.5" /> Serviços ({shopConfig?.services?.length || 0})
         </button>
         <button
           onClick={() => setTab("bot")}
-          className={`flex items-center gap-2 border-b-2 px-3.5 py-2.5 text-xs font-medium transition-colors ${
-            tab === "bot" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-lg transition-all duration-300 ${
+            tab === "bot" ? "bg-background text-foreground shadow-[0_2px_10px_-3px_rgba(0,0,0,0.1)] ring-1 ring-border/50" : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
           }`}
         >
           <Bot className="size-3.5" /> Bot & IA
         </button>
         <button
           onClick={() => setTab("payments")}
-          className={`flex items-center gap-2 border-b-2 px-3.5 py-2.5 text-xs font-medium transition-colors ${
-            tab === "payments" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-lg transition-all duration-300 ${
+            tab === "payments" ? "bg-background text-foreground shadow-[0_2px_10px_-3px_rgba(0,0,0,0.1)] ring-1 ring-border/50" : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
           }`}
         >
           <CreditCard className="size-3.5" /> PIX & Pagamentos
         </button>
         <button
           onClick={() => setTab("agenda")}
-          className={`flex items-center gap-2 border-b-2 px-3.5 py-2.5 text-xs font-medium transition-colors ${
-            tab === "agenda" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-lg transition-all duration-300 ${
+            tab === "agenda" ? "bg-background text-foreground shadow-[0_2px_10px_-3px_rgba(0,0,0,0.1)] ring-1 ring-border/50" : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
           }`}
         >
           <Calendar className="size-3.5" /> Agenda do Dia
         </button>
         <button
           onClick={() => setTab("chat")}
-          className={`flex items-center gap-2 border-b-2 px-3.5 py-2.5 text-xs font-medium transition-colors ${
-            tab === "chat" ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+          className={`flex items-center gap-2 px-4 py-2 text-xs font-medium rounded-lg transition-all duration-300 ${
+            tab === "chat" ? "bg-background text-foreground shadow-[0_2px_10px_-3px_rgba(0,0,0,0.1)] ring-1 ring-border/50" : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
           }`}
         >
           <MessageSquare className="size-3.5" /> Conversas WhatsApp
@@ -416,16 +416,29 @@ function TenantOwnerPage() {
               <QrCode className="size-4 text-primary" /> Conexão WhatsApp
             </h3>
 
-            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border p-6 text-center">
+            <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border/80 bg-background/50 p-8 text-center transition-all hover:bg-muted/20">
               {waStatus?.state === "online" ? (
-                <div className="space-y-2">
-                  <CheckCircle2 className="size-10 text-emerald-500 mx-auto" />
-                  <p className="font-semibold text-foreground">Conectado ao WhatsApp</p>
+                <div className="space-y-4 animate-in fade-in zoom-in duration-500">
+                  <div className="relative mx-auto size-16 flex items-center justify-center">
+                    <div className="absolute inset-0 rounded-full bg-emerald-500/20 animate-ping"></div>
+                    <CheckCircle2 className="relative size-12 text-emerald-500" />
+                  </div>
+                  <p className="font-semibold text-foreground text-lg">Conectado ao WhatsApp</p>
+                  <p className="text-xs text-muted-foreground">Seu agente está monitorando mensagens.</p>
                 </div>
               ) : waStatus?.qrDataUrl ? (
-                <img src={waStatus.qrDataUrl} alt="QR Code" className="size-48 rounded-md" />
+                <div className="space-y-4 animate-in fade-in duration-500">
+                  <div className="p-3 bg-white rounded-xl shadow-xl mx-auto inline-block">
+                    <img src={waStatus.qrDataUrl} alt="QR Code" className="size-52" />
+                  </div>
+                  <p className="text-sm font-medium text-foreground">Escaneie o QR Code</p>
+                  <p className="text-xs text-muted-foreground max-w-[250px] mx-auto">Abra o WhatsApp no seu celular, vá em Aparelhos Conectados e escaneie a imagem acima.</p>
+                </div>
               ) : (
-                <p className="text-xs text-muted-foreground">Carregando status do WhatsApp...</p>
+                <div className="space-y-4 animate-pulse">
+                  <div className="mx-auto size-12 rounded-full border-4 border-muted border-t-primary animate-spin"></div>
+                  <p className="text-xs text-muted-foreground">Carregando status do WhatsApp...</p>
+                </div>
               )}
             </div>
           </div>
@@ -514,24 +527,31 @@ function TenantOwnerPage() {
           </div>
 
           <div className="md:col-span-2 rounded-xl border border-border bg-card p-4 flex flex-col justify-between h-[450px]">
-            <div className="space-y-2 overflow-y-auto pr-2">
+            <div className="space-y-4 overflow-y-auto pr-4 h-full flex flex-col no-scrollbar">
               {messages
                 .filter((m) => !activeChatId || m.chatId === activeChatId)
-                .map((m, i) => (
-                  <div
-                    key={m.id || i}
-                    className={`max-w-[80%] rounded-lg p-3 text-xs ${
-                      m.sender === "client"
-                        ? "bg-muted text-foreground self-start"
-                        : "bg-primary text-primary-foreground self-end ml-auto"
-                    }`}
-                  >
-                    <p>{m.text}</p>
-                    <span className="mt-1 block text-[10px] opacity-70">
-                      {m.timestamp ? new Date(m.timestamp).toLocaleTimeString() : ""}
-                    </span>
-                  </div>
-                ))}
+                .map((m, i) => {
+                  const isClient = m.sender === "client";
+                  return (
+                    <div
+                      key={m.id || i}
+                      className={`flex flex-col max-w-[75%] ${isClient ? "self-start" : "self-end"}`}
+                    >
+                      <div
+                        className={`rounded-2xl px-4 py-2.5 text-sm shadow-sm ${
+                          isClient
+                            ? "bg-muted/70 text-foreground border border-border/50 rounded-tl-sm"
+                            : "bg-primary text-primary-foreground rounded-tr-sm"
+                        }`}
+                      >
+                        <p className="leading-relaxed">{m.text}</p>
+                      </div>
+                      <span className={`mt-1 text-[10px] opacity-60 ${isClient ? "ml-1" : "mr-1 text-right"}`}>
+                        {m.timestamp ? new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ""}
+                      </span>
+                    </div>
+                  );
+                })}
             </div>
 
             <form onSubmit={handleSendMessage} className="flex items-center gap-2 pt-3 border-t border-border">
@@ -554,10 +574,14 @@ function TenantOwnerPage() {
 
 function KpiCard({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
-    <div className="rounded-xl border border-border bg-card p-4">
-      <p className="text-[11px] text-muted-foreground">{label}</p>
-      <p className="mt-1 font-display text-2xl font-semibold text-foreground">{value}</p>
-      <p className="mt-1 text-[11px] text-muted-foreground">{hint}</p>
+    <div className="group relative overflow-hidden rounded-2xl border border-border/50 bg-card/40 backdrop-blur-md p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-border">
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+      <p className="text-[12px] font-medium text-muted-foreground uppercase tracking-wider">{label}</p>
+      <p className="mt-2 font-display text-3xl font-bold text-foreground">{value}</p>
+      <p className="mt-2 text-[11px] text-muted-foreground/80 flex items-center gap-1.5">
+        <span className="size-1.5 rounded-full bg-primary/60 block"></span>
+        {hint}
+      </p>
     </div>
   );
 }
