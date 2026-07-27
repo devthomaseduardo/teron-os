@@ -65,9 +65,21 @@ model Proposal {
   publicToken String    @unique @default(cuid())
   viewedAt    DateTime?
   acceptedAt  DateTime?
+
+  /// Trilha de auditoria da assinatura eletronica
+  signerName      String?
+  signerEmail     String?
+  signerIp        String?
+  signerUserAgent String?
+  signedAt        DateTime?
+  /// SHA-256 do conteudo exato do contrato no momento da assinatura
+  contractHash    String?
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   project     Project?
+  payments    Payment[]
+  otps        SignatureOtp[]
 }
 
 /// Projeto ativo (após proposta aceita / pago)
@@ -89,8 +101,56 @@ model Project {
   clientAccessToken String? @unique @default(cuid())
   /// Dados visíveis no painel do cliente (checklist, links, notas)
   clientPortal    Json?
+  /// Expiracao do acesso do cliente por token (renovavel)
+  clientTokenExpiresAt DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  payments        Payment[]
+}
+
+/// Cobranca / recebimento vinculado a uma proposta ou projeto.
+/// Fonte unica de verdade financeira: so o webhook assinado marca "pago".
+model Payment {
+  id          String    @id @default(cuid())
+  proposalId  String?
+  proposal    Proposal? @relation(fields: [proposalId], references: [id])
+  projectId   String?
+  project     Project?  @relation(fields: [projectId], references: [id])
+
+  provider    String // stripe | mercadopago | manual
+  /// ID no provedor (checkout session, payment id). Unico p/ idempotencia.
+  providerRef String?   @unique
+  kind        String    @default("entrada") // entrada | parcela | final
+  amount      Float
+  currency    String    @default("BRL")
+  status      String    @default("pendente") // pendente | pago | falhou | reembolsado | expirado
+  method      String? // pix | card | boleto
+  description String?
+  paidAt      DateTime?
+  /// Payload bruto do provedor, para auditoria/disputa
+  rawEvent    Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([proposalId])
+  @@index([projectId])
+  @@index([status])
+}
+
+/// Codigo de uso unico enviado por e-mail para assinar a proposta.
+/// Guardamos apenas o hash do codigo.
+model SignatureOtp {
+  id         String    @id @default(cuid())
+  proposalId String
+  proposal   Proposal  @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  email      String
+  codeHash   String
+  expiresAt  DateTime
+  consumedAt DateTime?
+  attempts   Int       @default(0)
+  createdAt  DateTime  @default(now())
+
+  @@index([proposalId])
 }
 
 model Tenant {

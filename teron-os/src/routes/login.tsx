@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { TeronWordmark } from "@/components/teron/logo";
-import { loginUserFn, registerUserFn, verifySessionFn } from "@/services/auth";
+import { getCurrentUserFn, loginUserFn, registerUserFn } from "@/services/auth";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -37,17 +37,15 @@ function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
-  // Already signed in? Send them straight to their destination.
+  // Ja autenticado? Manda direto ao destino. A sessao vem do cookie httpOnly,
+  // entao basta perguntar ao servidor.
   useEffect(() => {
     let cancelled = false;
-    const token = typeof window !== "undefined" ? localStorage.getItem("teron_auth_token") : null;
-    if (token) {
-      verifySessionFn({ data: { token } }).then((user) => {
-        if (!cancelled && user) {
-          window.location.replace(target);
-        }
-      });
-    }
+    getCurrentUserFn().then((user) => {
+      if (!cancelled && user) {
+        window.location.replace(target);
+      }
+    });
     return () => {
       cancelled = true;
     };
@@ -65,7 +63,6 @@ function LoginPage() {
           setError(res.error);
           return;
         }
-        localStorage.setItem("teron_auth_token", res.token);
         setNotice("Conta criada com sucesso! Redirecionando...");
         setTimeout(() => window.location.replace(target), 800);
       } else {
@@ -74,7 +71,6 @@ function LoginPage() {
           setError(res.error);
           return;
         }
-        localStorage.setItem("teron_auth_token", res.token);
         window.location.replace(target);
         return;
       }
@@ -134,7 +130,7 @@ function LoginPage() {
                 <input
                   type="password"
                   required
-                  minLength={6}
+                  minLength={8}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
