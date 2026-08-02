@@ -1,9 +1,8 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useRouteContext, useRouterState } from "@tanstack/react-router";
 import {
   Activity,
   Bell,
   BookOpen,
-  Boxes,
   Building2,
   CheckSquare,
   CircleDollarSign,
@@ -21,6 +20,7 @@ import {
   LayoutDashboard,
   LibraryBig,
   LifeBuoy,
+  LogOut,
   type LucideIcon,
   Megaphone,
   MessageSquare,
@@ -39,6 +39,7 @@ import type { ReactNode } from "react";
 
 import { TeronWordmark } from "@/components/teron/logo";
 import { cn } from "@/lib/utils";
+import { logoutFn } from "@/services/auth";
 
 type NavItem = { label: string; to: string; icon: LucideIcon; badge?: string };
 type NavGroup = { label: string; items: NavItem[] };
@@ -120,6 +121,22 @@ export function WorkspaceShell({
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
+  // Usuario real da sessao, injetado pelo `beforeLoad` da rota /app.
+  const { user } = useRouteContext({ from: "/app" });
+
+  const displayName = user?.name || user?.email || "Conta";
+  const initials = displayName
+    .split(/[\s@.]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+
+  async function handleLogout() {
+    await logoutFn();
+    window.location.replace("/login");
+  }
+
   return (
     <div className="flex min-h-screen bg-background">
       <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col border-r border-border/70 bg-sidebar md:flex">
@@ -189,13 +206,23 @@ export function WorkspaceShell({
         <div className="border-t border-sidebar-border/70 p-2">
           <div className="mt-2 flex items-center gap-2 rounded-md px-2 py-1.5">
             <div className="grid size-7 place-items-center rounded-full bg-gradient-to-br from-[oklch(0.7_0.14_250)] to-[oklch(0.68_0.2_320)] text-[11px] font-semibold text-white">
-              TR
+              {initials}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[12px] font-medium text-foreground">Thomas Reis</p>
-              <p className="truncate text-[10px] text-muted-foreground">TERON OS · Owner</p>
+              <p className="truncate text-[12px] font-medium text-foreground">{displayName}</p>
+              <p className="truncate text-[10px] text-muted-foreground">
+                TERON OS · {user?.role === "admin" ? "Owner" : (user?.role ?? "—")}
+              </p>
             </div>
-            <Boxes className="size-3.5 text-muted-foreground" />
+            <button
+              type="button"
+              onClick={handleLogout}
+              title="Sair do workspace"
+              aria-label="Sair do workspace"
+              className="rounded p-1 text-muted-foreground hover:bg-sidebar-accent hover:text-foreground"
+            >
+              <LogOut className="size-3.5" />
+            </button>
           </div>
         </div>
       </aside>
